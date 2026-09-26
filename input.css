@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #ffb2bb;
+  --color-primary-container: #4a101d;
+  --color-primary-fixed: #ffd9dd;
+  --color-primary-fixed-dim: #ffb2bb;
+  --color-on-primary: #581b27;
+  --color-on-primary-container: #c87581;
+  --color-on-primary-fixed: #3c0513;
+  --color-on-primary-fixed-variant: #74313d;
+  --color-inverse-primary: #914853;
+
+  --color-secondary: #e2c197;
+  --color-secondary-container: #5c4524;
+  --color-secondary-fixed: #ffddb2;
+  --color-secondary-fixed-dim: #e2c197;
+  --color-on-secondary: #412d0e;
+  --color-on-secondary-container: #d3b38a;
+  --color-on-secondary-fixed: #291800;
+  --color-on-secondary-fixed-variant: #594322;
+
+  --color-tertiary: #ffb2bc;
+  --color-tertiary-container: #50061b;
+  --color-tertiary-fixed: #ffd9dd;
+  --color-tertiary-fixed-dim: #ffb2bc;
+  --color-on-tertiary: #5e1325;
+  --color-on-tertiary-container: #d36e7e;
+  --color-on-tertiary-fixed: #400012;
+  --color-on-tertiary-fixed-variant: #7c2a3b;
+
+  --color-background: #0e0a0b;
+  --color-surface: #171213;
+  --color-surface-dim: #171213;
+  --color-surface-bright: #3e3839;
+  --color-surface-variant: #393334;
+  --color-surface-container-lowest: #0d0a0b;
+  --color-surface-container-low: #1f1a1b;
+  --color-surface-container: #231e1f;
+  --color-surface-container-high: #2e292a;
+  --color-surface-container-highest: #393334;
+  --color-surface-tint: #ffb2bb;
+
+  --color-on-background: #eae0e1;
+  --color-on-surface: #eae0e1;
+  --color-on-surface-variant: #d8c1c3;
+  --color-inverse-surface: #eae0e1;
+  --color-inverse-on-surface: #352f30;
+
+  --color-outline: #a08c8d;
+  --color-outline-variant: #534344;
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-on-error: #690005;
+  --color-on-error-container: #ffdad6;
+
+  --font-headline-lg: "Playfair Display", Georgia, serif;
+  --font-headline-md: "Playfair Display", Georgia, serif;
+  --font-headline-sm: "Playfair Display", Georgia, serif;
+  --font-title-editorial: "Playfair Display", Georgia, serif;
+  --font-display-hero: "Playfair Display", Georgia, serif;
+
+  --font-body-lg: "Manrope", sans-serif;
+  --font-body-md: "Manrope", sans-serif;
+  --font-body-sm: "Manrope", sans-serif;
+  --font-label-caps: "Manrope", sans-serif;
+  --font-label-md: "Manrope", sans-serif;
+
+  --spacing-space-xs: 0.375rem;
+  --spacing-space-sm: 0.75rem;
+  --spacing-space-md: 1.5rem;
+  --spacing-space-lg: 2.5rem;
+  --spacing-space-xl: 4rem;
+  --spacing-space-2xl: 6.5rem;
+  --spacing-space-3xl: 10rem;
+  --spacing-gutter: 2rem;
+  --spacing-gutter-mobile: 1.25rem;
+  --spacing-margin: 4rem;
+}
+
+@layer base {
+  *, ::before, ::after {
+    box-sizing: border-box;
+  }
+  html {
+    margin: 0;
+    padding: 0;
+    background-color: #0e0a0b;
+    color: #eae0e1;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #0e0a0b;
+    color: #eae0e1;
+    overflow-x: hidden;
+  }
+}
+
+/* Editorial Typography Reveal Helpers */
+.reveal-mask {
+  overflow: hidden;
+  display: block;
+}
+.reveal-inner {
+  display: block;
+  transform: translateY(110%);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Gallery Interactivity */
+.gallery-grid:hover .gallery-plate:not(:hover) {
+  opacity: 0.45;
+  filter: grayscale(35%) brightness(0.7);
+}
+.gallery-plate {
+  transition: opacity 0.5s ease, filter 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Material Icons fallback styling if font fails */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-inner, .reveal-item, .gallery-plate, #heroBg, .chapter-slide-img {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

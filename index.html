@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="web_standard" name="shell-type"/>
+  <title>Arjun &amp; Bindhu — The Florentine Monograph</title>
+  
+  <!-- Preconnect and Typography Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+
+  <!-- Local Compiled Tailwind CSS -->
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- Local GSAP & ScrollTrigger Libraries -->
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* Critical base rendering */
+    html {
+      scroll-behavior: auto !important; /* Ensure native instant response for ScrollTrigger */
+      background-color: #0e0a0b;
+      color: #eae0e1;
+    }
+    body {
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      background-color: #0e0a0b;
+      color: #eae0e1;
+      font-family: 'Manrope', sans-serif;
+    }
+
+    /* Editorial Text Masking */
+    .reveal-mask {
+      overflow: hidden;
+      display: block;
+    }
+    .reveal-inner {
+      display: block;
+      transform: translateY(110%);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    /* Pinned Story Transitions */
+    .story-slide-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      will-change: opacity, transform;
+    }
+    .story-chapter-card {
+      position: absolute;
+      inset-x: 0;
+      will-change: opacity, transform;
+    }
+
+
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal-inner {
+        transform: none !important;
+        opacity: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-primary-fixed">
+
+
+
+  <!-- ======================================================== -->
+  <!-- NAVIGATION BAR (Translucent Glass on Scroll)             -->
+  <!-- ======================================================== -->
+  <header class="fixed top-0 left-0 w-full z-50 transition-all duration-500 py-6 border-b border-transparent" id="mainNav">
+    <div class="max-w-[1440px] mx-auto px-gutter-mobile lg:px-margin flex items-center justify-between">
+      <a class="group flex items-center gap-2" href="#">
+        <span class="font-title-editorial text-2xl tracking-[0.25em] text-secondary font-light transition-all group-hover:text-primary">A &amp; B</span>
+      </a>
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-8 text-[11px] uppercase tracking-[0.28em] font-semibold text-on-surface-variant">
+        <a class="hover:text-secondary transition-colors" href="#prologue">Prologue</a>
+        <a class="hover:text-secondary transition-colors" href="#chapters">The Story</a>
+        <a class="hover:text-secondary transition-colors" href="#celebration">Celebration</a>
+        <a class="hover:text-secondary transition-colors" href="#itinerary">Itinerary</a>
+        <a class="hover:text-secondary transition-colors" href="#gallery">Portraits</a>
+        <a class="text-secondary hover:text-primary-fixed transition-colors font-semibold" href="#rsvp">RSVP</a>
+      </nav>
+      <!-- Right Action & Mobile Toggle -->
+      <div class="flex items-center gap-4">
+        <a class="hidden sm:inline-flex items-center gap-2 px-5 py-2 border border-secondary/40 text-[11px] uppercase tracking-[0.25em] text-secondary hover:bg-secondary/10 hover:border-secondary transition-all" href="#rsvp">
+          <span>Attend</span>
+        </a>
+        <button aria-label="Toggle navigation menu" class="md:hidden text-secondary p-1 focus:outline-none cursor-pointer" id="mobileMenuToggle">
+          <span class="material-symbols-outlined text-2xl" id="menuIcon">menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Fullscreen Nav Overlay -->
+  <div class="fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl flex flex-col justify-between p-8 opacity-0 pointer-events-none transition-all duration-500" id="mobileOverlay">
+    <div class="pt-20 space-y-6 text-center">
+      <span class="text-[10px] uppercase tracking-[0.35em] text-secondary/80 block">A Florentine Monograph</span>
+      <div class="flex flex-col gap-6 text-2xl font-headline-md tracking-wider">
+        <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#prologue">Prologue</a>
+        <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#chapters">The Chapters</a>
+        <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#celebration">The Celebration</a>
+        <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#itinerary">The Itinerary</a>
+        <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#gallery">Portraits</a>
+        <a class="mobile-nav-link text-secondary hover:text-primary transition-colors" href="#rsvp">Répondez S’il Vous Plaît</a>
+      </div>
+    </div>
+    <div class="text-center text-xs tracking-widest text-outline uppercase pb-6">
+      Villa Medici, Florence • Dec 24, 2026
+    </div>
+  </div>
+
+  <main class="w-full">
+    <!-- ======================================================== -->
+    <!-- 1. HERO SECTION: CINEMATIC FLUID OPENING                -->
+    <!-- ======================================================== -->
+    <section class="relative w-full min-h-screen flex flex-col justify-between overflow-hidden px-gutter-mobile lg:px-margin pt-28 pb-12" id="heroSection">
+      <!-- Background Parallax Image Container -->
+      <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="w-full h-full bg-cover bg-center will-change-transform" id="heroBg" style="background-image: url('assets/images/hero.avif');"></div>
+        <!-- Multi-stop Vignette & Darkening Gradients -->
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0e0a0b] via-[#0e0a0b]/60 to-[#0e0a0b]/40"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#0e0a0b]/90 via-transparent to-[#0e0a0b]/80"></div>
+        <div class="absolute inset-0 bg-[#4a101d]/15 mix-blend-color"></div>
+        <!-- Dynamic Darkening Scrim (Scroll-Linked) -->
+        <div class="absolute inset-0 bg-black opacity-0 pointer-events-none will-change-opacity" id="heroDarkOverlay"></div>
+      </div>
+
+      <!-- Header Subtitle / Archival Label -->
+      <div class="relative z-10 flex justify-between items-center text-secondary/80 text-[10px] md:text-xs tracking-[0.35em] uppercase border-b border-secondary/20 pb-4" id="heroTopBar">
+        <span>A Florentine Monograph</span>
+        <span class="hidden sm:inline">Winter Solstice • 2026</span>
+        <span>Villa Medici</span>
+      </div>
+
+      <!-- Monumental Editorial Typography (Bottom-Left Asymmetric Anchor) -->
+      <div class="relative z-10 my-auto py-12 max-w-4xl will-change-transform" id="heroTypography">
+        <div class="overflow-hidden mb-3">
+          <p class="hero-anim-item text-xs md:text-sm tracking-[0.4em] uppercase text-secondary font-medium">
+            The Celebration of Forever
+          </p>
+        </div>
+        <div class="overflow-hidden mb-6">
+          <h1 class="hero-anim-item font-display-hero text-5xl sm:text-7xl lg:text-[7rem] leading-[0.95] text-on-surface tracking-tight">
+            Arjun <span class="font-title-editorial italic text-secondary font-light">&amp;</span> Bindhu
+          </h1>
+        </div>
+        <div class="overflow-hidden flex items-center gap-6">
+          <div class="hero-anim-item flex items-center gap-4 text-xs md:text-sm uppercase tracking-[0.28em] text-on-surface-variant">
+            <span class="w-8 h-[1px] bg-secondary/50"></span>
+            <span>December 24, 2026</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary/60"></span>
+            <span>Florence, Tuscany</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll Indicator & Downward Prompt -->
+      <div class="relative z-10 flex justify-between items-end pt-8 border-t border-white/10 text-outline text-[10px] tracking-[0.3em] uppercase will-change-transform" id="heroBottomBar">
+        <span class="hidden sm:inline">A Private Celebration</span>
+        <a class="flex items-center gap-3 text-secondary/90 hover:text-primary transition-colors group cursor-pointer" href="#prologue" id="heroScrollCue">
+          <span>Discover The Story</span>
+          <span class="material-symbols-outlined text-sm transform group-hover:translate-y-1 transition-transform">arrow_downward</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- 2. PROLOGUE / INTIMATE OVERTURE                         -->
+    <!-- ======================================================== -->
+    <section class="relative w-full py-28 lg:py-36 px-gutter-mobile lg:px-margin bg-surface-container-lowest border-t border-secondary/15" id="prologue">
+      <div class="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+        <!-- Editorial Statement -->
+        <div class="lg:col-span-7 space-y-6">
+          <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
+            Chapter 00 • The Overture
+          </span>
+          <div class="reveal-mask">
+            <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl lg:text-6xl text-on-surface font-light leading-[1.1]">
+              Two souls.<br/>
+              <span class="italic text-secondary font-normal">One timeless promise.</span>
+            </h2>
+          </div>
+          <div class="w-16 h-[1px] bg-secondary/40"></div>
+          <p class="font-body-lg text-lg sm:text-xl text-on-surface-variant font-light leading-relaxed max-w-2xl">
+            Beyond the passage of days and the restlessness of the world, we found in each other a home without boundaries. We invite you to join us beneath the cypress groves and Renaissance vaults to witness and celebrate the eternal union of our lives.
+          </p>
+          <div class="pt-4 flex items-center gap-4 text-xs uppercase tracking-widest text-outline">
+            <span class="italic font-title-editorial text-base text-secondary normal-case">Florence, Tuscany</span>
+            <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+            <span>A Monograph of Devotion</span>
+          </div>
+        </div>
+        <!-- Archival Quote & Miniature Highlight -->
+        <div class="lg:col-span-5 relative">
+          <div class="border-l border-secondary/30 pl-8 lg:pl-12 py-4 space-y-6">
+            <p class="font-title-editorial italic text-2xl lg:text-3xl text-secondary-fixed leading-snug">
+              “Some lives are linked across centuries; we merely had to arrive at the agreed corner.”
+            </p>
+            <div class="text-[11px] uppercase tracking-[0.3em] text-outline">
+              Inscription from the Arno River • 2021
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- 3. CENTERPIECE: STICKY MULTI-CHAPTER LOVE STORY         -->
+    <!-- ======================================================== -->
+    <section class="relative w-full bg-background border-t border-secondary/15" id="chapters">
+      <!-- Desktop Pinned Container (GSAP ScrollTrigger Pinned) -->
+      <div class="relative w-full max-w-[1440px] mx-auto hidden lg:block" id="storyPinSection">
+        <div class="h-screen w-full flex overflow-hidden items-center" id="storyPinViewport">
+          
+          <!-- Left Pinned Visual Frame -->
+          <div class="w-1/2 h-full p-12 flex items-center justify-center relative" id="storyVisualFrame">
+            <div class="w-full h-[84%] relative overflow-hidden rounded-sm shadow-2xl border border-secondary/20 bg-[#110d0e]">
+              
+              <!-- Slide 1: Bindhu Veil Portrait -->
+              <div class="story-slide-layer opacity-100" id="storySlide1">
+                <div class="w-full h-full bg-cover bg-center will-change-transform" id="storyImg1" style="background-image: url('assets/images/story-bindhu.avif');"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent"></div>
+                <div class="absolute bottom-6 left-6 flex items-center gap-3">
+                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate I • Bindhu</span>
+                </div>
+              </div>
+
+              <!-- Slide 2: Arjun Black Tie Portrait -->
+              <div class="story-slide-layer opacity-0" id="storySlide2">
+                <div class="w-full h-full bg-cover bg-center will-change-transform" id="storyImg2" style="background-image: url('assets/images/story-arjun.avif');"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent"></div>
+                <div class="absolute bottom-6 left-6 flex items-center gap-3">
+                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate II • Arjun</span>
+                </div>
+              </div>
+
+              <!-- Slide 3: Couple Archway Candlelight -->
+              <div class="story-slide-layer opacity-0" id="storySlide3">
+                <div class="w-full h-full bg-cover bg-center will-change-transform" id="storyImg3" style="background-image: url('assets/images/story-couple.avif');"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent"></div>
+                <div class="absolute bottom-6 left-6 flex items-center gap-3">
+                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate III • The Vow</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Right Synchronized Chapter Typography -->
+          <div class="w-1/2 h-full flex flex-col justify-center px-16 relative" id="storyContentColumn">
+            <div class="relative w-full h-[360px]">
+              
+              <!-- Chapter I Text -->
+              <div class="story-chapter-card top-0 space-y-6 opacity-100" id="storyChapter1">
+                <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
+                  Chapter I • Autumn 2021
+                </span>
+                <div class="reveal-mask">
+                  <h3 class="font-headline-lg text-4xl lg:text-5xl text-on-surface font-light leading-tight">
+                    The Meeting in <span class="italic text-secondary">Florence</span>
+                  </h3>
+                </div>
+                <p class="font-body-lg text-lg text-on-surface-variant font-light leading-relaxed">
+                  It began in the quiet cloister of an antiquarian library overlooking the Arno. Amidst weathered vellum and early morning fog, an accidental exchange of notes sparked a conversation that outlasted the rain, the afternoon, and eventually, the season itself.
+                </p>
+                <div class="pt-4 border-l border-secondary/40 pl-6">
+                  <p class="font-title-editorial italic text-lg text-secondary-fixed">
+                    “Words came easily, as if rehearsed in another lifetime.”
+                  </p>
+                </div>
+              </div>
+
+              <!-- Chapter II Text -->
+              <div class="story-chapter-card top-0 space-y-6 opacity-0" id="storyChapter2">
+                <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
+                  Chapter II • 2022–2024
+                </span>
+                <div class="reveal-mask">
+                  <h3 class="font-headline-lg text-4xl lg:text-5xl text-on-surface font-light leading-tight">
+                    Across Continents, <span class="italic text-secondary">One Horizon</span>
+                  </h3>
+                </div>
+                <p class="font-body-lg text-lg text-on-surface-variant font-light leading-relaxed">
+                  Flights across twilight zones, handwritten dispatches sealed in red wax, and midnight calls across six timezones became the architecture of our devotion. Every city we walked alone was only ever half-seen until we walked it together.
+                </p>
+                <div class="flex items-center gap-6 pt-2 text-[11px] uppercase tracking-[0.25em] text-outline">
+                  <span>London</span>
+                  <span>•</span>
+                  <span>New York</span>
+                  <span>•</span>
+                  <span>Mumbai</span>
+                  <span>•</span>
+                  <span>Lake Como</span>
+                </div>
+              </div>
+
+              <!-- Chapter III Text -->
+              <div class="story-chapter-card top-0 space-y-6 opacity-0" id="storyChapter3">
+                <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
+                  Chapter III • The Vow
+                </span>
+                <div class="reveal-mask">
+                  <h3 class="font-headline-lg text-4xl lg:text-5xl text-on-surface font-light leading-tight">
+                    Under the <span class="italic text-secondary">Tuscan Stars</span>
+                  </h3>
+                </div>
+                <p class="font-body-lg text-lg text-on-surface-variant font-light leading-relaxed">
+                  On Christmas Eve, surrounded by ancient stone arches and the fragrance of olive wood embers, we seal our bond. A celebration crafted not for spectacle, but for intimacy, truth, and devotion.
+                </p>
+                <div class="pt-4">
+                  <a class="inline-flex items-center gap-3 text-xs uppercase tracking-[0.25em] text-secondary hover:text-primary transition-colors cursor-pointer" href="#rsvp">
+                    <span>Confirm Your Presence</span>
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Mobile/Tablet Stacked Editorial Layout -->
+      <div class="block lg:hidden py-16 px-gutter-mobile space-y-24" id="storyMobileContainer">
+        <!-- Item 1 -->
+        <div class="space-y-6">
+          <div class="w-full h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
+            <img alt="Bindhu Veil Portrait" class="w-full h-full object-cover" src="assets/images/story-bindhu.avif"/>
+          </div>
+          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter I • Autumn 2021</span>
+          <h3 class="font-headline-lg text-3xl text-on-surface font-light">The Meeting in <span class="italic text-secondary">Florence</span></h3>
+          <p class="text-on-surface-variant font-light text-base leading-relaxed">
+            It began in the quiet cloister of an antiquarian library overlooking the Arno. Amidst weathered vellum and early morning fog, an accidental exchange of notes sparked a conversation that outlasted the rain, the afternoon, and eventually, the season itself.
+          </p>
+        </div>
+        <!-- Item 2 -->
+        <div class="space-y-6">
+          <div class="w-full h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
+            <img alt="Arjun Black Tie Portrait" class="w-full h-full object-cover" src="assets/images/story-arjun.avif"/>
+          </div>
+          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter II • 2022–2024</span>
+          <h3 class="font-headline-lg text-3xl text-on-surface font-light">Across Continents, <span class="italic text-secondary">One Horizon</span></h3>
+          <p class="text-on-surface-variant font-light text-base leading-relaxed">
+            Flights across twilight zones, handwritten dispatches sealed in red wax, and midnight calls across six timezones became the architecture of our devotion. Every city we walked alone was only ever half-seen until we walked it together.
+          </p>
+        </div>
+        <!-- Item 3 -->
+        <div class="space-y-6">
+          <div class="w-full h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
+            <img alt="Couple Archway Candlelight Portrait" class="w-full h-full object-cover" src="assets/images/story-couple.avif"/>
+          </div>
+          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter III • The Vow</span>
+          <h3 class="font-headline-lg text-3xl text-on-surface font-light">Under the <span class="italic text-secondary">Tuscan Stars</span></h3>
+          <p class="text-on-surface-variant font-light text-base leading-relaxed">
+            On Christmas Eve, surrounded by ancient stone arches and the fragrance of olive wood embers, we seal our bond. A celebration crafted not for spectacle, but for intimacy, truth, and devotion.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- 4. WEBGL CELEBRATION & FIREWORKS SHADER CANVAS          -->
+    <!-- ======================================================== -->
+    <section class="relative w-full py-32 lg:py-48 px-gutter-mobile lg:px-margin min-h-[700px] flex items-center justify-center overflow-hidden border-t border-secondary/15" id="celebration">
+      <!-- WebGL Canvas for Dynamic Firework & Ember Stars -->
+      <canvas class="absolute inset-0 w-full h-full pointer-events-none z-0" id="fireworksCanvas"></canvas>
+      <!-- Atmosphere scrims -->
+      <div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background pointer-events-none z-[1]"></div>
+      
+      <!-- Centered Editorial Narrative -->
+      <div class="relative z-10 max-w-3xl text-center space-y-6">
+        <span class="text-[11px] uppercase tracking-[0.4em] text-secondary block font-semibold">
+          Solemnity &amp; Splendor
+        </span>
+        <div class="reveal-mask">
+          <h2 class="reveal-inner font-display-hero text-4xl sm:text-6xl lg:text-7xl text-on-surface font-light leading-tight">
+            And So, We Celebrate
+          </h2>
+        </div>
+        <p class="font-title-editorial italic text-xl sm:text-2xl text-secondary-fixed max-w-xl mx-auto font-light">
+          A Symphony of Starlight &amp; Tuscan Wine
+        </p>
+        
+        <!-- Minimalist Gold Details Bar -->
+        <div class="pt-8 flex flex-wrap justify-center items-center gap-8 sm:gap-16 border-t border-secondary/20">
+          <div class="text-center">
+            <span class="font-headline-md text-3xl sm:text-4xl text-secondary block font-normal">24</span>
+            <span class="text-[10px] uppercase tracking-[0.28em] text-outline">December</span>
+          </div>
+          <div class="w-[1px] h-8 bg-secondary/20"></div>
+          <div class="text-center">
+            <span class="font-headline-md text-3xl sm:text-4xl text-secondary block font-normal">18:00</span>
+            <span class="text-[10px] uppercase tracking-[0.28em] text-outline">Aperitivo</span>
+          </div>
+          <div class="w-[1px] h-8 bg-secondary/20"></div>
+          <div class="text-center">
+            <span class="font-headline-md text-3xl sm:text-4xl text-secondary block font-normal">Villa</span>
+            <span class="text-[10px] uppercase tracking-[0.28em] text-outline">Medici</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- 5. CHRONOLOGICAL VERTICAL TIMELINE                      -->
+    <!-- ======================================================== -->
+    <section class="w-full bg-surface-container-lowest py-28 lg:py-40 px-gutter-mobile lg:px-margin border-t border-secondary/15" id="itinerary">
+      <div class="max-w-[1100px] mx-auto">
+        <div class="text-center max-w-xl mx-auto mb-20 space-y-3">
+          <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chronicle of The Day</span>
+          <div class="reveal-mask">
+            <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl text-on-surface font-light">The Sacred &amp; The Soirée</h2>
+          </div>
+          <p class="text-on-surface-variant font-light text-sm sm:text-base">We invite our cherished guests to observe the timings with grace.</p>
+        </div>
+
+        <!-- Vertical Timeline Axis -->
+        <div class="relative pl-6 md:pl-0" id="timelineContainer">
+          <!-- Drawing Golden Hairline Desktop -->
+          <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-secondary/20 -translate-x-1/2">
+            <div class="w-full bg-secondary h-0 will-change-transform" id="timelineProgressLine"></div>
+          </div>
+          <!-- Drawing Golden Hairline Mobile -->
+          <div class="block md:hidden absolute left-3 top-0 bottom-0 w-[1px] bg-secondary/20">
+            <div class="w-full bg-secondary h-0 will-change-transform" id="timelineProgressLineMobile"></div>
+          </div>
+
+          <div class="space-y-16 lg:space-y-24">
+            <!-- Milestone 1 -->
+            <div class="relative md:grid md:grid-cols-2 md:gap-16 items-center timeline-milestone">
+              <div class="md:text-right pr-0 md:pr-12 space-y-2">
+                <span class="text-xs uppercase tracking-[0.3em] text-secondary font-semibold">04:30 PM</span>
+                <h3 class="font-headline-sm text-2xl text-on-surface font-light">The Nuptial Ceremony</h3>
+                <p class="text-on-surface-variant font-light text-sm max-w-sm ml-auto">The Garden of Statues. Vows exchanged amidst Renaissance marble and ancient cypress.</p>
+              </div>
+              <div class="hidden md:flex absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full border border-secondary bg-background items-center justify-center">
+                <div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+              </div>
+              <div class="pl-0 md:pl-12 mt-3 md:mt-0 text-xs uppercase tracking-widest text-outline">
+                Attire: Formal Tailoring
+              </div>
+            </div>
+
+            <!-- Milestone 2 -->
+            <div class="relative md:grid md:grid-cols-2 md:gap-16 items-center timeline-milestone">
+              <div class="order-2 md:order-1 md:text-right pr-0 md:pr-12 text-xs uppercase tracking-widest text-outline hidden md:block">
+                Ambiance: Candlelit Salon
+              </div>
+              <div class="hidden md:flex absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full border border-secondary bg-background items-center justify-center">
+                <div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+              </div>
+              <div class="order-1 md:order-2 pl-0 md:pl-12 space-y-2">
+                <span class="text-xs uppercase tracking-[0.3em] text-secondary font-semibold">06:00 PM</span>
+                <h3 class="font-headline-sm text-2xl text-on-surface font-light">Aperitivo &amp; Strings</h3>
+                <p class="text-on-surface-variant font-light text-sm max-w-sm">The Courtyard of Torches. Vintage vintage champagne, Chianti reserves &amp; live quartet.</p>
+                <div class="text-xs uppercase tracking-widest text-outline md:hidden pt-1">
+                  Ambiance: Candlelit Salon
+                </div>
+              </div>
+            </div>
+
+            <!-- Milestone 3 -->
+            <div class="relative md:grid md:grid-cols-2 md:gap-16 items-center timeline-milestone">
+              <div class="md:text-right pr-0 md:pr-12 space-y-2">
+                <span class="text-xs uppercase tracking-[0.3em] text-secondary font-semibold">07:30 PM</span>
+                <h3 class="font-headline-sm text-2xl text-on-surface font-light">The Gala Banquet</h3>
+                <p class="text-on-surface-variant font-light text-sm max-w-sm ml-auto">The Grand Fresco Hall. A curated six-course culinary tribute by Tuscan master chefs.</p>
+              </div>
+              <div class="hidden md:flex absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full border border-secondary bg-background items-center justify-center">
+                <div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+              </div>
+              <div class="pl-0 md:pl-12 mt-3 md:mt-0 text-xs uppercase tracking-widest text-outline">
+                Seated Gastronomic Service
+              </div>
+            </div>
+
+            <!-- Milestone 4 -->
+            <div class="relative md:grid md:grid-cols-2 md:gap-16 items-center timeline-milestone">
+              <div class="order-2 md:order-1 md:text-right pr-0 md:pr-12 text-xs uppercase tracking-widest text-outline hidden md:block">
+                Music: Classical to Midnight Vinyl
+              </div>
+              <div class="hidden md:flex absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full border border-secondary bg-background items-center justify-center">
+                <div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+              </div>
+              <div class="order-1 md:order-2 pl-0 md:pl-12 space-y-2">
+                <span class="text-xs uppercase tracking-[0.3em] text-secondary font-semibold">10:00 PM</span>
+                <h3 class="font-headline-sm text-2xl text-on-surface font-light">Midnight Revelry</h3>
+                <p class="text-on-surface-variant font-light text-sm max-w-sm">The Terrace Over Florence. Pyrotechnic spectacle over the hills, late dance, &amp; digestifs.</p>
+                <div class="text-xs uppercase tracking-widest text-outline md:hidden pt-1">
+                  Music: Classical to Midnight Vinyl
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sartorial Note -->
+        <div class="mt-24 pt-12 border-t border-secondary/15 flex flex-col md:flex-row justify-between items-baseline gap-6">
+          <div>
+            <span class="text-[10px] uppercase tracking-[0.3em] text-secondary block mb-1">Sartorial Guidance</span>
+            <h4 class="font-headline-sm text-2xl text-on-surface font-light">Black Tie &amp; Deep Jewel Tones</h4>
+          </div>
+          <p class="text-sm font-light text-on-surface-variant max-w-md">
+            Gentlemen in traditional black tie or midnight tuxedo; ladies in floor-length gowns of velvet, silk, or dark jewel hues.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- 6. CURATED EDITORIAL GALLERY & LIGHTBOX                 -->
+    <!-- ======================================================== -->
+    <section class="w-full bg-background py-28 lg:py-40 px-gutter-mobile lg:px-margin border-t border-secondary/15" id="gallery">
+      <div class="max-w-[1440px] mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-baseline mb-16 gap-4">
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block mb-2 font-semibold">Archival Portfolio</span>
+            <div class="reveal-mask">
+              <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl text-on-surface font-light">Visions in <span class="italic text-secondary">Shadow &amp; Light</span></h2>
+            </div>
+          </div>
+          <div class="text-xs uppercase tracking-[0.25em] text-outline">
+            Click portrait to examine
+          </div>
+        </div>
+
+        <!-- Asymmetrical Editorial Collage -->
+        <div class="gallery-grid grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          <!-- Plate I: Bride Veil -->
+          <div class="gallery-plate md:col-span-4 cursor-pointer group space-y-4" onclick="openLightbox('assets/images/gallery-bindhu.avif', 'Plate I • Bindhu', 'Antique chantilly lace veil beneath soft chiaroscuro light.')">
+            <div class="w-full h-[520px] overflow-hidden border border-secondary/20 rounded-sm">
+              <img alt="Bindhu Portrait" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out parallax-img" src="assets/images/gallery-bindhu.avif"/>
+            </div>
+            <div class="flex justify-between text-xs tracking-widest uppercase">
+              <span class="text-secondary font-medium">Plate I</span>
+              <span class="text-outline">Bindhu</span>
+            </div>
+          </div>
+
+          <!-- Plate II: Archway Centerpiece (Higher Anchor) -->
+          <div class="gallery-plate md:col-span-5 cursor-pointer group space-y-4 md:-mt-8" onclick="openLightbox('assets/images/gallery-couple.avif', 'Plate II • The Union', 'Arjun and Bindhu beneath candlelit floral installations at Villa Medici.')">
+            <div class="w-full h-[620px] overflow-hidden border border-secondary/30 rounded-sm">
+              <img alt="Couple Portrait" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out parallax-img" src="assets/images/gallery-couple.avif"/>
+            </div>
+            <div class="flex justify-between text-xs tracking-widest uppercase">
+              <span class="text-secondary font-medium">Plate II • The Union</span>
+              <span class="text-outline">Villa Medici</span>
+            </div>
+          </div>
+
+          <!-- Plate III: Groom Portrait -->
+          <div class="gallery-plate md:col-span-3 cursor-pointer group space-y-4" onclick="openLightbox('assets/images/gallery-arjun.avif', 'Plate III • Arjun', 'Bespoke velvet tuxedo tailored for the Florentine winter.')">
+            <div class="w-full h-[460px] overflow-hidden border border-secondary/20 rounded-sm">
+              <img alt="Arjun Portrait" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out parallax-img" src="assets/images/gallery-arjun.avif"/>
+            </div>
+            <div class="flex justify-between text-xs tracking-widest uppercase">
+              <span class="text-secondary font-medium">Plate III</span>
+              <span class="text-outline">Arjun</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal Lightbox Component -->
+    <div class="fixed inset-0 z-50 bg-[#080606]/95 backdrop-blur-md flex items-center justify-center p-4 md:p-12 opacity-0 pointer-events-none transition-all duration-300" id="lightboxModal">
+      <button aria-label="Close modal" class="absolute top-6 right-6 text-secondary hover:text-primary transition-colors p-2 cursor-pointer" onclick="closeLightbox()">
+        <span class="material-symbols-outlined text-3xl">close</span>
+      </button>
+      <div class="max-w-4xl max-h-[88vh] flex flex-col items-center">
+        <img alt="Enlarged portrait" class="max-h-[75vh] w-auto object-contain border border-secondary/30 shadow-2xl" id="lightboxImg" src=""/>
+        <div class="mt-6 text-center space-y-1">
+          <h4 class="font-headline-sm text-xl text-secondary" id="lightboxTitle"></h4>
+          <p class="text-xs text-on-surface-variant font-light tracking-wide max-w-md" id="lightboxDesc"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 7. BESPOKE INTERACTIVE RSVP SUITE                       -->
+    <!-- ======================================================== -->
+    <section class="w-full bg-surface-container-lowest py-28 lg:py-40 px-gutter-mobile lg:px-margin border-t border-secondary/15" id="rsvp">
+      <div class="max-w-2xl mx-auto">
+        <div class="text-center space-y-3 mb-12">
+          <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
+            Répondez S’il Vous Plaît
+          </span>
+          <div class="reveal-mask">
+            <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl text-on-surface font-light">
+              We Would Be Honoured By Your Presence
+            </h2>
+          </div>
+          <p class="font-body-sm text-sm text-on-surface-variant">
+            Kindly confirm your attendance by November 15, 2026.
+          </p>
+        </div>
+
+        <!-- Elevated Form Architecture -->
+        <form class="space-y-8" id="rsvpForm" onsubmit="event.preventDefault(); submitRSVP();">
+          <!-- Name Field -->
+          <div class="space-y-2">
+            <label class="block text-[11px] uppercase tracking-[0.25em] text-secondary">
+              Guest Name(s)
+            </label>
+            <input class="w-full bg-background border border-secondary/30 px-4 py-3 text-on-surface focus:outline-none focus:border-secondary transition-colors text-sm rounded-none" placeholder="Dr. Evelyn Vance &amp; Guest" required="" type="text"/>
+          </div>
+
+          <!-- Attendance Choice -->
+          <div class="space-y-3">
+            <label class="block text-[11px] uppercase tracking-[0.25em] text-secondary">
+              Attendance
+            </label>
+            <div class="grid grid-cols-2 gap-4">
+              <button aria-pressed="true" class="py-3 px-4 border border-secondary bg-secondary/15 text-secondary text-xs uppercase tracking-[0.2em] font-medium transition-all text-center cursor-pointer" id="rsvpBtnYes" onclick="selectAttendance(true)" type="button">
+                Joyfully Accepts
+              </button>
+              <button aria-pressed="false" class="py-3 px-4 border border-secondary/30 bg-transparent text-on-surface-variant hover:text-on-surface text-xs uppercase tracking-[0.2em] font-medium transition-all text-center cursor-pointer" id="rsvpBtnNo" onclick="selectAttendance(false)" type="button">
+                Regretfully Declines
+              </button>
+            </div>
+          </div>
+
+          <!-- Collapsible Conditional Details -->
+          <div class="space-y-8 transition-all duration-500 overflow-hidden max-h-[1000px] opacity-100" id="rsvpDetailsSection">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Guest Count -->
+              <div class="space-y-2">
+                <label class="block text-[11px] uppercase tracking-[0.25em] text-secondary">
+                  Number of Attendees
+                </label>
+                <select class="w-full bg-background border border-secondary/30 px-4 py-3 text-on-surface focus:outline-none focus:border-secondary transition-colors text-sm rounded-none">
+                  <option value="1">1 Guest</option>
+                  <option selected="" value="2">2 Guests</option>
+                  <option value="3">3 Guests</option>
+                  <option value="4">4 Guests</option>
+                </select>
+              </div>
+
+              <!-- Culinary Preference -->
+              <div class="space-y-2">
+                <label class="block text-[11px] uppercase tracking-[0.25em] text-secondary">
+                  Culinary Preference
+                </label>
+                <select class="w-full bg-background border border-secondary/30 px-4 py-3 text-on-surface focus:outline-none focus:border-secondary transition-colors text-sm rounded-none">
+                  <option value="tuscan">Tuscan Classical Tasting</option>
+                  <option value="vegetarian">White Truffle Vegetarian</option>
+                  <option value="vegan">Artisanal Vegan Haute Cuisine</option>
+                  <option value="halal">Halal Prepared Fine Dining</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Toast Selection -->
+            <div class="space-y-2">
+              <label class="block text-[11px] uppercase tracking-[0.25em] text-secondary">
+                Celebration Toast Selection
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <label class="flex items-center gap-3 p-3 border border-secondary/20 cursor-pointer hover:border-secondary/50 text-xs">
+                  <input checked="" class="text-secondary focus:ring-0 bg-background" name="toast" type="radio" value="brut"/>
+                  <span>Vintage Brut</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 border border-secondary/20 cursor-pointer hover:border-secondary/50 text-xs">
+                  <input class="text-secondary focus:ring-0 bg-background" name="toast" type="radio" value="rose"/>
+                  <span>Tuscan Rosé</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 border border-secondary/20 cursor-pointer hover:border-secondary/50 text-xs">
+                  <input class="text-secondary focus:ring-0 bg-background" name="toast" type="radio" value="botanical"/>
+                  <span>Botanical Elixir</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Note / Blessing -->
+          <div class="space-y-2">
+            <label class="block text-[11px] uppercase tracking-[0.25em] text-secondary">
+              A Blessing or Note for the Couple
+            </label>
+            <textarea class="w-full bg-background border border-secondary/30 px-4 py-3 text-on-surface focus:outline-none focus:border-secondary transition-colors text-sm rounded-none" placeholder="Share your words of joy or poetry..." rows="3"></textarea>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-4">
+            <button class="w-full py-4 bg-secondary/10 border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary transition-all duration-300 text-xs uppercase tracking-[0.3em] font-semibold cursor-pointer" type="submit">
+              Confirm Inscription
+            </button>
+          </div>
+        </form>
+
+        <!-- Confirmation Note -->
+        <div class="hidden mt-12 p-8 border border-secondary/40 bg-surface text-center space-y-4 transition-all duration-700" id="rsvpConfirmation">
+          <div class="w-12 h-12 mx-auto rounded-full bg-primary-container border border-secondary/50 flex items-center justify-center text-secondary font-title-editorial italic text-lg shadow-inner">
+            A&amp;B
+          </div>
+          <h3 class="font-headline-sm text-2xl text-on-surface">Gratitude for Your Response</h3>
+          <p class="font-body-md text-sm text-on-surface-variant font-light max-w-md mx-auto leading-relaxed">
+            Your dispatch has been formally sealed in the celebration ledger of Villa Medici. We look forward to sharing this timeless moment in Tuscany with you.
+          </p>
+          <div class="text-[10px] uppercase tracking-[0.3em] text-secondary pt-2">
+            Florence • 24.12.2026
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- 8. CINEMATIC CLOSING OUTRO                              -->
+    <!-- ======================================================== -->
+    <section class="relative w-full min-h-[75vh] flex items-center justify-center overflow-hidden px-gutter-mobile lg:px-margin py-28 border-t border-secondary/15">
+      <!-- Background Image & Atmospheric Vignette -->
+      <div class="absolute inset-0 z-0">
+        <div class="w-full h-full bg-cover bg-center filter brightness-[0.35]" style="background-image: url('assets/images/outro.avif');"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/50"></div>
+      </div>
+      <!-- Outro Monogram & Sign-off -->
+      <div class="relative z-10 text-center max-w-2xl mx-auto space-y-6">
+        <div class="w-14 h-14 mx-auto border border-secondary/40 rounded-full flex items-center justify-center shadow-lg bg-surface/50 backdrop-blur-sm">
+          <span class="font-title-editorial italic text-2xl text-secondary">A&amp;B</span>
+        </div>
+        <div class="reveal-mask">
+          <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl text-on-surface font-light">
+            Forever Begins Here
+          </h2>
+        </div>
+        <p class="font-title-editorial italic text-xl text-secondary-fixed">
+          Villa Medici, Florence • December 24, 2026
+        </p>
+        <div class="pt-8">
+          <span class="text-[10px] uppercase tracking-[0.35em] text-outline block">
+            End of Monograph • Love Without End
+          </span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- FOOTER                                                   -->
+  <!-- ======================================================== -->
+  <footer class="w-full bg-[#080606] border-t border-secondary/15 py-12 px-gutter-mobile lg:px-margin">
+    <div class="max-w-[1440px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-6 text-xs text-outline tracking-widest uppercase">
+      <div>© 2026 Arjun &amp; Bindhu. A Private Monograph.</div>
+      <div class="text-secondary/70">Florence &amp; Lake Como, Italy</div>
+    </div>
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- REAL MOTION ENGINE SCRIPT (GSAP + ScrollTrigger)         -->
+  <!-- ======================================================== -->
+  <script>
+    // Register GSAP plugins
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+    } else {
+      console.error('GSAP or ScrollTrigger failed to load');
+    }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+
+
+    // --- 1. HERO SECTION MOTION (Sections 5, 6, 7) ---
+    function initHeroMotion() {
+      const heroBg = document.getElementById('heroBg');
+      const heroTopBar = document.getElementById('heroTopBar');
+      const heroTypography = document.getElementById('heroTypography');
+      const heroAnimItems = document.querySelectorAll('.hero-anim-item');
+      const heroBottomBar = document.getElementById('heroBottomBar');
+      const heroDarkOverlay = document.getElementById('heroDarkOverlay');
+
+      if (!heroBg || !heroTypography) return;
+
+      if (!prefersReducedMotion) {
+        // Page Load Sequence
+        // Background image: scale(1.08) -> scale(1.00), 1.8s refined ease
+        gsap.fromTo(heroBg, 
+          { scale: 1.08 },
+          { scale: 1.00, duration: 1.8, ease: 'power2.out' }
+        );
+
+        // Sequential typography entrance: monogram/top bar, label, title, date, bottom cue
+        gsap.fromTo(heroTopBar,
+          { y: -25, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1.0, ease: 'power2.out', delay: 0.2 }
+        );
+
+        gsap.fromTo(heroAnimItems,
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1.1, stagger: 0.16, ease: 'power3.out', delay: 0.4 }
+        );
+
+        gsap.fromTo(heroBottomBar,
+          { y: 25, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1.0, ease: 'power2.out', delay: 0.9 }
+        );
+
+        // Scroll-Linked Hero Motion
+        // Scrub timeline tied directly to heroSection scroll progress
+        const heroScrollTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '#heroSection',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.4
+          }
+        });
+
+        // Background moves vertically: 0 -> 60px, subtle scale 1.00 -> 1.05
+        heroScrollTl.to(heroBg, {
+          y: 60,
+          scale: 1.05,
+          ease: 'none'
+        }, 0);
+
+        // Main typography moves upward: 0 -> -85px, opacity 1 -> 0, scale 1 -> 0.96
+        heroScrollTl.to(heroTypography, {
+          y: -85,
+          opacity: 0,
+          scale: 0.96,
+          ease: 'none'
+        }, 0);
+
+        // Bottom scroll cue fades out promptly
+        heroScrollTl.to(heroBottomBar, {
+          y: -40,
+          opacity: 0,
+          ease: 'none'
+        }, 0);
+
+        // Dark overlay increases gradually
+        heroScrollTl.to(heroDarkOverlay, {
+          opacity: 0.72,
+          ease: 'none'
+        }, 0);
+
+      } else {
+        // Reduced motion: instant display
+        gsap.set([heroBg, heroTopBar, heroTypography, heroAnimItems, heroBottomBar], { opacity: 1, y: 0, scale: 1 });
+      }
+    }
+
+    // --- 2. PINNED MULTI-CHAPTER LOVE STORY (Sections 8, 9, 10, 11, 12) ---
+    function initStoryMotion() {
+      const storyPinSection = document.getElementById('storyPinSection');
+      const storyPinViewport = document.getElementById('storyPinViewport');
+      if (!storyPinSection || !storyPinViewport) return;
+
+      // Only enable desktop pinning on screens >= 1024px
+      ScrollTrigger.matchMedia({
+        "(min-width: 1024px)": function() {
+          if (prefersReducedMotion) return;
+
+          // Slides and images
+          const slide1 = document.getElementById('storySlide1');
+          const slide2 = document.getElementById('storySlide2');
+          const slide3 = document.getElementById('storySlide3');
+          const img1 = document.getElementById('storyImg1');
+          const img2 = document.getElementById('storyImg2');
+          const img3 = document.getElementById('storyImg3');
+
+          // Typography chapter cards
+          const ch1 = document.getElementById('storyChapter1');
+          const ch2 = document.getElementById('storyChapter2');
+          const ch3 = document.getElementById('storyChapter3');
+
+          // Initial positions with autoAlpha (manages opacity + visibility automatically)
+          gsap.set(slide1, { autoAlpha: 1 });
+          gsap.set([slide2, slide3], { autoAlpha: 0 });
+          gsap.set(img1, { scale: 1.10 });
+          gsap.set([img2, img3], { scale: 1.08 });
+
+          gsap.set(ch1, { autoAlpha: 1, y: 0 });
+          gsap.set(ch2, { autoAlpha: 0, y: 35 });
+          gsap.set(ch3, { autoAlpha: 0, y: 35 });
+
+          // Create the Master Story Timeline with ScrollTrigger Pinning
+          const storyTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: storyPinSection,
+              start: 'top top',
+              end: '+=2400', // ~250-300vh comfortable scroll range
+              pin: storyPinViewport,
+              pinSpacing: true,
+              scrub: 0.5,
+              anticipatePin: 1
+            }
+          });
+
+          // Master Duration: 6 units
+          // Chapter 1: Bindhu portrait begins slightly zoomed and settles
+          storyTl.to(img1, {
+            scale: 1.00,
+            duration: 1.2,
+            ease: 'power1.out'
+          }, 0);
+
+          // Phase A: Transition from Chapter 1 to Chapter 2 (around 33% progress)
+          // 1. Ch 1 text exits upward cleanly
+          storyTl.to(ch1, {
+            autoAlpha: 0,
+            y: -30,
+            duration: 0.5,
+            ease: 'power2.in'
+          }, 1.3);
+
+          // 2. Images crossfade
+          storyTl.to(slide1, {
+            autoAlpha: 0,
+            duration: 1.0,
+            ease: 'power1.inOut'
+          }, 1.4);
+
+          storyTl.to(slide2, {
+            autoAlpha: 1,
+            duration: 1.0,
+            ease: 'power1.inOut'
+          }, 1.4);
+
+          storyTl.to(img2, {
+            scale: 1.00,
+            duration: 1.2,
+            ease: 'power1.out'
+          }, 1.4);
+
+          // 3. Ch 2 text enters from below after Ch 1 text is clear
+          storyTl.to(ch2, {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out'
+          }, 1.9);
+
+          // Phase B: Transition from Chapter 2 to Chapter 3 (around 66% progress)
+          // 1. Ch 2 text exits upward cleanly
+          storyTl.to(ch2, {
+            autoAlpha: 0,
+            y: -30,
+            duration: 0.5,
+            ease: 'power2.in'
+          }, 3.3);
+
+          // 2. Images crossfade
+          storyTl.to(slide2, {
+            autoAlpha: 0,
+            duration: 1.0,
+            ease: 'power1.inOut'
+          }, 3.4);
+
+          storyTl.to(slide3, {
+            autoAlpha: 1,
+            duration: 1.0,
+            ease: 'power1.inOut'
+          }, 3.4);
+
+          storyTl.to(img3, {
+            scale: 1.00,
+            duration: 1.2,
+            ease: 'power1.out'
+          }, 3.4);
+
+          // 3. Ch 3 text enters from below after Ch 2 text is clear
+          storyTl.to(ch3, {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out'
+          }, 3.9);
+
+          // Section settles smoothly in Chapter 3 before releasing
+          storyTl.to({}, { duration: 0.9 }, 4.7);
+        },
+
+        // Mobile layout: simple vertical flow, zero trapping
+        "(max-width: 1023px)": function() {
+          const mobileItems = document.querySelectorAll('#storyMobileContainer > div');
+          mobileItems.forEach(item => {
+            gsap.from(item, {
+              y: 35,
+              opacity: 0.6,
+              duration: 0.8,
+              scrollTrigger: {
+                trigger: item,
+                start: 'top 85%',
+                toggleActions: 'play none none reverse'
+              }
+            });
+          });
+        }
+      });
+    }
+
+    // --- 3. EDITORIAL TYPOGRAPHY REVEALS (Section 13) ---
+    function initTypographyReveals() {
+      if (prefersReducedMotion) {
+        gsap.set('.reveal-inner', { y: '0%', opacity: 1 });
+        return;
+      }
+
+      gsap.utils.toArray('.reveal-inner').forEach(inner => {
+        gsap.to(inner, {
+          y: '0%',
+          opacity: 1,
+          duration: 1.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: inner.parentElement,
+            start: 'top 88%',
+            toggleActions: 'play none none reverse'
+          }
+        });
+      });
+    }
+
+    // --- 4. IMAGE PARALLAX (Section 14) ---
+    function initImageParallax() {
+      if (prefersReducedMotion) return;
+
+      gsap.utils.toArray('.parallax-img').forEach(img => {
+        gsap.to(img, {
+          yPercent: 8,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: img.parentElement,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.4
+          }
+        });
+      });
+    }
+
+    // --- 5. TIMELINE PROGRESSION (Section 16) ---
+    function initTimelineProgress() {
+      const container = document.getElementById('timelineContainer');
+      const progressLine = document.getElementById('timelineProgressLine');
+      const progressLineMobile = document.getElementById('timelineProgressLineMobile');
+      if (!container) return;
+
+      if (progressLine) {
+        gsap.to(progressLine, {
+          height: '100%',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top 70%',
+            end: 'bottom 80%',
+            scrub: 0.3
+          }
+        });
+      }
+
+      if (progressLineMobile) {
+        gsap.to(progressLineMobile, {
+          height: '100%',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top 75%',
+            end: 'bottom 85%',
+            scrub: 0.3
+          }
+        });
+      }
+
+      // Milestones stagger reveal
+      gsap.utils.toArray('.timeline-milestone').forEach(node => {
+        gsap.from(node, {
+          opacity: 0,
+          y: 28,
+          duration: 0.9,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: node,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
+        });
+      });
+    }
+
+    // --- 6. NAVIGATION GLASS BLUR (Section 19) ---
+    function initNavScroll() {
+      const nav = document.getElementById('mainNav');
+      if (!nav) return;
+
+      ScrollTrigger.create({
+        start: 'top -50',
+        onUpdate: (self) => {
+          if (self.scroll() > 50) {
+            nav.classList.add('bg-background/90', 'backdrop-blur-md', 'border-secondary/20', 'py-4');
+            nav.classList.remove('py-6', 'border-transparent');
+          } else {
+            nav.classList.remove('bg-background/90', 'backdrop-blur-md', 'border-secondary/20', 'py-4');
+            nav.classList.add('py-6', 'border-transparent');
+          }
+        }
+      });
+    }
+
+    // --- 7. WEBGL CELEBRATION SHADER (Section 18) ---
+    let celebrationScrollProgress = 0;
+    const canvas = document.getElementById('fireworksCanvas');
+    let gl = null;
+    let animFrameId = null;
+    let isCanvasVisible = false;
+
+    if (canvas) {
+      gl = canvas.getContext('webgl');
+      function resizeCanvas() {
+        if (!canvas) return;
+        canvas.width = canvas.clientWidth * window.devicePixelRatio;
+        canvas.height = canvas.clientHeight * window.devicePixelRatio;
+        if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+      }
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      if (gl) {
+        const vsSource = `
+          attribute vec2 a_pos;
+          void main() {
+            gl_Position = vec4(a_pos, 0.0, 1.0);
+          }
+        `;
+        const fsSource = `
+          precision mediump float;
+          uniform vec2 u_resolution;
+          uniform float u_time;
+          uniform float u_scroll;
+
+          void main() {
+            vec2 st = gl_FragCoord.xy / u_resolution.xy;
+            st.y = 1.0 - st.y;
+            vec2 p = (gl_FragCoord.xy * 2.0 - u_resolution) / min(u_resolution.x, u_resolution.y);
+            
+            float t = u_time * 0.6;
+            vec3 color = vec3(0.0);
+
+            // Starlight Ember field (responsive count)
+            for (float i = 1.0; i < 9.0; i++) {
+              vec2 offset = vec2(sin(i * 1.84 + t * 0.4), cos(i * 2.11 + t * 0.35)) * 0.7;
+              float dist = length(p - offset);
+              float sparkle = sin(u_time * 2.5 + i * 4.0) * 0.5 + 0.5;
+              float ember = (0.012 * (1.0 + u_scroll * 1.5)) / (dist + 0.001);
+              color += vec3(0.9, 0.75, 0.5) * ember * sparkle;
+            }
+
+            // Radial golden flash modulated by scroll
+            float centerDist = length(p);
+            float flash = smoothstep(1.2, 0.0, centerDist) * (0.15 + u_scroll * 0.35);
+            color += vec3(0.85, 0.65, 0.4) * flash * 0.4;
+
+            gl_FragColor = vec4(color, 0.85);
+          }
+        `;
+
+        function createShader(gl, type, source) {
+          const s = gl.createShader(type);
+          gl.shaderSource(s, source);
+          gl.compileShader(s);
+          return s;
+        }
+
+        const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+        const program = gl.createProgram();
+        gl.attachShader(program, vs);
+        gl.attachShader(program, fs);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+
+        const posBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+          -1, -1,  1, -1, -1,  1,
+          -1,  1,  1, -1,  1,  1
+        ]), gl.STATIC_DRAW);
+
+        const aPos = gl.getAttribLocation(program, 'a_pos');
+        gl.enableVertexAttribArray(aPos);
+        gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+        const uRes = gl.getUniformLocation(program, 'u_resolution');
+        const uTime = gl.getUniformLocation(program, 'u_time');
+        const uScroll = gl.getUniformLocation(program, 'u_scroll');
+
+        let startTime = performance.now();
+
+        function renderWebGL() {
+          if (!isCanvasVisible || prefersReducedMotion) return;
+          const elapsed = (performance.now() - startTime) * 0.001;
+          gl.uniform2f(uRes, canvas.width, canvas.height);
+          gl.uniform1f(uTime, elapsed);
+          gl.uniform1f(uScroll, celebrationScrollProgress);
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+          animFrameId = requestAnimationFrame(renderWebGL);
+        }
+
+        // Section trigger: Run WebGL ONLY while section is visible
+        ScrollTrigger.create({
+          trigger: '#celebration',
+          start: 'top bottom',
+          end: 'bottom top',
+          onUpdate: (self) => {
+            celebrationScrollProgress = self.progress;
+          },
+          onToggle: (self) => {
+            isCanvasVisible = self.isActive;
+            if (self.isActive && !animFrameId) {
+              renderWebGL();
+            } else if (!self.isActive && animFrameId) {
+              cancelAnimationFrame(animFrameId);
+              animFrameId = null;
+            }
+          }
+        });
+      }
+    }
+
+    // --- 8. LIGHTBOX MODAL ---
+    const lightboxModal = document.getElementById('lightboxModal');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxTitle = document.getElementById('lightboxTitle');
+    const lightboxDesc = document.getElementById('lightboxDesc');
+
+    function openLightbox(src, title, desc) {
+      if (!lightboxModal) return;
+      lightboxImg.src = src;
+      lightboxTitle.textContent = title;
+      lightboxDesc.textContent = desc;
+      lightboxModal.classList.remove('opacity-0', 'pointer-events-none');
+      lightboxModal.classList.add('opacity-100');
+    }
+
+    function closeLightbox() {
+      if (!lightboxModal) return;
+      lightboxModal.classList.add('opacity-0', 'pointer-events-none');
+      lightboxModal.classList.remove('opacity-100');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+
+    if (lightboxModal) {
+      lightboxModal.addEventListener('click', (e) => {
+        if (e.target === lightboxModal) closeLightbox();
+      });
+    }
+
+    // --- 9. RSVP INTERACTION ---
+    let isAttending = true;
+    function selectAttendance(accepting) {
+      isAttending = accepting;
+      const btnYes = document.getElementById('rsvpBtnYes');
+      const btnNo = document.getElementById('rsvpBtnNo');
+      const detailsSec = document.getElementById('rsvpDetailsSection');
+
+      if (accepting) {
+        btnYes.setAttribute('aria-pressed', 'true');
+        btnNo.setAttribute('aria-pressed', 'false');
+        btnYes.className = 'py-3 px-4 border border-secondary bg-secondary/15 text-secondary text-xs uppercase tracking-[0.2em] font-medium transition-all text-center cursor-pointer';
+        btnNo.className = 'py-3 px-4 border border-secondary/30 bg-transparent text-on-surface-variant hover:text-on-surface text-xs uppercase tracking-[0.2em] font-medium transition-all text-center cursor-pointer';
+        
+        detailsSec.classList.remove('max-h-0', 'opacity-0');
+        detailsSec.classList.add('max-h-[1000px]', 'opacity-100');
+      } else {
+        btnYes.setAttribute('aria-pressed', 'false');
+        btnNo.setAttribute('aria-pressed', 'true');
+        btnNo.className = 'py-3 px-4 border border-secondary bg-secondary/15 text-secondary text-xs uppercase tracking-[0.2em] font-medium transition-all text-center cursor-pointer';
+        btnYes.className = 'py-3 px-4 border border-secondary/30 bg-transparent text-on-surface-variant hover:text-on-surface text-xs uppercase tracking-[0.2em] font-medium transition-all text-center cursor-pointer';
+        
+        detailsSec.classList.remove('max-h-[1000px]', 'opacity-100');
+        detailsSec.classList.add('max-h-0', 'opacity-0');
+      }
+    }
+
+    function submitRSVP() {
+      const form = document.getElementById('rsvpForm');
+      const confirmation = document.getElementById('rsvpConfirmation');
+      if (form && confirmation) {
+        form.classList.add('opacity-30', 'pointer-events-none');
+        confirmation.classList.remove('hidden');
+      }
+    }
+
+    // --- 10. MOBILE MENU ---
+    const mobileToggle = document.getElementById('mobileMenuToggle');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+    const menuIcon = document.getElementById('menuIcon');
+
+    if (mobileToggle && mobileOverlay) {
+      mobileToggle.addEventListener('click', () => {
+        const isOpen = mobileOverlay.classList.contains('opacity-100');
+        if (isOpen) {
+          mobileOverlay.classList.remove('opacity-100');
+          mobileOverlay.classList.add('opacity-0', 'pointer-events-none');
+          if (menuIcon) menuIcon.textContent = 'menu';
+        } else {
+          mobileOverlay.classList.add('opacity-100');
+          mobileOverlay.classList.remove('opacity-0', 'pointer-events-none');
+          if (menuIcon) menuIcon.textContent = 'close';
+        }
+      });
+
+      document.querySelectorAll('.mobile-nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileOverlay.classList.remove('opacity-100');
+          mobileOverlay.classList.add('opacity-0', 'pointer-events-none');
+          if (menuIcon) menuIcon.textContent = 'menu';
+        });
+      });
+    }
+
+    // --- INITIALIZE ALL MOTION SYSTEMS ON DOM READY ---
+    window.addEventListener('DOMContentLoaded', () => {
+      initHeroMotion();
+      initStoryMotion();
+      initTypographyReveals();
+      initImageParallax();
+      initTimelineProgress();
+      initNavScroll();
+
+      // Refresh ScrollTrigger after any assets finish settling
+      window.addEventListener('load', () => {
+        ScrollTrigger.refresh();
+      });
+    });
+  </script>
+</body>
+</html>
