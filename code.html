@@ -225,12 +225,12 @@
     <!-- 3. CENTERPIECE: STICKY MULTI-CHAPTER LOVE STORY         -->
     <!-- ======================================================== -->
     <section class="relative w-full bg-background border-t border-secondary/15" id="chapters">
-      <!-- Desktop Pinned Container (GSAP ScrollTrigger Pinned) -->
-      <div class="relative w-full max-w-[1440px] mx-auto hidden lg:block" id="storyPinSection">
+      <!-- Desktop & Tablet Pinned Container (GSAP ScrollTrigger Pinned) -->
+      <div class="relative w-full max-w-[1440px] mx-auto hidden md:block" id="storyPinSection">
         <div class="h-screen w-full flex overflow-hidden items-center" id="storyPinViewport">
           
           <!-- Left Pinned Visual Frame -->
-          <div class="w-1/2 h-full p-12 flex items-center justify-center relative" id="storyVisualFrame">
+          <div class="w-1/2 h-full p-4 md:p-6 lg:p-10 xl:p-12 flex items-center justify-center relative" id="storyVisualFrame">
             <div class="w-full h-[84%] relative overflow-hidden rounded-sm shadow-2xl border border-secondary/20 bg-[#110d0e]">
               
               <!-- Slide 1: Bindhu Veil Portrait -->
@@ -264,43 +264,43 @@
           </div>
 
           <!-- Right Synchronized Chapter Typography -->
-          <div class="w-1/2 h-full flex flex-col justify-center px-16 relative" id="storyContentColumn">
-            <div class="relative w-full h-[360px]">
+          <div class="w-1/2 h-full flex flex-col justify-center px-4 md:px-6 lg:px-10 xl:px-16 relative" id="storyContentColumn">
+            <div class="relative w-full min-h-[300px] xl:h-[360px]">
               
               <!-- Chapter I Text -->
-              <div class="story-chapter-card top-0 space-y-6 opacity-100" id="storyChapter1">
-                <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
+              <div class="story-chapter-card top-0 space-y-4 md:space-y-6 opacity-100" id="storyChapter1">
+                <span class="text-[10px] md:text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
                   Chapter I • Autumn 2021
                 </span>
                 <div class="reveal-mask">
-                  <h3 class="font-headline-lg text-4xl lg:text-5xl text-on-surface font-light leading-tight">
+                  <h3 class="font-headline-lg text-2xl md:text-3xl xl:text-5xl text-on-surface font-light leading-tight">
                     The Meeting in <span class="italic text-secondary">Florence</span>
                   </h3>
                 </div>
-                <p class="font-body-lg text-lg text-on-surface-variant font-light leading-relaxed">
+                <p class="font-body-lg text-sm md:text-base xl:text-lg text-on-surface-variant font-light leading-relaxed">
                   It began in the quiet cloister of an antiquarian library overlooking the Arno. Amidst weathered vellum and early morning fog, an accidental exchange of notes sparked a conversation that outlasted the rain, the afternoon, and eventually, the season itself.
                 </p>
-                <div class="pt-4 border-l border-secondary/40 pl-6">
-                  <p class="font-title-editorial italic text-lg text-secondary-fixed">
+                <div class="pt-2 md:pt-4 border-l border-secondary/40 pl-4 md:pl-6">
+                  <p class="font-title-editorial italic text-base md:text-lg text-secondary-fixed">
                     “Words came easily, as if rehearsed in another lifetime.”
                   </p>
                 </div>
               </div>
 
               <!-- Chapter II Text -->
-              <div class="story-chapter-card top-0 space-y-6 opacity-0" id="storyChapter2">
-                <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
+              <div class="story-chapter-card top-0 space-y-4 md:space-y-6 opacity-0" id="storyChapter2">
+                <span class="text-[10px] md:text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
                   Chapter II • 2022–2024
                 </span>
                 <div class="reveal-mask">
-                  <h3 class="font-headline-lg text-4xl lg:text-5xl text-on-surface font-light leading-tight">
+                  <h3 class="font-headline-lg text-2xl md:text-3xl xl:text-5xl text-on-surface font-light leading-tight">
                     Across Continents, <span class="italic text-secondary">One Horizon</span>
                   </h3>
                 </div>
-                <p class="font-body-lg text-lg text-on-surface-variant font-light leading-relaxed">
+                <p class="font-body-lg text-sm md:text-base xl:text-lg text-on-surface-variant font-light leading-relaxed">
                   Flights across twilight zones, handwritten dispatches sealed in red wax, and midnight calls across six timezones became the architecture of our devotion. Every city we walked alone was only ever half-seen until we walked it together.
                 </p>
-                <div class="flex items-center gap-6 pt-2 text-[11px] uppercase tracking-[0.25em] text-outline">
+                <div class="flex items-center gap-4 md:gap-6 pt-2 text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-outline">
                   <span>London</span>
                   <span>•</span>
                   <span>New York</span>
@@ -312,19 +312,19 @@
               </div>
 
               <!-- Chapter III Text -->
-              <div class="story-chapter-card top-0 space-y-6 opacity-0" id="storyChapter3">
-                <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
+              <div class="story-chapter-card top-0 space-y-4 md:space-y-6 opacity-0" id="storyChapter3">
+                <span class="text-[10px] md:text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
                   Chapter III • The Vow
                 </span>
                 <div class="reveal-mask">
-                  <h3 class="font-headline-lg text-4xl lg:text-5xl text-on-surface font-light leading-tight">
+                  <h3 class="font-headline-lg text-2xl md:text-3xl xl:text-5xl text-on-surface font-light leading-tight">
                     Under the <span class="italic text-secondary">Tuscan Stars</span>
                   </h3>
                 </div>
-                <p class="font-body-lg text-lg text-on-surface-variant font-light leading-relaxed">
+                <p class="font-body-lg text-sm md:text-base xl:text-lg text-on-surface-variant font-light leading-relaxed">
                   On Christmas Eve, surrounded by ancient stone arches and the fragrance of olive wood embers, we seal our bond. A celebration crafted not for spectacle, but for intimacy, truth, and devotion.
                 </p>
-                <div class="pt-4">
+                <div class="pt-2 md:pt-4">
                   <a class="inline-flex items-center gap-3 text-xs uppercase tracking-[0.25em] text-secondary hover:text-primary transition-colors cursor-pointer" href="#rsvp">
                     <span>Confirm Your Presence</span>
                     <span class="material-symbols-outlined text-sm">arrow_forward</span>
@@ -338,11 +338,11 @@
         </div>
       </div>
 
-      <!-- Mobile/Tablet Stacked Editorial Layout -->
-      <div class="block lg:hidden py-16 px-gutter-mobile space-y-24" id="storyMobileContainer">
+      <!-- Mobile Vertical Narrative Layout (Native Touch Scrolling) -->
+      <div class="block md:hidden py-16 px-gutter-mobile space-y-24" id="storyMobileContainer">
         <!-- Item 1 -->
         <div class="space-y-6">
-          <div class="w-full h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
+          <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
             <img alt="Bindhu Veil Portrait" class="w-full h-full object-cover" src="assets/images/story-bindhu.avif"/>
           </div>
           <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter I • Autumn 2021</span>
@@ -353,7 +353,7 @@
         </div>
         <!-- Item 2 -->
         <div class="space-y-6">
-          <div class="w-full h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
+          <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
             <img alt="Arjun Black Tie Portrait" class="w-full h-full object-cover" src="assets/images/story-arjun.avif"/>
           </div>
           <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter II • 2022–2024</span>
@@ -364,7 +364,7 @@
         </div>
         <!-- Item 3 -->
         <div class="space-y-6">
-          <div class="w-full h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
+          <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
             <img alt="Couple Archway Candlelight Portrait" class="w-full h-full object-cover" src="assets/images/story-couple.avif"/>
           </div>
           <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter III • The Vow</span>
@@ -813,44 +813,56 @@
           { y: 0, opacity: 1, duration: 1.0, ease: 'power2.out', delay: 0.9 }
         );
 
-        // Scroll-Linked Hero Motion
-        // Scrub timeline tied directly to heroSection scroll progress
-        const heroScrollTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: '#heroSection',
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 0.4
-          }
+        // Responsive Scroll-Linked Hero Motion via gsap.matchMedia
+        const heroMm = gsap.matchMedia();
+
+        // TIER 1: DESKTOP (1200px and above) — Full Cinematic Hero Parallax
+        heroMm.add("(min-width: 1200px)", () => {
+          const heroScrollTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: '#heroSection',
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 0.4
+            }
+          });
+          heroScrollTl.to(heroBg, { y: 70, scale: 1.06, ease: 'none' }, 0);
+          heroScrollTl.to(heroTypography, { y: -95, opacity: 0, scale: 0.96, ease: 'none' }, 0);
+          heroScrollTl.to(heroBottomBar, { y: -40, opacity: 0, ease: 'none' }, 0);
+          heroScrollTl.to(heroDarkOverlay, { opacity: 0.72, ease: 'none' }, 0);
         });
 
-        // Background moves vertically: 0 -> 60px, subtle scale 1.00 -> 1.05
-        heroScrollTl.to(heroBg, {
-          y: 60,
-          scale: 1.05,
-          ease: 'none'
-        }, 0);
+        // TIER 2: TABLET / SMALL LAPTOP (768px to 1199px) — Calibrated Responsive Parallax
+        heroMm.add("(min-width: 768px) and (max-width: 1199px)", () => {
+          const heroScrollTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: '#heroSection',
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 0.4
+            }
+          });
+          heroScrollTl.to(heroBg, { y: 45, scale: 1.04, ease: 'none' }, 0);
+          heroScrollTl.to(heroTypography, { y: -60, opacity: 0, scale: 0.97, ease: 'none' }, 0);
+          heroScrollTl.to(heroBottomBar, { y: -30, opacity: 0, ease: 'none' }, 0);
+          heroScrollTl.to(heroDarkOverlay, { opacity: 0.70, ease: 'none' }, 0);
+        });
 
-        // Main typography moves upward: 0 -> -85px, opacity 1 -> 0, scale 1 -> 0.96
-        heroScrollTl.to(heroTypography, {
-          y: -85,
-          opacity: 0,
-          scale: 0.96,
-          ease: 'none'
-        }, 0);
-
-        // Bottom scroll cue fades out promptly
-        heroScrollTl.to(heroBottomBar, {
-          y: -40,
-          opacity: 0,
-          ease: 'none'
-        }, 0);
-
-        // Dark overlay increases gradually
-        heroScrollTl.to(heroDarkOverlay, {
-          opacity: 0.72,
-          ease: 'none'
-        }, 0);
+        // TIER 3: MOBILE (below 768px) — Lightweight Touch-Optimized Motion
+        heroMm.add("(max-width: 767px)", () => {
+          const heroScrollTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: '#heroSection',
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 0.4
+            }
+          });
+          heroScrollTl.to(heroBg, { y: 25, scale: 1.02, ease: 'none' }, 0);
+          heroScrollTl.to(heroTypography, { y: -35, opacity: 0, scale: 0.98, ease: 'none' }, 0);
+          heroScrollTl.to(heroBottomBar, { y: -20, opacity: 0, ease: 'none' }, 0);
+          heroScrollTl.to(heroDarkOverlay, { opacity: 0.65, ease: 'none' }, 0);
+        });
 
       } else {
         // Reduced motion: instant display
@@ -864,147 +876,252 @@
       const storyPinViewport = document.getElementById('storyPinViewport');
       if (!storyPinSection || !storyPinViewport) return;
 
-      // Only enable desktop pinning on screens >= 1024px
-      ScrollTrigger.matchMedia({
-        "(min-width: 1024px)": function() {
-          if (prefersReducedMotion) return;
+      if (prefersReducedMotion) {
+        gsap.set(['#storySlide1', '#storyChapter1'], { autoAlpha: 1 });
+        gsap.set(['#storySlide2', '#storySlide3', '#storyChapter2', '#storyChapter3'], { autoAlpha: 0 });
+        return;
+      }
 
-          // Slides and images
-          const slide1 = document.getElementById('storySlide1');
-          const slide2 = document.getElementById('storySlide2');
-          const slide3 = document.getElementById('storySlide3');
-          const img1 = document.getElementById('storyImg1');
-          const img2 = document.getElementById('storyImg2');
-          const img3 = document.getElementById('storyImg3');
+      // Responsive Story Engine via gsap.matchMedia
+      const storyMm = gsap.matchMedia();
 
-          // Typography chapter cards
-          const ch1 = document.getElementById('storyChapter1');
-          const ch2 = document.getElementById('storyChapter2');
-          const ch3 = document.getElementById('storyChapter3');
+      // Elements
+      const slide1 = document.getElementById('storySlide1');
+      const slide2 = document.getElementById('storySlide2');
+      const slide3 = document.getElementById('storySlide3');
+      const img1 = document.getElementById('storyImg1');
+      const img2 = document.getElementById('storyImg2');
+      const img3 = document.getElementById('storyImg3');
+      const ch1 = document.getElementById('storyChapter1');
+      const ch2 = document.getElementById('storyChapter2');
+      const ch3 = document.getElementById('storyChapter3');
 
-          // Initial positions with autoAlpha (manages opacity + visibility automatically)
-          gsap.set(slide1, { autoAlpha: 1 });
-          gsap.set([slide2, slide3], { autoAlpha: 0 });
-          gsap.set(img1, { scale: 1.10 });
-          gsap.set([img2, img3], { scale: 1.08 });
+      // TIER 1: DESKTOP — 1200px AND ABOVE (Full Cinematic Master Pinning)
+      storyMm.add("(min-width: 1200px)", () => {
+        gsap.set(slide1, { autoAlpha: 1 });
+        gsap.set([slide2, slide3], { autoAlpha: 0 });
+        gsap.set(img1, { scale: 1.10 });
+        gsap.set([img2, img3], { scale: 1.08 });
 
-          gsap.set(ch1, { autoAlpha: 1, y: 0 });
-          gsap.set(ch2, { autoAlpha: 0, y: 35 });
-          gsap.set(ch3, { autoAlpha: 0, y: 35 });
+        gsap.set(ch1, { autoAlpha: 1, y: 0 });
+        gsap.set(ch2, { autoAlpha: 0, y: 35 });
+        gsap.set(ch3, { autoAlpha: 0, y: 35 });
 
-          // Create the Master Story Timeline with ScrollTrigger Pinning
-          const storyTl = gsap.timeline({
+        const storyTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: storyPinSection,
+            start: 'top top',
+            end: '+=2400',
+            pin: storyPinViewport,
+            pinSpacing: true,
+            scrub: 0.5,
+            anticipatePin: 1
+          }
+        });
+
+        // Chapter 1: Bindhu portrait begins slightly zoomed and settles
+        storyTl.to(img1, {
+          scale: 1.00,
+          duration: 1.2,
+          ease: 'power1.out'
+        }, 0);
+
+        // Phase A: Transition from Chapter 1 to Chapter 2 (around 33% progress)
+        storyTl.to(ch1, {
+          autoAlpha: 0,
+          y: -30,
+          duration: 0.5,
+          ease: 'power2.in'
+        }, 1.3);
+
+        storyTl.to(slide1, {
+          autoAlpha: 0,
+          duration: 1.0,
+          ease: 'power1.inOut'
+        }, 1.4);
+
+        storyTl.to(slide2, {
+          autoAlpha: 1,
+          duration: 1.0,
+          ease: 'power1.inOut'
+        }, 1.4);
+
+        storyTl.to(img2, {
+          scale: 1.00,
+          duration: 1.2,
+          ease: 'power1.out'
+        }, 1.4);
+
+        storyTl.to(ch2, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out'
+        }, 1.9);
+
+        // Phase B: Transition from Chapter 2 to Chapter 3 (around 66% progress)
+        storyTl.to(ch2, {
+          autoAlpha: 0,
+          y: -30,
+          duration: 0.5,
+          ease: 'power2.in'
+        }, 3.3);
+
+        storyTl.to(slide2, {
+          autoAlpha: 0,
+          duration: 1.0,
+          ease: 'power1.inOut'
+        }, 3.4);
+
+        storyTl.to(slide3, {
+          autoAlpha: 1,
+          duration: 1.0,
+          ease: 'power1.inOut'
+        }, 3.4);
+
+        storyTl.to(img3, {
+          scale: 1.00,
+          duration: 1.2,
+          ease: 'power1.out'
+        }, 3.4);
+
+        storyTl.to(ch3, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out'
+        }, 3.9);
+
+        // Settle smoothly before releasing
+        storyTl.to({}, { duration: 0.9 }, 4.7);
+      });
+
+      // TIER 2: TABLET / SMALL LAPTOP — 768px TO 1199px (Simplified Cinematic Pinning)
+      storyMm.add("(min-width: 768px) and (max-width: 1199px)", () => {
+        gsap.set(slide1, { autoAlpha: 1 });
+        gsap.set([slide2, slide3], { autoAlpha: 0 });
+        gsap.set(img1, { scale: 1.06 });
+        gsap.set([img2, img3], { scale: 1.05 });
+
+        gsap.set(ch1, { autoAlpha: 1, y: 0 });
+        gsap.set(ch2, { autoAlpha: 0, y: 25 });
+        gsap.set(ch3, { autoAlpha: 0, y: 25 });
+
+        // Compact scroll range (+1600px) calibrated for tablet touch/trackpad
+        const storyTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: storyPinSection,
+            start: 'top top',
+            end: '+=1600',
+            pin: storyPinViewport,
+            pinSpacing: true,
+            scrub: 0.4,
+            anticipatePin: 1
+          }
+        });
+
+        // Chapter 1 settles
+        storyTl.to(img1, {
+          scale: 1.00,
+          duration: 1.0,
+          ease: 'power1.out'
+        }, 0);
+
+        // Phase A: Ch 1 -> Ch 2 (~33% progress)
+        storyTl.to(ch1, {
+          autoAlpha: 0,
+          y: -20,
+          duration: 0.4,
+          ease: 'power2.in'
+        }, 1.0);
+
+        storyTl.to(slide1, {
+          autoAlpha: 0,
+          duration: 0.8,
+          ease: 'power1.inOut'
+        }, 1.1);
+
+        storyTl.to(slide2, {
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: 'power1.inOut'
+        }, 1.1);
+
+        storyTl.to(img2, {
+          scale: 1.00,
+          duration: 1.0,
+          ease: 'power1.out'
+        }, 1.1);
+
+        storyTl.to(ch2, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'power2.out'
+        }, 1.5);
+
+        // Phase B: Ch 2 -> Ch 3 (~66% progress)
+        storyTl.to(ch2, {
+          autoAlpha: 0,
+          y: -20,
+          duration: 0.4,
+          ease: 'power2.in'
+        }, 2.6);
+
+        storyTl.to(slide2, {
+          autoAlpha: 0,
+          duration: 0.8,
+          ease: 'power1.inOut'
+        }, 2.7);
+
+        storyTl.to(slide3, {
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: 'power1.inOut'
+        }, 2.7);
+
+        storyTl.to(img3, {
+          scale: 1.00,
+          duration: 1.0,
+          ease: 'power1.out'
+        }, 2.7);
+
+        storyTl.to(ch3, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'power2.out'
+        }, 3.1);
+
+        storyTl.to({}, { duration: 0.6 }, 3.7);
+      });
+
+      // TIER 3: MOBILE — BELOW 768px (Vertical Narrative Layout)
+      storyMm.add("(max-width: 767px)", () => {
+        const mobileItems = document.querySelectorAll('#storyMobileContainer > div');
+        mobileItems.forEach(item => {
+          const img = item.querySelector('img');
+          const tl = gsap.timeline({
             scrollTrigger: {
-              trigger: storyPinSection,
-              start: 'top top',
-              end: '+=2400', // ~250-300vh comfortable scroll range
-              pin: storyPinViewport,
-              pinSpacing: true,
-              scrub: 0.5,
-              anticipatePin: 1
+              trigger: item,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse'
             }
           });
-
-          // Master Duration: 6 units
-          // Chapter 1: Bindhu portrait begins slightly zoomed and settles
-          storyTl.to(img1, {
-            scale: 1.00,
-            duration: 1.2,
-            ease: 'power1.out'
-          }, 0);
-
-          // Phase A: Transition from Chapter 1 to Chapter 2 (around 33% progress)
-          // 1. Ch 1 text exits upward cleanly
-          storyTl.to(ch1, {
-            autoAlpha: 0,
-            y: -30,
-            duration: 0.5,
-            ease: 'power2.in'
-          }, 1.3);
-
-          // 2. Images crossfade
-          storyTl.to(slide1, {
-            autoAlpha: 0,
-            duration: 1.0,
-            ease: 'power1.inOut'
-          }, 1.4);
-
-          storyTl.to(slide2, {
-            autoAlpha: 1,
-            duration: 1.0,
-            ease: 'power1.inOut'
-          }, 1.4);
-
-          storyTl.to(img2, {
-            scale: 1.00,
-            duration: 1.2,
-            ease: 'power1.out'
-          }, 1.4);
-
-          // 3. Ch 2 text enters from below after Ch 1 text is clear
-          storyTl.to(ch2, {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.6,
+          tl.from(item, {
+            y: 25,
+            opacity: 0.4,
+            duration: 0.7,
             ease: 'power2.out'
-          }, 1.9);
-
-          // Phase B: Transition from Chapter 2 to Chapter 3 (around 66% progress)
-          // 1. Ch 2 text exits upward cleanly
-          storyTl.to(ch2, {
-            autoAlpha: 0,
-            y: -30,
-            duration: 0.5,
-            ease: 'power2.in'
-          }, 3.3);
-
-          // 2. Images crossfade
-          storyTl.to(slide2, {
-            autoAlpha: 0,
-            duration: 1.0,
-            ease: 'power1.inOut'
-          }, 3.4);
-
-          storyTl.to(slide3, {
-            autoAlpha: 1,
-            duration: 1.0,
-            ease: 'power1.inOut'
-          }, 3.4);
-
-          storyTl.to(img3, {
-            scale: 1.00,
-            duration: 1.2,
-            ease: 'power1.out'
-          }, 3.4);
-
-          // 3. Ch 3 text enters from below after Ch 2 text is clear
-          storyTl.to(ch3, {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.6,
-            ease: 'power2.out'
-          }, 3.9);
-
-          // Section settles smoothly in Chapter 3 before releasing
-          storyTl.to({}, { duration: 0.9 }, 4.7);
-        },
-
-        // Mobile layout: simple vertical flow, zero trapping
-        "(max-width: 1023px)": function() {
-          const mobileItems = document.querySelectorAll('#storyMobileContainer > div');
-          mobileItems.forEach(item => {
-            gsap.from(item, {
-              y: 35,
-              opacity: 0.6,
-              duration: 0.8,
-              scrollTrigger: {
-                trigger: item,
-                start: 'top 85%',
-                toggleActions: 'play none none reverse'
-              }
-            });
           });
-        }
+          if (img) {
+            tl.from(img, {
+              scale: 1.06,
+              duration: 0.9,
+              ease: 'power1.out'
+            }, 0);
+          }
+        });
       });
     }
 
