@@ -429,17 +429,11 @@
   .h-screen {
     height: 100vh;
   }
-  .max-h-0 {
-    max-height: 0px;
-  }
   .max-h-\[75vh\] {
     max-height: 75vh;
   }
   .max-h-\[88vh\] {
     max-height: 88vh;
-  }
-  .max-h-\[1000px\] {
-    max-height: 1000px;
   }
   .min-h-\[75vh\] {
     min-height: 75vh;
@@ -726,6 +720,12 @@
   .bg-secondary {
     background-color: var(--color-secondary);
   }
+  .bg-secondary\/5 {
+    background-color: color-mix(in srgb, #e2c197 5%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-secondary) 5%, transparent);
+    }
+  }
   .bg-secondary\/10 {
     background-color: color-mix(in srgb, #e2c197 10%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -871,9 +871,6 @@
   .p-2 {
     padding: calc(var(--spacing) * 2);
   }
-  .p-3 {
-    padding: calc(var(--spacing) * 3);
-  }
   .p-4 {
     padding: calc(var(--spacing) * 4);
   }
@@ -886,6 +883,9 @@
   .px-5 {
     padding-inline: calc(var(--spacing) * 5);
   }
+  .px-8 {
+    padding-inline: calc(var(--spacing) * 8);
+  }
   .px-gutter-mobile {
     padding-inline: var(--spacing-gutter-mobile);
   }
@@ -894,6 +894,9 @@
   }
   .py-3 {
     padding-block: calc(var(--spacing) * 3);
+  }
+  .py-3\.5 {
+    padding-block: calc(var(--spacing) * 3.5);
   }
   .py-4 {
     padding-block: calc(var(--spacing) * 4);
@@ -925,6 +928,9 @@
   .pt-8 {
     padding-top: calc(var(--spacing) * 8);
   }
+  .pt-10 {
+    padding-top: calc(var(--spacing) * 10);
+  }
   .pt-12 {
     padding-top: calc(var(--spacing) * 12);
   }
@@ -936,9 +942,6 @@
   }
   .pr-0 {
     padding-right: 0px;
-  }
-  .pb-4 {
-    padding-bottom: calc(var(--spacing) * 4);
   }
   .pb-6 {
     padding-bottom: calc(var(--spacing) * 6);
@@ -1124,12 +1127,6 @@
       color: color-mix(in oklab, var(--color-secondary) 70%, transparent);
     }
   }
-  .text-secondary\/80 {
-    color: color-mix(in srgb, #e2c197 80%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      color: color-mix(in oklab, var(--color-secondary) 80%, transparent);
-    }
-  }
   .text-secondary\/90 {
     color: color-mix(in srgb, #e2c197 90%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -1250,6 +1247,10 @@
     will-change: transform;
   }
   @media (hover: hover) {
+    .group-hover\:translate-x-1:is(:where(.group):hover *) {
+      --tw-translate-x: var(--spacing);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
     .group-hover\:translate-y-1:is(:where(.group):hover *) {
       --tw-translate-y: var(--spacing);
       translate: var(--tw-translate-x) var(--tw-translate-y);
@@ -1277,16 +1278,15 @@
     color: var(--color-primary-fixed);
   }
   @media (hover: hover) {
+    .hover\:-translate-y-1:hover {
+      --tw-translate-y: calc(var(--spacing) * -1);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+    .hover\:scale-\[1\.02\]:hover {
+      scale: 1.02;
+    }
     .hover\:border-secondary:hover {
       border-color: var(--color-secondary);
-    }
-    .hover\:border-secondary\/50:hover {
-      border-color: color-mix(in srgb, #e2c197 50%, transparent);
-    }
-    @supports (color: color-mix(in lab, red, red)) {
-      .hover\:border-secondary\/50:hover {
-        border-color: color-mix(in oklab, var(--color-secondary) 50%, transparent);
-      }
     }
     .hover\:bg-secondary:hover {
       background-color: var(--color-secondary);
@@ -1297,6 +1297,14 @@
     @supports (color: color-mix(in lab, red, red)) {
       .hover\:bg-secondary\/10:hover {
         background-color: color-mix(in oklab, var(--color-secondary) 10%, transparent);
+      }
+    }
+    .hover\:bg-secondary\/15:hover {
+      background-color: color-mix(in srgb, #e2c197 15%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-secondary\/15:hover {
+        background-color: color-mix(in oklab, var(--color-secondary) 15%, transparent);
       }
     }
     .hover\:text-on-secondary:hover {
@@ -1314,17 +1322,27 @@
     .hover\:text-secondary:hover {
       color: var(--color-secondary);
     }
+    .hover\:shadow-\[0_8px_25px_rgba\(226\,193\,151\,0\.15\)\]:hover {
+      --tw-shadow: 0 8px 25px var(--tw-shadow-color, rgba(226,193,151,0.15));
+      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    }
   }
   .focus\:border-secondary:focus {
     border-color: var(--color-secondary);
   }
-  .focus\:ring-0:focus {
-    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
   .focus\:outline-none:focus {
     --tw-outline-style: none;
     outline-style: none;
+  }
+  .active\:translate-y-0:active {
+    --tw-translate-y: 0px;
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  .active\:scale-100:active {
+    --tw-scale-x: 100%;
+    --tw-scale-y: 100%;
+    --tw-scale-z: 100%;
+    scale: var(--tw-scale-x) var(--tw-scale-y);
   }
   @media (width >= 40rem) {
     .sm\:inline {
@@ -1335,9 +1353,6 @@
     }
     .sm\:h-\[450px\] {
       height: 450px;
-    }
-    .sm\:grid-cols-3 {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
     .sm\:flex-row {
       flex-direction: row;
@@ -1470,10 +1485,6 @@
     .md\:text-sm {
       font-size: var(--text-sm);
       line-height: var(--tw-leading, var(--text-sm--line-height));
-    }
-    .md\:text-xs {
-      font-size: var(--text-xs);
-      line-height: var(--tw-leading, var(--text-xs--line-height));
     }
     .md\:text-\[11px\] {
       font-size: 11px;
