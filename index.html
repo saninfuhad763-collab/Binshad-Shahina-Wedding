@@ -63,6 +63,28 @@
 
 
 
+    /* 3D Ceremonial Door Styles */
+    #doorStage {
+      perspective: 1400px;
+      perspective-origin: 50% 50%;
+    }
+    @media (max-width: 767px) {
+      #doorStage {
+        perspective: 900px;
+      }
+    }
+    .door-panel {
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      will-change: transform;
+    }
+    .door-left {
+      transform-origin: 0% 50%;
+    }
+    .door-right {
+      transform-origin: 100% 50%;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -75,14 +97,57 @@
     }
   </style>
 </head>
-<body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-primary-fixed">
+<body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-primary-fixed overflow-hidden">
+
+  <!-- ======================================================== -->
+  <!-- 0. CEREMONIAL WEDDING DOOR INTRO OVERLAY                 -->
+  <!-- ======================================================== -->
+  <div class="fixed inset-0 z-[100] bg-[#090607] flex items-center justify-center overflow-hidden" id="weddingIntro" role="dialog" aria-modal="true" aria-label="Ceremonial Entrance">
+    <!-- 3D Perspective Door Stage -->
+    <div class="absolute inset-0 overflow-hidden" id="doorStage">
+      
+      <!-- Ambient Backlight Elements (Seam glow & Expanding bloom) -->
+      <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 opacity-0 will-change-transform will-change-opacity" id="doorLightBloom">
+        <div class="w-full h-full" style="background: radial-gradient(ellipse at 50% 50%, rgba(251, 240, 221, 0.85) 0%, rgba(226, 193, 151, 0.5) 30%, rgba(74, 16, 29, 0.3) 60%, transparent 80%);"></div>
+      </div>
+      <div class="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-1 pointer-events-none z-15 opacity-0 will-change-opacity" id="doorLightSeam" style="background: linear-gradient(to right, transparent, rgba(251,240,221,0.95), transparent); box-shadow: 0 0 15px rgba(226,193,151,0.85), 0 0 35px rgba(251,240,221,0.7);"></div>
+
+      <!-- Left Door Panel (Hinged on Left Edge) -->
+      <div class="door-panel door-left absolute top-0 left-0 w-1/2 h-full overflow-hidden will-change-transform z-20" id="doorLeft" style="box-shadow: inset -2px 0 12px rgba(0,0,0,0.85);">
+        <div class="door-leaf absolute top-0 left-0 w-[100vw] h-full" style="background: url('assets/images/wedding-doors.jpg') no-repeat center center / cover;"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/60 pointer-events-none"></div>
+      </div>
+
+      <!-- Right Door Panel (Hinged on Right Edge) -->
+      <div class="door-panel door-right absolute top-0 right-0 w-1/2 h-full overflow-hidden will-change-transform z-20" id="doorRight" style="box-shadow: inset 2px 0 12px rgba(0,0,0,0.85);">
+        <div class="door-leaf absolute top-0 right-0 w-[100vw] h-full" style="background: url('assets/images/wedding-doors.jpg') no-repeat center center / cover;"></div>
+        <div class="absolute inset-0 bg-gradient-to-l from-black/40 via-transparent to-black/60 pointer-events-none"></div>
+      </div>
+
+      <!-- Center Seam Shadow Line (Pre-interaction) -->
+      <div class="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2px] pointer-events-none z-25" id="doorSeamShadow" style="background: rgba(14,10,11,0.9); box-shadow: 0 0 4px rgba(0,0,0,0.95);"></div>
+    </div>
+
+    <!-- Ceremonial Enter Button Container -->
+    <div class="relative z-30 flex flex-col items-center justify-center p-6 text-center select-none" id="doorActionContainer">
+      <div class="mb-4 overflow-hidden">
+        <span class="text-[10px] md:text-xs tracking-[0.4em] uppercase text-secondary/70 font-light block">
+          A Private Celebration
+        </span>
+      </div>
+      <button id="doorEnterBtn" class="group relative inline-flex items-center justify-center gap-3 px-8 py-4 sm:px-10 sm:py-4.5 border border-secondary/50 bg-[#0e0a0b]/80 backdrop-blur-md text-secondary text-xs sm:text-sm uppercase tracking-[0.3em] font-medium transition-all duration-500 ease-out hover:border-secondary hover:bg-secondary/15 hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[0_0_35px_rgba(226,193,151,0.3)] focus:outline-none focus:ring-1 focus:ring-secondary cursor-pointer" aria-label="Enter the celebration">
+        <span>Enter The Celebration</span>
+        <span class="material-symbols-outlined text-base sm:text-lg transform group-hover:translate-x-1 transition-transform duration-300">arrow_forward</span>
+      </button>
+    </div>
+  </div>
 
 
 
   <!-- ======================================================== -->
   <!-- NAVIGATION BAR (Translucent Glass on Scroll)             -->
   <!-- ======================================================== -->
-  <header class="fixed top-0 left-0 w-full z-50 transition-all duration-500 py-6 border-b border-transparent" id="mainNav">
+  <header class="fixed top-0 left-0 w-full z-50 transition-all duration-500 py-6 border-b border-transparent opacity-0 pointer-events-none" id="mainNav">
     <div class="max-w-[1440px] mx-auto px-gutter-mobile lg:px-margin flex items-center justify-between">
       <a class="group flex items-center gap-2" href="#">
         <span class="font-title-editorial text-2xl tracking-[0.25em] text-secondary font-light transition-all group-hover:text-primary">B &amp; S</span>
@@ -130,19 +195,23 @@
     <!-- 1. HERO SECTION: CINEMATIC FLUID OPENING                -->
     <!-- ======================================================== -->
     <section class="relative w-full min-h-screen flex flex-col justify-between overflow-hidden px-gutter-mobile lg:px-margin pt-28 pb-12" id="heroSection">
-      <!-- Background Parallax Image Container -->
+      <!-- Background Parallax Image & Video Container -->
       <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div class="w-full h-full bg-cover bg-center will-change-transform" id="heroBg" style="background-image: url('assets/images/hero.avif');"></div>
+        <!-- Desktop / Tablet 16:9 Video -->
+        <video id="heroVideoDesktop" class="hidden md:block absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 z-10" muted playsinline preload="none"></video>
+        <!-- Mobile 9:16 Portrait Video -->
+        <video id="heroVideoMobile" class="block md:hidden absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 z-10" muted playsinline preload="none"></video>
+        <div class="w-full h-full bg-cover bg-center will-change-transform z-0" id="heroBg" style="background-image: url('assets/images/hero.avif');"></div>
         <!-- Multi-stop Vignette & Darkening Gradients -->
-        <div class="absolute inset-0 bg-gradient-to-t from-[#0e0a0b] via-[#0e0a0b]/60 to-[#0e0a0b]/40"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-[#0e0a0b]/90 via-transparent to-[#0e0a0b]/80"></div>
-        <div class="absolute inset-0 bg-[#4a101d]/15 mix-blend-color"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0e0a0b] via-[#0e0a0b]/60 to-[#0e0a0b]/40 z-20"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#0e0a0b]/90 via-transparent to-[#0e0a0b]/80 z-20"></div>
+        <div class="absolute inset-0 bg-[#4a101d]/15 mix-blend-color z-20"></div>
         <!-- Dynamic Darkening Scrim (Scroll-Linked) -->
-        <div class="absolute inset-0 bg-black opacity-0 pointer-events-none will-change-opacity" id="heroDarkOverlay"></div>
+        <div class="absolute inset-0 bg-black opacity-0 pointer-events-none will-change-opacity z-20" id="heroDarkOverlay"></div>
       </div>
 
       <!-- Monumental Editorial Typography (Bottom-Left Asymmetric Anchor) -->
-      <div class="relative z-10 my-auto py-12 max-w-4xl will-change-transform" id="heroTypography">
+      <div class="relative z-10 my-auto py-12 max-w-4xl will-change-transform opacity-0 pointer-events-none" id="heroTypography">
         <div class="overflow-hidden mb-3">
           <p class="hero-anim-item text-xs md:text-sm tracking-[0.4em] uppercase text-secondary font-medium">
             The Celebration of Forever
@@ -164,7 +233,7 @@
       </div>
 
       <!-- Scroll Indicator & Downward Prompt -->
-      <div class="relative z-10 flex justify-between items-end pt-8 border-t border-white/10 text-outline text-[10px] tracking-[0.3em] uppercase will-change-transform" id="heroBottomBar">
+      <div class="relative z-10 flex justify-between items-end pt-8 border-t border-white/10 text-outline text-[10px] tracking-[0.3em] uppercase will-change-transform opacity-0 pointer-events-none" id="heroBottomBar">
         <span class="hidden sm:inline">A Private Celebration</span>
         <a class="flex items-center gap-3 text-secondary/90 hover:text-primary transition-colors group cursor-pointer" href="#prologue" id="heroScrollCue">
           <span>Discover The Story</span>
@@ -724,37 +793,247 @@
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // --- 0. CEREMONIAL WEDDING DOOR INTRO ENGINE ---
+    let introFinished = false;
+    let activeVideo = null;
 
+    function revealHomepageUI() {
+      if (introFinished) return;
+      introFinished = true;
+
+      const mainNav = document.getElementById('mainNav');
+      const heroTypography = document.getElementById('heroTypography');
+      const heroAnimItems = document.querySelectorAll('.hero-anim-item');
+      const heroBottomBar = document.getElementById('heroBottomBar');
+
+      // Enable and fade in top navigation
+      if (mainNav) {
+        mainNav.classList.remove('opacity-0', 'pointer-events-none');
+        gsap.to(mainNav, { opacity: 1, duration: 0.9, ease: 'power2.out' });
+      }
+
+      // Enable hero typography & sequential entrance animation
+      if (heroTypography) {
+        heroTypography.classList.remove('opacity-0', 'pointer-events-none');
+        gsap.to(heroTypography, { opacity: 1, duration: 0.4 });
+      }
+      if (heroBottomBar) {
+        heroBottomBar.classList.remove('opacity-0', 'pointer-events-none');
+      }
+
+      if (!prefersReducedMotion) {
+        if (heroAnimItems.length > 0) {
+          gsap.fromTo(heroAnimItems,
+            { y: 35, opacity: 0 },
+            { y: 0, opacity: 1, duration: 1.1, stagger: 0.16, ease: 'power3.out', delay: 0.1 }
+          );
+        }
+        if (heroBottomBar) {
+          gsap.fromTo(heroBottomBar,
+            { y: 22, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.5 }
+          );
+        }
+      } else {
+        if (heroAnimItems.length > 0) gsap.set(heroAnimItems, { y: 0, opacity: 1 });
+        if (heroBottomBar) gsap.set(heroBottomBar, { y: 0, opacity: 1 });
+      }
+
+      // Safely restore native scrolling
+      document.body.classList.remove('overflow-hidden');
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+
+      // Completely remove door intro from viewport & accessibility tree
+      const weddingIntro = document.getElementById('weddingIntro');
+      if (weddingIntro) {
+        weddingIntro.style.display = 'none';
+        weddingIntro.setAttribute('aria-hidden', 'true');
+      }
+
+      // Refresh ScrollTrigger positions after layout release
+      requestAnimationFrame(() => {
+        ScrollTrigger.sort();
+        ScrollTrigger.refresh();
+      });
+    }
+
+    function onVideoCompleted() {
+      // FREEZE EXACT FINAL FRAME:
+      // Pause video in place at its ending frame without resetting currentTime or hiding it.
+      if (activeVideo) {
+        try {
+          activeVideo.pause();
+        } catch (e) {
+          // ignore
+        }
+      }
+      revealHomepageUI();
+    }
+
+    function initDoorIntro() {
+      const weddingIntro = document.getElementById('weddingIntro');
+      const doorEnterBtn = document.getElementById('doorEnterBtn');
+      const doorActionContainer = document.getElementById('doorActionContainer');
+      const doorLeft = document.getElementById('doorLeft');
+      const doorRight = document.getElementById('doorRight');
+      const doorLightBloom = document.getElementById('doorLightBloom');
+      const doorLightSeam = document.getElementById('doorLightSeam');
+      const doorSeamShadow = document.getElementById('doorSeamShadow');
+
+      const videoDesktop = document.getElementById('heroVideoDesktop');
+      const videoMobile = document.getElementById('heroVideoMobile');
+
+      if (!weddingIntro) {
+        revealHomepageUI();
+        return;
+      }
+
+      // Responsive video selection: only load the active viewport asset
+      const isMobile = window.innerWidth < 768;
+      activeVideo = isMobile ? videoMobile : videoDesktop;
+      const inactiveVideo = isMobile ? videoDesktop : videoMobile;
+
+      if (inactiveVideo) {
+        inactiveVideo.removeAttribute('src');
+        inactiveVideo.load();
+      }
+
+      const videoSrc = isMobile 
+        ? 'assets/videos/binshad-shahina-wedding-mobile-optimized.mp4'
+        : 'assets/videos/binshad-shahina-wedding-desktop-optimized.mp4';
+
+      if (prefersReducedMotion) {
+        // Reduced motion: skip door intro entirely and reveal page
+        weddingIntro.style.display = 'none';
+        weddingIntro.setAttribute('aria-hidden', 'true');
+        revealHomepageUI();
+        return;
+      }
+
+      // Ensure proper 3D transform origins
+      if (doorLeft) gsap.set(doorLeft, { transformOrigin: '0% 50%' });
+      if (doorRight) gsap.set(doorRight, { transformOrigin: '100% 50%' });
+
+      // Prepare active video source
+      if (activeVideo && !activeVideo.getAttribute('src')) {
+        activeVideo.src = videoSrc;
+        activeVideo.load();
+      }
+
+      if (doorEnterBtn) {
+        doorEnterBtn.addEventListener('click', () => {
+          // Prevent multiple clicks
+          doorEnterBtn.disabled = true;
+          doorEnterBtn.style.pointerEvents = 'none';
+
+          // 1. Enter button fades and scales out
+          if (doorActionContainer) {
+            gsap.to(doorActionContainer, {
+              opacity: 0,
+              scale: 0.95,
+              duration: 0.5,
+              ease: 'power2.inOut'
+            });
+          }
+
+          // 2. Light seam and warm backlight leak
+          if (doorLightSeam) {
+            gsap.to(doorLightSeam, {
+              opacity: 1,
+              duration: 0.4,
+              ease: 'power2.out'
+            });
+          }
+          if (doorLightBloom) {
+            gsap.to(doorLightBloom, {
+              opacity: 0.95,
+              scale: 1.15,
+              duration: 1.2,
+              delay: 0.15,
+              ease: 'power2.out'
+            });
+          }
+          if (doorSeamShadow) {
+            gsap.to(doorSeamShadow, { opacity: 0, duration: 0.35 });
+          }
+
+          // 3. Grand symmetrical 3D doors swing open
+          if (doorLeft) {
+            gsap.to(doorLeft, {
+              rotateY: -95,
+              duration: 1.9,
+              delay: 0.2,
+              ease: 'power3.inOut'
+            });
+          }
+          if (doorRight) {
+            gsap.to(doorRight, {
+              rotateY: 95,
+              duration: 1.9,
+              delay: 0.2,
+              ease: 'power3.inOut'
+            });
+          }
+
+          // 4. Reveal & play video behind doors
+          if (activeVideo) {
+            gsap.to(activeVideo, {
+              opacity: 1,
+              duration: 0.8,
+              delay: 0.45,
+              ease: 'power2.out'
+            });
+
+            const playPromise = activeVideo.play();
+            if (playPromise !== undefined) {
+              playPromise.catch((err) => {
+                console.warn('Video play interrupted, advancing to final frame:', err);
+                onVideoCompleted();
+              });
+            }
+
+            activeVideo.addEventListener('ended', onVideoCompleted, { once: true });
+
+            // Failsafe timer (if ended event does not fire within 9.5s)
+            setTimeout(() => {
+              if (!introFinished) {
+                onVideoCompleted();
+              }
+            }, 9500);
+          } else {
+            setTimeout(revealHomepageUI, 2000);
+          }
+
+          // 5. Fade out door overlay as doors finish swinging
+          gsap.to(weddingIntro, {
+            opacity: 0,
+            duration: 0.7,
+            delay: 1.6,
+            ease: 'power2.out',
+            onComplete: () => {
+              weddingIntro.style.display = 'none';
+              weddingIntro.setAttribute('aria-hidden', 'true');
+            }
+          });
+        });
+      }
+    }
 
     // --- 1. HERO SECTION MOTION (Sections 5, 6, 7) ---
     function initHeroMotion() {
       const heroBg = document.getElementById('heroBg');
       const heroTypography = document.getElementById('heroTypography');
-      const heroAnimItems = document.querySelectorAll('.hero-anim-item');
       const heroBottomBar = document.getElementById('heroBottomBar');
       const heroDarkOverlay = document.getElementById('heroDarkOverlay');
+      const videoDesktop = document.getElementById('heroVideoDesktop');
+      const videoMobile = document.getElementById('heroVideoMobile');
 
       if (!heroBg || !heroTypography) return;
 
+      const heroVisuals = [heroBg, videoDesktop, videoMobile].filter(Boolean);
+
       if (!prefersReducedMotion) {
-        // Page Load Sequence
-        // Background image: scale(1.08) -> scale(1.00), 1.8s refined ease
-        gsap.fromTo(heroBg, 
-          { scale: 1.08 },
-          { scale: 1.00, duration: 1.8, ease: 'power2.out' }
-        );
-
-        // Sequential typography entrance: label, title, date, bottom cue
-        gsap.fromTo(heroAnimItems,
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1.1, stagger: 0.16, ease: 'power3.out', delay: 0.3 }
-        );
-
-        gsap.fromTo(heroBottomBar,
-          { y: 25, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1.0, ease: 'power2.out', delay: 0.8 }
-        );
-
         // Responsive Scroll-Linked Hero Motion via gsap.matchMedia
         const heroMm = gsap.matchMedia();
 
@@ -768,7 +1047,7 @@
               scrub: 0.4
             }
           });
-          heroScrollTl.to(heroBg, { y: 70, scale: 1.06, ease: 'none' }, 0);
+          heroScrollTl.to(heroVisuals, { y: 70, scale: 1.06, ease: 'none' }, 0);
           heroScrollTl.to(heroTypography, { y: -95, opacity: 0, scale: 0.96, ease: 'none' }, 0);
           heroScrollTl.to(heroBottomBar, { y: -40, opacity: 0, ease: 'none' }, 0);
           heroScrollTl.to(heroDarkOverlay, { opacity: 0.72, ease: 'none' }, 0);
@@ -784,7 +1063,7 @@
               scrub: 0.4
             }
           });
-          heroScrollTl.to(heroBg, { y: 45, scale: 1.04, ease: 'none' }, 0);
+          heroScrollTl.to(heroVisuals, { y: 45, scale: 1.04, ease: 'none' }, 0);
           heroScrollTl.to(heroTypography, { y: -60, opacity: 0, scale: 0.97, ease: 'none' }, 0);
           heroScrollTl.to(heroBottomBar, { y: -30, opacity: 0, ease: 'none' }, 0);
           heroScrollTl.to(heroDarkOverlay, { opacity: 0.70, ease: 'none' }, 0);
@@ -800,7 +1079,7 @@
               scrub: 0.4
             }
           });
-          heroScrollTl.to(heroBg, { y: 25, scale: 1.02, ease: 'none' }, 0);
+          heroScrollTl.to(heroVisuals, { y: 25, scale: 1.02, ease: 'none' }, 0);
           heroScrollTl.to(heroTypography, { y: -35, opacity: 0, scale: 0.98, ease: 'none' }, 0);
           heroScrollTl.to(heroBottomBar, { y: -20, opacity: 0, ease: 'none' }, 0);
           heroScrollTl.to(heroDarkOverlay, { opacity: 0.65, ease: 'none' }, 0);
@@ -808,7 +1087,7 @@
 
       } else {
         // Reduced motion: instant display
-        gsap.set([heroBg, heroTypography, heroAnimItems, heroBottomBar], { opacity: 1, y: 0, scale: 1 });
+        gsap.set([heroBg, heroVisuals, heroTypography, heroBottomBar], { opacity: 1, y: 0, scale: 1 });
       }
     }
 
@@ -1449,6 +1728,7 @@
 
     // --- INITIALIZE ALL MOTION SYSTEMS ON DOM READY ---
     window.addEventListener('DOMContentLoaded', () => {
+      initDoorIntro();
       initHeroMotion();
       initStoryMotion();
       initTypographyReveals();
