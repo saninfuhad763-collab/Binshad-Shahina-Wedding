@@ -63,37 +63,250 @@
 
 
 
-    /* 3D Ceremonial Door Styles */
+    /* =====================================================
+       STEP 10 — PRECISION CINEMATIC INTRO
+       ===================================================== */
+
+    /* Prevent layout shift when native scrollbar appears after intro */
+    html { scrollbar-gutter: stable; }
+
+    /* ARTWORK FRAME: fills entire viewport, no black bars.
+       Artwork is 1672×941 landscape. background-size: cover always fills.
+       background-position keeps the central medallion (≈50% x, 43% y) in view. */
+    #doorArtworkFrame {
+      position: absolute;
+      inset: 0;
+      background-image: url('assets/images/wedding-doors-premium.avif');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: 50% 43%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    @media (max-width: 1023px) and (orientation: portrait) {
+      #doorArtworkFrame { background-position: 50% 40%; }
+    }
+    @media (max-width: 767px) {
+      /* Portrait: cover crops sides of wide image, keeping door center visible */
+      #doorArtworkFrame { background-position: 50% 38%; }
+    }
+
+    /* Atmospheric dark vignette */
+    #doorAtmosphere {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 45%,
+        rgba(9,6,7,0) 0%, rgba(9,6,7,0.08) 35%,
+        rgba(9,6,7,0.45) 70%, rgba(9,6,7,0.72) 100%
+      );
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* INTERIOR REVEAL — KEY FIX for duplicate-artwork problem.
+       Before click: opaque → hides hero section video.
+       On click: GSAP fades to 0 → exposes video directly behind doors.
+       Result: door → video, no intermediate duplicate artwork. */
+    #doorInteriorReveal {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, #1a0810 0%, #0e0507 45%, #090607 100%);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* Soft secondary bloom */
+    #doorLightBloom {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 43%,
+        rgba(226,193,151,0.35) 0%, rgba(180,120,80,0.15) 30%,
+        rgba(74,16,29,0.12) 55%, transparent 78%
+      );
+      opacity: 0;
+      pointer-events: none;
+      z-index: 6;
+      will-change: opacity;
+    }
+
+    /* 3D Door Stage */
     #doorStage {
       perspective: 1400px;
       perspective-origin: 50% 50%;
+      position: absolute;
+      inset: 0;
+      z-index: 4;
     }
+    @media (max-width: 767px) { #doorStage { perspective: 900px; } }
+
+    .door-panel { transform-style: preserve-3d; backface-visibility: hidden; will-change: transform; }
+    .door-left  { transform-origin: 0%   50%; }
+    .door-right { transform-origin: 100% 50%; }
+
+    /* Door leaf inner — crops artwork to correct half.
+       background-size: 200% means each 50vw leaf shows its half.
+       background-position-y: 43% matches the artwork frame focal point. */
+    .door-leaf-inner {
+      position: absolute;
+      inset: 0;
+      background-image: url('assets/images/wedding-doors-premium.avif');
+      background-repeat: no-repeat;
+      background-size: 200% auto;
+      background-position-y: 43%;
+    }
+    #doorLeft  .door-leaf-inner { background-position-x: 0%;   }
+    #doorRight .door-leaf-inner { background-position-x: 100%; }
     @media (max-width: 767px) {
-      #doorStage {
-        perspective: 900px;
-      }
-    }
-    .door-panel {
-      transform-style: preserve-3d;
-      backface-visibility: hidden;
-      will-change: transform;
-    }
-    .door-left {
-      transform-origin: 0% 50%;
-    }
-    .door-right {
-      transform-origin: 100% 50%;
+      .door-leaf-inner { background-size: 200% auto; background-position-y: 38%; }
+      #doorLeft  .door-leaf-inner { background-position-x: 0%;   }
+      #doorRight .door-leaf-inner { background-position-x: 100%; }
     }
 
+    /* Edge shadows */
+    .door-panel-edge { position: absolute; inset: 0; pointer-events: none; }
+    #doorLeft  .door-panel-edge { background: linear-gradient(to right, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.08) 30%, rgba(0,0,0,0.52) 100%); }
+    #doorRight .door-panel-edge { background: linear-gradient(to left,  rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.08) 30%, rgba(0,0,0,0.52) 100%); }
+
+    /* Center seam */
+    #doorCenterSeam {
+      position: absolute; top: 0; bottom: 0; left: 50%;
+      transform: translateX(-50%); width: 2px;
+      background: rgba(14,10,11,0.95); box-shadow: 0 0 6px rgba(0,0,0,0.98);
+      z-index: 10; pointer-events: none;
+    }
+
+    /* Expanding radial light wave. GSAP: scale(0.015)→scale(1), opacity.
+       Gradient creates a distinct RING edge → visibly travels outward. */
+    #doorLightWave {
+      position: absolute; top: 50%; left: 50%;
+      width: 280vmax; height: 280vmax; border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(255,252,240,0.92) 0%,   rgba(255,230,160,0.75) 3%,
+        rgba(226,193,151,0.60) 8%,   rgba(200,150,80,0.35)  16%,
+        rgba(180,100,50,0.15)  28%,  rgba(74,16,29,0.06)    48%,
+        transparent            65%
+      );
+      opacity: 0; pointer-events: none; z-index: 8;
+      will-change: transform, opacity;
+    }
+
+    /* Tiny center ignition hot-spot */
+    #doorIgnition {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,252,235,0.98);
+      box-shadow: 0 0 12px 4px rgba(255,240,180,0.9), 0 0 28px 10px rgba(226,193,151,0.6), 0 0 55px 20px rgba(180,100,50,0.3);
+      opacity: 0; pointer-events: none; z-index: 12;
+      will-change: opacity, transform;
+    }
+
+    /* Vertical seam ignition glow */
+    #doorLightSeam {
+      position: absolute; top: 0; bottom: 0; left: 50%;
+      transform: translateX(-50%); width: 3px;
+      background: linear-gradient(to bottom, rgba(255,248,220,0) 0%, rgba(255,248,220,0.95) 20%, rgba(255,248,220,0.98) 50%, rgba(255,248,220,0.95) 80%, rgba(255,248,220,0) 100%);
+      box-shadow: 0 0 16px 4px rgba(226,193,151,0.92), 0 0 45px 12px rgba(255,248,220,0.55), 0 0 85px 24px rgba(226,193,151,0.28);
+      opacity: 0; pointer-events: none; z-index: 11; will-change: opacity;
+    }
+
+    /* Welcome text group: centred stack (eyebrow → names → button) */
+    #doorWelcomeGroup {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 16;
+      display: flex; flex-direction: column; align-items: center;
+      pointer-events: none; white-space: nowrap; will-change: opacity;
+    }
+    #doorEyebrow {
+      font-family: 'Manrope', sans-serif; font-size: 9px; font-weight: 500;
+      letter-spacing: 0.40em; text-transform: uppercase;
+      color: rgba(226,193,151,0.65); margin-bottom: 20px;
+      opacity: 0; will-change: opacity, transform;
+    }
+    #doorNamesDisplay {
+      font-family: 'Playfair Display', serif; font-size: clamp(22px, 4vw, 38px);
+      font-weight: 400; font-style: italic;
+      color: rgba(234,224,225,0.88); letter-spacing: 0.04em;
+      line-height: 1.2; text-align: center; margin-bottom: 32px;
+      opacity: 0; will-change: opacity, transform;
+    }
+    #doorNamesDisplay .ampersand { font-size: 0.75em; color: rgba(226,193,151,0.72); display: inline-block; margin: 0 0.2em; }
+
+    /* Round ceremonial button */
+    #doorRoundBtn {
+      position: relative; width: 80px; height: 80px; border-radius: 50%;
+      cursor: pointer; border: none; background: transparent; padding: 0;
+      pointer-events: auto; -webkit-tap-highlight-color: transparent;
+      opacity: 0; will-change: opacity, transform;
+    }
+    @media (max-width: 767px) {
+      #doorRoundBtn { width: 68px; height: 68px; }
+      #doorNamesDisplay { font-size: clamp(18px, 5vw, 26px); margin-bottom: 24px; }
+      #doorEyebrow { font-size: 8px; letter-spacing: 0.32em; margin-bottom: 14px; }
+    }
+    .door-btn-inner {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: radial-gradient(circle at 50% 42%, rgba(35,14,20,0.85) 0%, rgba(20,8,13,0.93) 58%, rgba(9,5,7,0.97) 100%);
+      box-shadow: 0 0 0 1.5px rgba(226,193,151,0.72), inset 0 0 0 1px rgba(226,193,151,0.28), 0 0 22px 6px rgba(226,193,151,0.15), 0 0 45px 12px rgba(74,16,29,0.35);
+    }
+    .door-btn-inner::before {
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 58%; height: 58%; border-radius: 50%; border: 1px solid rgba(226,193,151,0.35);
+    }
+    .door-btn-inner::after {
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 18%; height: 18%; border-radius: 50%;
+      background: rgba(226,193,151,0.60); box-shadow: 0 0 10px rgba(226,193,151,0.70);
+    }
+    /* "TAP HERE TO OPEN" label below button */
+    #doorCtaLabel {
+      position: absolute; top: calc(100% + 13px); left: 50%; transform: translateX(-50%);
+      font-family: 'Manrope', sans-serif; font-size: 8px; font-weight: 500;
+      letter-spacing: 0.40em; text-transform: uppercase;
+      color: rgba(226,193,151,0.55); white-space: nowrap; pointer-events: none;
+    }
+    @media (max-width: 767px) { #doorCtaLabel { font-size: 7px; letter-spacing: 0.34em; top: calc(100% + 10px); } }
+
+    @keyframes doorBtnBreathe {
+      0%, 100% { box-shadow: 0 0 0 1.5px rgba(226,193,151,0.72), inset 0 0 0 1px rgba(226,193,151,0.28), 0 0 22px 6px rgba(226,193,151,0.15), 0 0 45px 12px rgba(74,16,29,0.35); }
+      50%       { box-shadow: 0 0 0 1.5px rgba(226,193,151,0.90), inset 0 0 0 1px rgba(226,193,151,0.48), 0 0 32px 10px rgba(226,193,151,0.28), 0 0 60px 18px rgba(74,16,29,0.55); }
+    }
+    #doorRoundBtn:not(:disabled) .door-btn-inner { animation: doorBtnBreathe 3.4s ease-in-out infinite; }
+    #doorRoundBtn:focus-visible .door-btn-inner { box-shadow: 0 0 0 2px rgba(226,193,151,0.92), 0 0 0 4px rgba(226,193,151,0.32), inset 0 0 0 1px rgba(226,193,151,0.52), 0 0 30px 8px rgba(226,193,151,0.30); }
+    #doorRoundBtn:disabled { cursor: default; pointer-events: none; }
+
+    /* Cinematic progress rail — deliberate design element, not a fake scrollbar */
+    #doorProgressRail {
+      position: absolute; top: 15%; bottom: 15%; right: 28px; width: 1px;
+      background: rgba(226,193,151,0.12); z-index: 20; pointer-events: none;
+      opacity: 0; will-change: opacity;
+    }
+    #doorProgressRail::before {
+      content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 3px; height: 3px; border-radius: 50%;
+      background: rgba(226,193,151,0.50); box-shadow: 0 0 6px rgba(226,193,151,0.35);
+    }
+    #doorProgressRail::after {
+      content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 3px; height: 3px; border-radius: 50%; background: rgba(226,193,151,0.22);
+    }
+    #doorProgressFill {
+      position: absolute; top: 0; left: 0; right: 0; height: 100%;
+      transform-origin: top center; transform: scaleY(0);
+      background: linear-gradient(to bottom, rgba(226,193,151,0.80), rgba(226,193,151,0.35));
+      will-change: transform;
+    }
+    #doorProgressDot {
+      position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%);
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(226,193,151,0.90); box-shadow: 0 0 8px rgba(226,193,151,0.60);
+    }
+    @media (max-width: 767px) { #doorProgressRail { right: 16px; } }
+
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-      }
-      .reveal-inner {
-        transform: none !important;
-        opacity: 1 !important;
-      }
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+      .reveal-inner { transform: none !important; opacity: 1 !important; }
     }
   </style>
 </head>
@@ -102,44 +315,75 @@
   <!-- ======================================================== -->
   <!-- 0. CEREMONIAL WEDDING DOOR INTRO OVERLAY                 -->
   <!-- ======================================================== -->
-  <div class="fixed inset-0 z-[100] bg-[#090607] flex items-center justify-center overflow-hidden" id="weddingIntro" role="dialog" aria-modal="true" aria-label="Ceremonial Entrance">
-    <!-- 3D Perspective Door Stage -->
-    <div class="absolute inset-0 overflow-hidden" id="doorStage">
-      
-      <!-- Ambient Backlight Elements (Seam glow & Expanding bloom) -->
-      <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 opacity-0 will-change-transform will-change-opacity" id="doorLightBloom">
-        <div class="w-full h-full" style="background: radial-gradient(ellipse at 50% 50%, rgba(251, 240, 221, 0.85) 0%, rgba(226, 193, 151, 0.5) 30%, rgba(74, 16, 29, 0.3) 60%, transparent 80%);"></div>
-      </div>
-      <div class="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-1 pointer-events-none z-15 opacity-0 will-change-opacity" id="doorLightSeam" style="background: linear-gradient(to right, transparent, rgba(251,240,221,0.95), transparent); box-shadow: 0 0 15px rgba(226,193,151,0.85), 0 0 35px rgba(251,240,221,0.7);"></div>
+  <div class="fixed inset-0 z-[100] overflow-hidden" id="weddingIntro" role="dialog" aria-modal="true" aria-label="Ceremonial Entrance">
 
-      <!-- Left Door Panel (Hinged on Left Edge) -->
-      <div class="door-panel door-left absolute top-0 left-0 w-1/2 h-full overflow-hidden will-change-transform z-20" id="doorLeft" style="box-shadow: inset -2px 0 12px rgba(0,0,0,0.85);">
-        <div class="door-leaf absolute top-0 left-0 w-[100vw] h-full" style="background: url('assets/images/wedding-doors.jpg') no-repeat center center / cover;"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/60 pointer-events-none"></div>
+    <!-- LAYER 1: Stationary artwork — outer architecture stays still -->
+    <div id="doorArtworkFrame"></div>
+
+    <!-- LAYER 2: Atmospheric vignette -->
+    <div id="doorAtmosphere"></div>
+
+    <!-- LAYER 3: Dark interior. Hides the hero video before doors open.
+         GSAP fades this to 0 as doors open → reveals video directly.
+         This eliminates the "duplicate doorway artwork" discontinuity. -->
+    <div id="doorInteriorReveal"></div>
+
+    <!-- LAYER 4: Soft secondary bloom -->
+    <div id="doorLightBloom"></div>
+
+    <!-- LAYER 5: 3D Door Stage — only the rotating door leaves live here -->
+    <div id="doorStage">
+
+      <!-- Left Door Leaf — hinged on LEFT edge (transform-origin: 0% 50%) -->
+      <div class="door-panel door-left absolute top-0 left-0 w-1/2 h-full" id="doorLeft">
+        <div class="door-leaf-inner"></div>
+        <div class="door-panel-edge"></div>
       </div>
 
-      <!-- Right Door Panel (Hinged on Right Edge) -->
-      <div class="door-panel door-right absolute top-0 right-0 w-1/2 h-full overflow-hidden will-change-transform z-20" id="doorRight" style="box-shadow: inset 2px 0 12px rgba(0,0,0,0.85);">
-        <div class="door-leaf absolute top-0 right-0 w-[100vw] h-full" style="background: url('assets/images/wedding-doors.jpg') no-repeat center center / cover;"></div>
-        <div class="absolute inset-0 bg-gradient-to-l from-black/40 via-transparent to-black/60 pointer-events-none"></div>
+      <!-- Right Door Leaf — hinged on RIGHT edge (transform-origin: 100% 50%) -->
+      <div class="door-panel door-right absolute top-0 right-0 w-1/2 h-full" id="doorRight">
+        <div class="door-leaf-inner"></div>
+        <div class="door-panel-edge"></div>
       </div>
 
-      <!-- Center Seam Shadow Line (Pre-interaction) -->
-      <div class="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2px] pointer-events-none z-25" id="doorSeamShadow" style="background: rgba(14,10,11,0.9); box-shadow: 0 0 4px rgba(0,0,0,0.95);"></div>
     </div>
 
-    <!-- Ceremonial Enter Button Container -->
-    <div class="relative z-30 flex flex-col items-center justify-center p-6 text-center select-none" id="doorActionContainer">
-      <div class="mb-4 overflow-hidden">
-        <span class="text-[10px] md:text-xs tracking-[0.4em] uppercase text-secondary/70 font-light block">
-          A Private Celebration
-        </span>
-      </div>
-      <button id="doorEnterBtn" class="group relative inline-flex items-center justify-center gap-3 px-8 py-4 sm:px-10 sm:py-4.5 border border-secondary/50 bg-[#0e0a0b]/80 backdrop-blur-md text-secondary text-xs sm:text-sm uppercase tracking-[0.3em] font-medium transition-all duration-500 ease-out hover:border-secondary hover:bg-secondary/15 hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[0_0_35px_rgba(226,193,151,0.3)] focus:outline-none focus:ring-1 focus:ring-secondary cursor-pointer" aria-label="Enter the celebration">
-        <span>Enter The Celebration</span>
-        <span class="material-symbols-outlined text-base sm:text-lg transform group-hover:translate-x-1 transition-transform duration-300">arrow_forward</span>
+    <!-- LAYER 6: Center seam shadow -->
+    <div id="doorCenterSeam"></div>
+
+    <!-- LAYER 7: Expanding champagne radial light wave -->
+    <div id="doorLightWave"></div>
+
+    <!-- Center ignition hot-spot -->
+    <div id="doorIgnition"></div>
+
+    <!-- LAYER 8: Vertical seam ignition glow -->
+    <div id="doorLightSeam"></div>
+
+    <!-- LAYER 9: Welcome text composition + ceremonial button -->
+    <div id="doorWelcomeGroup">
+
+      <!-- Small uppercase eyebrow -->
+      <div id="doorEyebrow">A Welcome to Our Celebration</div>
+
+      <!-- Couple names — large italic serif -->
+      <div id="doorNamesDisplay">Binshad <span class="ampersand">&amp;</span> Shahina</div>
+
+      <!-- Round ceremonial button -->
+      <button id="doorRoundBtn" aria-label="Enter the celebration">
+        <div class="door-btn-inner"></div>
+        <span id="doorCtaLabel">Tap Here to Open</span>
       </button>
+
     </div>
+
+    <!-- Cinematic progress rail — right edge, deliberate design element -->
+    <div id="doorProgressRail">
+      <div id="doorProgressFill">
+        <div id="doorProgressDot"></div>
+      </div>
+    </div>
+
   </div>
 
 
@@ -182,11 +426,11 @@
         <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#celebration">The Celebration</a>
         <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#itinerary">The Itinerary</a>
         <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#gallery">Portraits</a>
-        <a class="mobile-nav-link text-secondary hover:text-primary transition-colors" href="#rsvp">Répondez S’il Vous Plaît</a>
+        <a class="mobile-nav-link text-secondary hover:text-primary transition-colors" href="#rsvp">R├⌐pondez SΓÇÖil Vous Pla├«t</a>
       </div>
     </div>
     <div class="text-center text-xs tracking-widest text-outline uppercase pb-6">
-      Florence, Tuscany • Dec 24, 2026
+      Florence, Tuscany ΓÇó Dec 24, 2026
     </div>
   </div>
 
@@ -250,7 +494,7 @@
         <!-- Editorial Statement -->
         <div class="lg:col-span-7 space-y-6">
           <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
-            Chapter 00 • The Overture
+            Chapter 00 ΓÇó The Overture
           </span>
           <div class="reveal-mask">
             <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl lg:text-6xl text-on-surface font-light leading-[1.1]">
@@ -272,10 +516,10 @@
         <div class="lg:col-span-5 relative">
           <div class="border-l border-secondary/30 pl-8 lg:pl-12 py-4 space-y-6">
             <p class="font-title-editorial italic text-2xl lg:text-3xl text-secondary-fixed leading-snug">
-              “Some lives are linked across centuries; we merely had to arrive at the agreed corner.”
+              ΓÇ£Some lives are linked across centuries; we merely had to arrive at the agreed corner.ΓÇ¥
             </p>
             <div class="text-[11px] uppercase tracking-[0.3em] text-outline">
-              Inscription from the Arno River • 2021
+              Inscription from the Arno River ΓÇó 2021
             </div>
           </div>
         </div>
@@ -299,7 +543,7 @@
                 <div class="w-full h-full bg-cover bg-center will-change-transform" id="storyImg1" style="background-image: url('assets/images/story-bindhu.avif');"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent"></div>
                 <div class="absolute bottom-6 left-6 flex items-center gap-3">
-                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate I • Shahina</span>
+                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate I ΓÇó Shahina</span>
                 </div>
               </div>
 
@@ -308,7 +552,7 @@
                 <div class="w-full h-full bg-cover bg-center will-change-transform" id="storyImg2" style="background-image: url('assets/images/story-arjun.avif');"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent"></div>
                 <div class="absolute bottom-6 left-6 flex items-center gap-3">
-                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate II • Binshad</span>
+                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate II ΓÇó Binshad</span>
                 </div>
               </div>
 
@@ -317,7 +561,7 @@
                 <div class="w-full h-full bg-cover bg-center will-change-transform" id="storyImg3" style="background-image: url('assets/images/story-couple.avif');"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent"></div>
                 <div class="absolute bottom-6 left-6 flex items-center gap-3">
-                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate III • The Vow</span>
+                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate III ΓÇó The Vow</span>
                 </div>
               </div>
 
@@ -331,7 +575,7 @@
               <!-- Chapter I Text -->
               <div class="story-chapter-card top-0 space-y-4 md:space-y-6 opacity-100" id="storyChapter1">
                 <span class="text-[10px] md:text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
-                  Chapter I • Autumn 2021
+                  Chapter I ΓÇó Autumn 2021
                 </span>
                 <div class="reveal-mask">
                   <h3 class="font-headline-lg text-2xl md:text-3xl xl:text-5xl text-on-surface font-light leading-tight">
@@ -343,7 +587,7 @@
                 </p>
                 <div class="pt-2 md:pt-4 border-l border-secondary/40 pl-4 md:pl-6">
                   <p class="font-title-editorial italic text-base md:text-lg text-secondary-fixed">
-                    “Words came easily, as if rehearsed in another lifetime.”
+                    ΓÇ£Words came easily, as if rehearsed in another lifetime.ΓÇ¥
                   </p>
                 </div>
               </div>
@@ -351,7 +595,7 @@
               <!-- Chapter II Text -->
               <div class="story-chapter-card top-0 space-y-4 md:space-y-6 opacity-0" id="storyChapter2">
                 <span class="text-[10px] md:text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
-                  Chapter II • 2022–2024
+                  Chapter II ΓÇó 2022ΓÇô2024
                 </span>
                 <div class="reveal-mask">
                   <h3 class="font-headline-lg text-2xl md:text-3xl xl:text-5xl text-on-surface font-light leading-tight">
@@ -363,11 +607,11 @@
                 </p>
                 <div class="flex items-center gap-4 md:gap-6 pt-2 text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-outline">
                   <span>London</span>
-                  <span>•</span>
+                  <span>ΓÇó</span>
                   <span>New York</span>
-                  <span>•</span>
+                  <span>ΓÇó</span>
                   <span>Mumbai</span>
-                  <span>•</span>
+                  <span>ΓÇó</span>
                   <span>Lake Como</span>
                 </div>
               </div>
@@ -375,7 +619,7 @@
               <!-- Chapter III Text -->
               <div class="story-chapter-card top-0 space-y-4 md:space-y-6 opacity-0" id="storyChapter3">
                 <span class="text-[10px] md:text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
-                  Chapter III • The Vow
+                  Chapter III ΓÇó The Vow
                 </span>
                 <div class="reveal-mask">
                   <h3 class="font-headline-lg text-2xl md:text-3xl xl:text-5xl text-on-surface font-light leading-tight">
@@ -406,7 +650,7 @@
           <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
             <img alt="Shahina Veil Portrait" class="w-full h-full object-cover" src="assets/images/story-bindhu.avif"/>
           </div>
-          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter I • Autumn 2021</span>
+          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter I ΓÇó Autumn 2021</span>
           <h3 class="font-headline-lg text-3xl text-on-surface font-light">The Meeting in <span class="italic text-secondary">Florence</span></h3>
           <p class="text-on-surface-variant font-light text-base leading-relaxed">
             It began in the quiet cloister of an antiquarian library overlooking the Arno. Amidst weathered vellum and early morning fog, an accidental exchange of notes sparked a conversation that outlasted the rain, the afternoon, and eventually, the season itself.
@@ -417,7 +661,7 @@
           <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
             <img alt="Binshad Black Tie Portrait" class="w-full h-full object-cover" src="assets/images/story-arjun.avif"/>
           </div>
-          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter II • 2022–2024</span>
+          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter II ΓÇó 2022ΓÇô2024</span>
           <h3 class="font-headline-lg text-3xl text-on-surface font-light">Across Continents, <span class="italic text-secondary">One Horizon</span></h3>
           <p class="text-on-surface-variant font-light text-base leading-relaxed">
             Flights across twilight zones, handwritten dispatches sealed in red wax, and midnight calls across six timezones became the architecture of our devotion. Every city we walked alone was only ever half-seen until we walked it together.
@@ -428,7 +672,7 @@
           <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
             <img alt="Couple Archway Candlelight Portrait" class="w-full h-full object-cover" src="assets/images/story-couple.avif"/>
           </div>
-          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter III • The Vow</span>
+          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter III ΓÇó The Vow</span>
           <h3 class="font-headline-lg text-3xl text-on-surface font-light">Under the <span class="italic text-secondary">Tuscan Stars</span></h3>
           <p class="text-on-surface-variant font-light text-base leading-relaxed">
             On Christmas Eve, surrounded by ancient stone arches and the fragrance of olive wood embers, we seal our bond. A celebration crafted not for spectacle, but for intimacy, truth, and devotion.
@@ -496,7 +740,7 @@
         <div class="text-center max-w-xl mx-auto mb-20 space-y-3">
           <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chronicle of The Day</span>
           <div class="reveal-mask">
-            <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl text-on-surface font-light">The Sacred &amp; The Soirée</h2>
+            <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl text-on-surface font-light">The Sacred &amp; The Soir├⌐e</h2>
           </div>
           <p class="text-on-surface-variant font-light text-sm sm:text-base">We invite our cherished guests to observe the timings with grace.</p>
         </div>
@@ -614,7 +858,7 @@
         <!-- Asymmetrical Editorial Collage -->
         <div class="gallery-grid grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           <!-- Plate I: Bride Veil -->
-          <div class="gallery-plate md:col-span-4 cursor-pointer group space-y-4" onclick="openLightbox('assets/images/gallery-bindhu.avif', 'Plate I • Shahina', 'Antique chantilly lace veil beneath soft chiaroscuro light.')">
+          <div class="gallery-plate md:col-span-4 cursor-pointer group space-y-4" onclick="openLightbox('assets/images/gallery-bindhu.avif', 'Plate I ΓÇó Shahina', 'Antique chantilly lace veil beneath soft chiaroscuro light.')">
             <div class="w-full h-[520px] overflow-hidden border border-secondary/20 rounded-sm">
               <img alt="Shahina Portrait" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out parallax-img" src="assets/images/gallery-bindhu.avif"/>
             </div>
@@ -625,18 +869,18 @@
           </div>
 
           <!-- Plate II: Archway Centerpiece (Higher Anchor) -->
-          <div class="gallery-plate md:col-span-5 cursor-pointer group space-y-4 md:-mt-8" onclick="openLightbox('assets/images/gallery-couple.avif', 'Plate II • The Union', 'Binshad and Shahina beneath candlelit floral installations.')">
+          <div class="gallery-plate md:col-span-5 cursor-pointer group space-y-4 md:-mt-8" onclick="openLightbox('assets/images/gallery-couple.avif', 'Plate II ΓÇó The Union', 'Binshad and Shahina beneath candlelit floral installations.')">
             <div class="w-full h-[620px] overflow-hidden border border-secondary/30 rounded-sm">
               <img alt="Couple Portrait" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out parallax-img" src="assets/images/gallery-couple.avif"/>
             </div>
             <div class="flex justify-between text-xs tracking-widest uppercase">
-              <span class="text-secondary font-medium">Plate II • The Union</span>
+              <span class="text-secondary font-medium">Plate II ΓÇó The Union</span>
               <span class="text-outline">The Union</span>
             </div>
           </div>
 
           <!-- Plate III: Groom Portrait -->
-          <div class="gallery-plate md:col-span-3 cursor-pointer group space-y-4" onclick="openLightbox('assets/images/gallery-arjun.avif', 'Plate III • Binshad', 'Bespoke velvet tuxedo tailored for the winter celebration.')">
+          <div class="gallery-plate md:col-span-3 cursor-pointer group space-y-4" onclick="openLightbox('assets/images/gallery-arjun.avif', 'Plate III ΓÇó Binshad', 'Bespoke velvet tuxedo tailored for the winter celebration.')">
             <div class="w-full h-[460px] overflow-hidden border border-secondary/20 rounded-sm">
               <img alt="Binshad Portrait" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out parallax-img" src="assets/images/gallery-arjun.avif"/>
             </div>
@@ -670,7 +914,7 @@
       <div class="max-w-2xl mx-auto">
         <div class="text-center space-y-3 mb-12">
           <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
-            Répondez S’il Vous Plaît
+            R├⌐pondez SΓÇÖil Vous Pla├«t
           </span>
           <div class="reveal-mask">
             <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl text-on-surface font-light">
@@ -733,7 +977,7 @@
             Your dispatch has been formally sealed in our celebration ledger. We look forward to sharing this timeless moment in Tuscany with you.
           </p>
           <div class="text-[10px] uppercase tracking-[0.3em] text-secondary pt-2">
-            Florence • 24.12.2026
+            Florence ΓÇó 24.12.2026
           </div>
         </div>
       </div>
@@ -759,11 +1003,11 @@
           </h2>
         </div>
         <p class="font-title-editorial italic text-xl text-secondary-fixed">
-          Florence, Tuscany • December 24, 2026
+          Florence, Tuscany ΓÇó December 24, 2026
         </p>
         <div class="pt-8">
           <span class="text-[10px] uppercase tracking-[0.35em] text-outline block">
-            End of Monograph • Love Without End
+            End of Monograph ΓÇó Love Without End
           </span>
         </div>
       </div>
@@ -775,7 +1019,7 @@
   <!-- ======================================================== -->
   <footer class="w-full bg-[#080606] border-t border-secondary/15 py-12 px-gutter-mobile lg:px-margin">
     <div class="max-w-[1440px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-6 text-xs text-outline tracking-widest uppercase">
-      <div>© 2026 Binshad &amp; Shahina. A Private Celebration.</div>
+      <div>┬⌐ 2026 Binshad &amp; Shahina. A Private Celebration.</div>
       <div class="text-secondary/70">Florence &amp; Lake Como, Italy</div>
     </div>
   </footer>
@@ -793,230 +1037,296 @@
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // =====================================================
+    // STEP 10 — CINEMATIC DOOR INTRO ENGINE
+    // State: locked → opening → video → finishing → complete
+    // =====================================================
+
     // --- 0. CEREMONIAL WEDDING DOOR INTRO ENGINE ---
-    let introFinished = false;
+    let introState = 'locked';
     let activeVideo = null;
+    let homepageRevealStarted = false;
+    let failsafeTimer = null;
 
-    function revealHomepageUI() {
-      if (introFinished) return;
-      introFinished = true;
+    // beginHomepageReveal: called ~2s before video ends.
+    // Reveals nav + hero UI while the film is still playing.
+    function beginHomepageReveal() {
+      if (homepageRevealStarted) return;
+      homepageRevealStarted = true;
 
-      const mainNav = document.getElementById('mainNav');
+      const mainNav        = document.getElementById('mainNav');
       const heroTypography = document.getElementById('heroTypography');
-      const heroAnimItems = document.querySelectorAll('.hero-anim-item');
-      const heroBottomBar = document.getElementById('heroBottomBar');
-
-      // Enable and fade in top navigation
-      if (mainNav) {
-        mainNav.classList.remove('opacity-0', 'pointer-events-none');
-        gsap.to(mainNav, { opacity: 1, duration: 0.9, ease: 'power2.out' });
-      }
-
-      // Enable hero typography & sequential entrance animation
-      if (heroTypography) {
-        heroTypography.classList.remove('opacity-0', 'pointer-events-none');
-        gsap.to(heroTypography, { opacity: 1, duration: 0.4 });
-      }
-      if (heroBottomBar) {
-        heroBottomBar.classList.remove('opacity-0', 'pointer-events-none');
-      }
+      const heroAnimItems  = document.querySelectorAll('.hero-anim-item');
+      const heroBottomBar  = document.getElementById('heroBottomBar');
 
       if (!prefersReducedMotion) {
+        if (mainNav) {
+          mainNav.classList.remove('opacity-0', 'pointer-events-none');
+          gsap.fromTo(mainNav,
+            { opacity: 0, y: -10, filter: 'blur(4px)' },
+            { opacity: 1, y: 0,   filter: 'blur(0px)', duration: 1.2, ease: 'power2.out' }
+          );
+        }
+        if (heroTypography) {
+          heroTypography.classList.remove('opacity-0', 'pointer-events-none');
+          gsap.fromTo(heroTypography,
+            { opacity: 0, y: 22, scale: 0.983, filter: 'blur(6px)' },
+            { opacity: 1, y: 0,  scale: 1,     filter: 'blur(0px)', duration: 1.5, ease: 'power3.out', delay: 0.18 }
+          );
+        }
         if (heroAnimItems.length > 0) {
           gsap.fromTo(heroAnimItems,
-            { y: 35, opacity: 0 },
-            { y: 0, opacity: 1, duration: 1.1, stagger: 0.16, ease: 'power3.out', delay: 0.1 }
+            { y: 24, opacity: 0 },
+            { y: 0,  opacity: 1, duration: 1.1, stagger: 0.14, ease: 'power3.out', delay: 0.30 }
           );
         }
         if (heroBottomBar) {
+          heroBottomBar.classList.remove('opacity-0', 'pointer-events-none');
           gsap.fromTo(heroBottomBar,
-            { y: 22, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.5 }
+            { y: 14, opacity: 0 },
+            { y: 0,  opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.70 }
           );
         }
       } else {
+        if (mainNav)        { mainNav.classList.remove('opacity-0','pointer-events-none');        gsap.set(mainNav,        { opacity: 1 }); }
+        if (heroTypography) { heroTypography.classList.remove('opacity-0','pointer-events-none'); gsap.set(heroTypography, { opacity: 1, y: 0, scale: 1 }); }
         if (heroAnimItems.length > 0) gsap.set(heroAnimItems, { y: 0, opacity: 1 });
-        if (heroBottomBar) gsap.set(heroBottomBar, { y: 0, opacity: 1 });
+        if (heroBottomBar)  { heroBottomBar.classList.remove('opacity-0','pointer-events-none');  gsap.set(heroBottomBar,  { y: 0, opacity: 1 }); }
       }
+    }
 
-      // Safely restore native scrolling
+    // completeIntro: freezes final video frame, restores scroll, removes overlay.
+    function completeIntro() {
+      if (introState === 'complete') return;
+      introState = 'complete';
+
+      if (failsafeTimer) { clearTimeout(failsafeTimer); failsafeTimer = null; }
+
+      // Freeze final frame — do NOT reset currentTime
+      if (activeVideo) { try { activeVideo.pause(); } catch(e) {} }
+
+      beginHomepageReveal();
+
+      // Restore native scrolling
       document.body.classList.remove('overflow-hidden');
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
 
-      // Completely remove door intro from viewport & accessibility tree
       const weddingIntro = document.getElementById('weddingIntro');
       if (weddingIntro) {
-        weddingIntro.style.display = 'none';
-        weddingIntro.setAttribute('aria-hidden', 'true');
+        setTimeout(() => {
+          weddingIntro.style.display = 'none';
+          weddingIntro.setAttribute('aria-hidden', 'true');
+        }, 350);
       }
 
-      // Refresh ScrollTrigger positions after layout release
       requestAnimationFrame(() => {
         ScrollTrigger.sort();
         ScrollTrigger.refresh();
       });
     }
 
-    function onVideoCompleted() {
-      // FREEZE EXACT FINAL FRAME:
-      // Pause video in place at its ending frame without resetting currentTime or hiding it.
-      if (activeVideo) {
-        try {
-          activeVideo.pause();
-        } catch (e) {
-          // ignore
-        }
-      }
-      revealHomepageUI();
-    }
-
     function initDoorIntro() {
-      const weddingIntro = document.getElementById('weddingIntro');
-      const doorEnterBtn = document.getElementById('doorEnterBtn');
-      const doorActionContainer = document.getElementById('doorActionContainer');
-      const doorLeft = document.getElementById('doorLeft');
-      const doorRight = document.getElementById('doorRight');
-      const doorLightBloom = document.getElementById('doorLightBloom');
-      const doorLightSeam = document.getElementById('doorLightSeam');
-      const doorSeamShadow = document.getElementById('doorSeamShadow');
+      const weddingIntro       = document.getElementById('weddingIntro');
+      const doorRoundBtn       = document.getElementById('doorRoundBtn');
+      const doorLeft           = document.getElementById('doorLeft');
+      const doorRight          = document.getElementById('doorRight');
+      const doorLightBloom     = document.getElementById('doorLightBloom');
+      const doorLightSeam      = document.getElementById('doorLightSeam');
+      const doorLightWave      = document.getElementById('doorLightWave');
+      const doorCenterSeam     = document.getElementById('doorCenterSeam');
+      const doorInteriorReveal = document.getElementById('doorInteriorReveal');
+      const doorIgnition       = document.getElementById('doorIgnition');
+      const doorEyebrow        = document.getElementById('doorEyebrow');
+      const doorNamesDisplay   = document.getElementById('doorNamesDisplay');
+      const doorProgressRail   = document.getElementById('doorProgressRail');
+      const doorProgressFill   = document.getElementById('doorProgressFill');
+      const doorProgressDot    = document.getElementById('doorProgressDot');
 
       const videoDesktop = document.getElementById('heroVideoDesktop');
-      const videoMobile = document.getElementById('heroVideoMobile');
+      const videoMobile  = document.getElementById('heroVideoMobile');
 
-      if (!weddingIntro) {
-        revealHomepageUI();
+      if (!weddingIntro) { beginHomepageReveal(); completeIntro(); return; }
+
+      // Reduced-motion fast path
+      if (prefersReducedMotion) {
+        weddingIntro.style.display = 'none';
+        weddingIntro.setAttribute('aria-hidden', 'true');
+        beginHomepageReveal();
+        completeIntro();
         return;
       }
 
-      // Responsive video selection: only load the active viewport asset
+      // Responsive video selection (no load yet — preload:none preserved)
       const isMobile = window.innerWidth < 768;
-      activeVideo = isMobile ? videoMobile : videoDesktop;
-      const inactiveVideo = isMobile ? videoDesktop : videoMobile;
-
-      if (inactiveVideo) {
-        inactiveVideo.removeAttribute('src');
-        inactiveVideo.load();
-      }
-
-      const videoSrc = isMobile 
+      const videoSrc = isMobile
         ? 'assets/videos/binshad-shahina-wedding-mobile-optimized.mp4'
         : 'assets/videos/binshad-shahina-wedding-desktop-optimized.mp4';
 
-      if (prefersReducedMotion) {
-        // Reduced motion: skip door intro entirely and reveal page
-        weddingIntro.style.display = 'none';
-        weddingIntro.setAttribute('aria-hidden', 'true');
-        revealHomepageUI();
-        return;
+      activeVideo = isMobile ? videoMobile : videoDesktop;
+      const inactiveVideo = isMobile ? videoDesktop : videoMobile;
+      if (inactiveVideo) { inactiveVideo.removeAttribute('src'); }
+
+      // GSAP initial states
+      if (doorLeft)  gsap.set(doorLeft,  { transformOrigin: '0% 50%',   rotateY: 0 });
+      if (doorRight) gsap.set(doorRight, { transformOrigin: '100% 50%', rotateY: 0 });
+      if (doorLightWave) {
+        gsap.set(doorLightWave, {
+          xPercent: -50, yPercent: -50, scale: 0.015, opacity: 0,
+          transformOrigin: '50% 50%'
+        });
+      }
+      if (doorRoundBtn) gsap.set(doorRoundBtn, { transformOrigin: '50% 50%' });
+
+      // Welcome text entrance — slow, restrained
+      const introEntrance = gsap.timeline({ delay: 0.5 });
+      if (doorEyebrow) {
+        introEntrance.fromTo(doorEyebrow,
+          { opacity: 0, y: 8, filter: 'blur(4px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.8, ease: 'power2.out' }, 0);
+      }
+      if (doorNamesDisplay) {
+        introEntrance.fromTo(doorNamesDisplay,
+          { opacity: 0, y: 10, filter: 'blur(6px)' },
+          { opacity: 1, y: 0,  filter: 'blur(0px)', duration: 2.0, ease: 'power2.out' }, 0.25);
+      }
+      if (doorRoundBtn) {
+        introEntrance.fromTo(doorRoundBtn,
+          { opacity: 0, y: 6, scale: 0.94 },
+          { opacity: 1, y: 0, scale: 1,   duration: 1.6, ease: 'power2.out' }, 0.55);
+      }
+      if (doorProgressRail) {
+        introEntrance.to(doorProgressRail,
+          { opacity: 1, duration: 1.2, ease: 'power2.out' }, 1.2);
       }
 
-      // Ensure proper 3D transform origins
-      if (doorLeft) gsap.set(doorLeft, { transformOrigin: '0% 50%' });
-      if (doorRight) gsap.set(doorRight, { transformOrigin: '100% 50%' });
+      // Button click handler
+      if (doorRoundBtn) {
+        doorRoundBtn.addEventListener('click', handleEnterClick, { once: true });
+      }
 
-      // Prepare active video source
-      if (activeVideo && !activeVideo.getAttribute('src')) {
+      function handleEnterClick() {
+        if (introState !== 'locked') return;
+        introState = 'opening';
+        doorRoundBtn.disabled = true;
+        introEntrance.kill();
+
+        const tl = gsap.timeline();
+
+        // T=0 — Button press-in + welcome text yields
+        tl.to(doorRoundBtn, { scale: 0.85, opacity: 0.5, duration: 0.20, ease: 'power2.inOut' }, 0);
+        tl.to([doorEyebrow, doorNamesDisplay].filter(Boolean),
+          { opacity: 0, y: -8, filter: 'blur(3px)', duration: 0.45, ease: 'power2.in', stagger: 0.06 }, 0);
+
+        // T=0 — Seam shadow fades
+        if (doorCenterSeam) tl.to(doorCenterSeam, { opacity: 0, duration: 0.28, ease: 'power2.out' }, 0);
+
+        // T=0.08 — Center ignition flash
+        if (doorIgnition) {
+          tl.to(doorIgnition, { opacity: 1, duration: 0.10, ease: 'power3.out' }, 0.08);
+          tl.to(doorIgnition, { scale: 2.8, opacity: 0, duration: 0.55, ease: 'power2.out' }, 0.15);
+        }
+
+        // T=0.10 — Seam glow
+        if (doorLightSeam) {
+          tl.to(doorLightSeam, { opacity: 1, duration: 0.28, ease: 'power2.out' }, 0.10);
+          tl.to(doorLightSeam, { opacity: 0, duration: 0.55, ease: 'power1.in' }, 0.55);
+        }
+
+        // T=0.12 — Button collapses
+        tl.to(doorRoundBtn, { scale: 0.40, opacity: 0, duration: 0.38, ease: 'power2.in' }, 0.12);
+
+        // T=0.08 — Bloom sustains through door movement
+        if (doorLightBloom) tl.to(doorLightBloom, { opacity: 0.88, duration: 1.90, ease: 'power2.out' }, 0.08);
+
+        // T=0.10 — RADIAL WAVE EXPANDS (the cinematic centrepiece)
+        if (doorLightWave) {
+          tl.to(doorLightWave, { opacity: 0.92, duration: 0.14, ease: 'power3.out' }, 0.10);
+          tl.to(doorLightWave, { scale: 1, duration: 1.30, ease: 'power2.out' }, 0.10);
+          tl.to(doorLightWave, { opacity: 0, duration: 0.72, ease: 'power1.in' }, 0.92);
+        }
+
+        // T=0.20 — Doors open (heavy, physical)
+        if (doorLeft)  tl.to(doorLeft,  { rotateY: -95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
+        if (doorRight) tl.to(doorRight, { rotateY:  95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
+
+        // T=0.35 — Load and play video in parallel with door opening
+        tl.call(() => { prepareAndPlayVideo(); }, null, 0.35);
+
+        // T=1.90 — Interior reveal fades → video is directly visible
+        if (doorInteriorReveal) tl.to(doorInteriorReveal, { opacity: 0, duration: 0.65, ease: 'power2.inOut' }, 1.90);
+
+        // T=2.15 — Bloom fades
+        if (doorLightBloom) tl.to(doorLightBloom, { opacity: 0, duration: 0.85, ease: 'power1.in' }, 2.15);
+
+        // T=2.50 — Artwork frame fades (leaves are folded back)
+        const doorArtworkFrame = document.getElementById('doorArtworkFrame');
+        const doorAtmosphere   = document.getElementById('doorAtmosphere');
+        tl.to([doorArtworkFrame, doorAtmosphere].filter(Boolean),
+          { opacity: 0, duration: 0.60, ease: 'power1.in' }, 2.50);
+
+        // T=2.80 — Progress rail fades
+        if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.40, ease: 'power1.in' }, 2.80);
+
+        // T=2.90 — Overlay becomes non-blocking (video continues playing behind)
+        tl.to(weddingIntro, {
+          opacity: 0, duration: 0.45, ease: 'power1.in',
+          onComplete: () => { weddingIntro.style.pointerEvents = 'none'; }
+        }, 2.90);
+
+        // Progress rail fill animation
+        if (doorProgressFill && doorProgressDot) {
+          gsap.to(doorProgressFill, { scaleY: 1, duration: 1.85, ease: 'power2.inOut', delay: 0.20 });
+          gsap.to(doorProgressDot,  { top: '100%', duration: 1.85, ease: 'power2.inOut', delay: 0.20 });
+        }
+
+        // Failsafe
+        failsafeTimer = setTimeout(() => {
+          if (introState !== 'complete') {
+            console.warn('[DoorIntro] Failsafe triggered.');
+            completeIntro();
+          }
+        }, 12000);
+      }
+
+      // prepareAndPlayVideo: assigns src on click → waits canplay → seeks frame 0
+      // → plays → fades to opacity 1. First visible frame IS frame 0.
+      function prepareAndPlayVideo() {
+        if (!activeVideo) { setTimeout(completeIntro, 2400); return; }
+        introState = 'video';
+
         activeVideo.src = videoSrc;
         activeVideo.load();
-      }
 
-      if (doorEnterBtn) {
-        doorEnterBtn.addEventListener('click', () => {
-          // Prevent multiple clicks
-          doorEnterBtn.disabled = true;
-          doorEnterBtn.style.pointerEvents = 'none';
-
-          // 1. Enter button fades and scales out
-          if (doorActionContainer) {
-            gsap.to(doorActionContainer, {
-              opacity: 0,
-              scale: 0.95,
-              duration: 0.5,
-              ease: 'power2.inOut'
+        function onCanPlay() {
+          activeVideo.currentTime = 0;
+          const playPromise = activeVideo.play();
+          gsap.to(activeVideo, { opacity: 1, duration: 0.80, ease: 'power2.out' });
+          if (playPromise !== undefined) {
+            playPromise.catch((err) => {
+              console.warn('[DoorIntro] Video play failed:', err);
+              completeIntro();
             });
           }
-
-          // 2. Light seam and warm backlight leak
-          if (doorLightSeam) {
-            gsap.to(doorLightSeam, {
-              opacity: 1,
-              duration: 0.4,
-              ease: 'power2.out'
-            });
-          }
-          if (doorLightBloom) {
-            gsap.to(doorLightBloom, {
-              opacity: 0.95,
-              scale: 1.15,
-              duration: 1.2,
-              delay: 0.15,
-              ease: 'power2.out'
-            });
-          }
-          if (doorSeamShadow) {
-            gsap.to(doorSeamShadow, { opacity: 0, duration: 0.35 });
-          }
-
-          // 3. Grand symmetrical 3D doors swing open
-          if (doorLeft) {
-            gsap.to(doorLeft, {
-              rotateY: -95,
-              duration: 1.9,
-              delay: 0.2,
-              ease: 'power3.inOut'
-            });
-          }
-          if (doorRight) {
-            gsap.to(doorRight, {
-              rotateY: 95,
-              duration: 1.9,
-              delay: 0.2,
-              ease: 'power3.inOut'
-            });
-          }
-
-          // 4. Reveal & play video behind doors
-          if (activeVideo) {
-            gsap.to(activeVideo, {
-              opacity: 1,
-              duration: 0.8,
-              delay: 0.45,
-              ease: 'power2.out'
-            });
-
-            const playPromise = activeVideo.play();
-            if (playPromise !== undefined) {
-              playPromise.catch((err) => {
-                console.warn('Video play interrupted, advancing to final frame:', err);
-                onVideoCompleted();
-              });
-            }
-
-            activeVideo.addEventListener('ended', onVideoCompleted, { once: true });
-
-            // Failsafe timer (if ended event does not fire within 9.5s)
-            setTimeout(() => {
-              if (!introFinished) {
-                onVideoCompleted();
-              }
-            }, 9500);
-          } else {
-            setTimeout(revealHomepageUI, 2000);
-          }
-
-          // 5. Fade out door overlay as doors finish swinging
-          gsap.to(weddingIntro, {
-            opacity: 0,
-            duration: 0.7,
-            delay: 1.6,
-            ease: 'power2.out',
-            onComplete: () => {
-              weddingIntro.style.display = 'none';
-              weddingIntro.setAttribute('aria-hidden', 'true');
+          activeVideo.addEventListener('timeupdate', function onTU() {
+            if (!activeVideo.duration || activeVideo.duration === Infinity) return;
+            if (activeVideo.duration - activeVideo.currentTime <= 2.0 && !homepageRevealStarted) {
+              activeVideo.removeEventListener('timeupdate', onTU);
+              beginHomepageReveal();
             }
           });
-        });
+          activeVideo.addEventListener('ended', () => {
+            introState = 'finishing';
+            completeIntro();
+          }, { once: true });
+        }
+
+        activeVideo.addEventListener('canplay', onCanPlay, { once: true });
+        activeVideo.addEventListener('loadedmetadata', function onMeta() {
+          setTimeout(() => {
+            if (introState === 'video' && activeVideo.readyState >= 3) onCanPlay();
+          }, 2500);
+        }, { once: true });
       }
     }
 
@@ -1037,7 +1347,7 @@
         // Responsive Scroll-Linked Hero Motion via gsap.matchMedia
         const heroMm = gsap.matchMedia();
 
-        // TIER 1: DESKTOP (1200px and above) — Full Cinematic Hero Parallax
+        // TIER 1: DESKTOP (1200px and above) ΓÇö Full Cinematic Hero Parallax
         heroMm.add("(min-width: 1200px)", () => {
           const heroScrollTl = gsap.timeline({
             scrollTrigger: {
@@ -1053,7 +1363,7 @@
           heroScrollTl.to(heroDarkOverlay, { opacity: 0.72, ease: 'none' }, 0);
         });
 
-        // TIER 2: TABLET / SMALL LAPTOP (768px to 1199px) — Calibrated Responsive Parallax
+        // TIER 2: TABLET / SMALL LAPTOP (768px to 1199px) ΓÇö Calibrated Responsive Parallax
         heroMm.add("(min-width: 768px) and (max-width: 1199px)", () => {
           const heroScrollTl = gsap.timeline({
             scrollTrigger: {
@@ -1069,7 +1379,7 @@
           heroScrollTl.to(heroDarkOverlay, { opacity: 0.70, ease: 'none' }, 0);
         });
 
-        // TIER 3: MOBILE (below 768px) — Lightweight Touch-Optimized Motion
+        // TIER 3: MOBILE (below 768px) ΓÇö Lightweight Touch-Optimized Motion
         heroMm.add("(max-width: 767px)", () => {
           const heroScrollTl = gsap.timeline({
             scrollTrigger: {
@@ -1117,7 +1427,7 @@
       const ch2 = document.getElementById('storyChapter2');
       const ch3 = document.getElementById('storyChapter3');
 
-      // TIER 1: DESKTOP — 1200px AND ABOVE (Full Cinematic Master Pinning)
+      // TIER 1: DESKTOP ΓÇö 1200px AND ABOVE (Full Cinematic Master Pinning)
       storyMm.add("(min-width: 1200px)", () => {
         gsap.set(slide1, { autoAlpha: 1 });
         gsap.set([slide2, slide3], { autoAlpha: 0 });
@@ -1217,7 +1527,7 @@
         storyTl.to({}, { duration: 0.9 }, 4.7);
       });
 
-      // TIER 2: TABLET / SMALL LAPTOP — 768px TO 1199px (Simplified Cinematic Pinning)
+      // TIER 2: TABLET / SMALL LAPTOP ΓÇö 768px TO 1199px (Simplified Cinematic Pinning)
       storyMm.add("(min-width: 768px) and (max-width: 1199px)", () => {
         gsap.set(slide1, { autoAlpha: 1 });
         gsap.set([slide2, slide3], { autoAlpha: 0 });
@@ -1317,7 +1627,7 @@
         storyTl.to({}, { duration: 0.6 }, 3.7);
       });
 
-      // TIER 3: MOBILE — BELOW 768px (Vertical Narrative Layout)
+      // TIER 3: MOBILE ΓÇö BELOW 768px (Vertical Narrative Layout)
       storyMm.add("(max-width: 767px)", () => {
         const mobileItems = document.querySelectorAll('#storyMobileContainer > div');
         mobileItems.forEach(item => {
