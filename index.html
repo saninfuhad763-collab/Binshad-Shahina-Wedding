@@ -138,6 +138,17 @@
       transform: none !important;
       opacity: 0; /* JS sets to 1 only after frame-0 is confirmed */
       will-change: opacity;
+      z-index: 1;
+    }
+
+    /* STEP 14: Single Source of Truth — Cinematic Dim Scrim (15–30% Black + Gentle Vignette) */
+    .video-cinematic-dim {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 50%, rgba(14, 10, 11, 0.20) 0%, rgba(14, 10, 11, 0.28) 60%, rgba(14, 10, 11, 0.40) 100%),
+                  linear-gradient(to bottom, rgba(14, 10, 11, 0.22) 0%, rgba(14, 10, 11, 0.12) 50%, rgba(14, 10, 11, 0.32) 100%);
+      z-index: 2;
     }
 
     /* Soft secondary bloom */
@@ -345,7 +356,9 @@
     <!-- LAYER 3a: Video aperture. The hero video element is reparented here
          at click-time. Sits below #doorInteriorReveal (same z-index, earlier DOM order).
          When the interior overlay fades, frame-0 video is already here at opacity:1. -->
-    <div id="doorVideoAperture"></div>
+    <div id="doorVideoAperture">
+      <div class="video-cinematic-dim"></div>
+    </div>
 
     <!-- LAYER 3b: Dark interior overlay. Paints on top of the aperture initially.
          GSAP fades this to 0 as doors open → first visible content = frame 0. -->
@@ -469,10 +482,8 @@
         <!-- Mobile 9:16 Portrait Video -->
         <video id="heroVideoMobile" class="block md:hidden absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 z-10" muted playsinline preload="none"></video>
         <div class="w-full h-full bg-cover bg-center will-change-transform z-0" id="heroBg" style="background-image: url('assets/images/hero.avif');"></div>
-        <!-- Multi-stop Vignette & Darkening Gradients -->
-        <div class="absolute inset-0 bg-gradient-to-t from-[#0e0a0b] via-[#0e0a0b]/60 to-[#0e0a0b]/40 z-20"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-[#0e0a0b]/90 via-transparent to-[#0e0a0b]/80 z-20"></div>
-        <div class="absolute inset-0 bg-[#4a101d]/15 mix-blend-color z-20"></div>
+        <!-- Single Source of Truth: Video Cinematic Dim Layer -->
+        <div class="video-cinematic-dim z-20"></div>
         <!-- Dynamic Darkening Scrim (Scroll-Linked) -->
         <div class="absolute inset-0 bg-black opacity-0 pointer-events-none will-change-opacity z-20" id="heroDarkOverlay"></div>
       </div>
@@ -1343,34 +1354,48 @@
         if (doorLeft)  tl.to(doorLeft,  { rotateY: -95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
         if (doorRight) tl.to(doorRight, { rotateY:  95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
 
-        // T=1.45 — Dark interior overlay fades out → video aperture revealed.
-        // The video is already in the aperture at opacity:1 and currentTime=0.
-        // First visible video content IS frame 0.
-        if (doorInteriorReveal) tl.to(doorInteriorReveal, { opacity: 0, duration: 0.80, ease: 'power2.inOut' }, 1.45);
+        // T=1.30 — Aperture reveal point:
+        // Video is confirmed at frame 0, dim layer is already active.
+        // Interior mask fades out, video begins playback immediately.
+        tl.call(() => {
+          revealTriggered = true;
+          if (frameConfirmed) {
+            startVideoPlayback();
+          }
+        }, null, 1.30);
 
-        // T=2.20 — Bloom fades
-        if (doorLightBloom) tl.to(doorLightBloom, { opacity: 0, duration: 0.85, ease: 'power1.in' }, 2.20);
+        if (doorInteriorReveal) {
+          tl.to(doorInteriorReveal, { opacity: 0, duration: 0.50, ease: 'power2.out' }, 1.30);
+        }
 
-        // T=2.30 — Artwork frame + atmosphere fades (doors folded back)
+        // T=2.05 — Bloom fades as doors reach 95°
+        if (doorLightBloom) tl.to(doorLightBloom, { opacity: 0, duration: 0.50, ease: 'power1.in' }, 2.05);
+
+        // T=2.30 — Artwork frame + atmosphere fades completely (doors already folded back)
         const doorArtworkFrame = document.getElementById('doorArtworkFrame');
         const doorAtmosphere   = document.getElementById('doorAtmosphere');
         tl.to([doorArtworkFrame, doorAtmosphere].filter(Boolean),
-          { opacity: 0, duration: 0.55, ease: 'power1.in' }, 2.30);
+          { opacity: 0, duration: 0.35, ease: 'power1.in' }, 2.30);
 
-        // T=2.55 — Door stage (leaves) fade out
+        // T=2.50 — Door stage (leaves) fade out completely
         const doorStage = document.getElementById('doorStage');
-        if (doorStage) tl.to(doorStage, { opacity: 0, duration: 0.40, ease: 'power1.in' }, 2.55);
+        if (doorStage) tl.to(doorStage, { opacity: 0, duration: 0.30, ease: 'power1.in' }, 2.50);
 
-        // T=2.65 — Progress rail fades
-        if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.35, ease: 'power1.in' }, 2.65);
+        // T=2.70 — Progress rail fades
+        if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.25, ease: 'power1.in' }, 2.70);
 
-        // T=2.75 — Return video to hero BEFORE overlay becomes visible (smooth seam)
-        tl.call(() => { returnVideoToHero(); }, null, 2.75);
+        // T=2.80 — Return video to hero AFTER door artwork & leaves are completely at opacity:0
+        // Because #doorVideoAperture and #heroSection share the identical .video-cinematic-dim layer,
+        // this handoff has ZERO brightness change and zero flash.
+        tl.call(() => { returnVideoToHero(); }, null, 2.80);
 
-        // T=2.80 — Overlay becomes non-blocking
+        // T=2.80 — Intro overlay fades out seamlessly
         tl.to(weddingIntro, {
-          opacity: 0, duration: 0.35, ease: 'power1.in',
-          onComplete: () => { weddingIntro.style.pointerEvents = 'none'; }
+          opacity: 0, duration: 0.30, ease: 'power1.in',
+          onComplete: () => {
+            weddingIntro.style.display = 'none';
+            weddingIntro.style.pointerEvents = 'none';
+          }
         }, 2.80);
 
         // Progress rail fill animation
@@ -1390,13 +1415,46 @@
       }
 
       // ── prepareVideo ─────────────────────────────────────────────────────
-      // ONE-VIDEO ARCHITECTURE (Step 12):
+      // ONE-VIDEO ARCHITECTURE (Step 14):
       // 1. Record original hero DOM position
       // 2. Set src + load
-      // 3. Move video into #doorVideoAperture
-      // 4. On canplay: seek to 0, set opacity:1 (frame-0 confirmed), then play
-      // The dark interior overlay is still opaque when opacity:1 is set,
-      // so the user sees nothing yet. GSAP fades the overlay at T=1.45.
+      // 3. Move video into #doorVideoAperture (placed beneath .video-cinematic-dim)
+      // 4. On canplay: seek to 0, set opacity:1, KEEP PAUSED.
+      // 5. Video DOES NOT play while covered by #doorInteriorReveal.
+      // 6. At exact reveal point (T=1.30s), startVideoPlayback() confirms currentTime=0
+      //    and immediately begins playback.
+      let revealTriggered = false;
+      let frameConfirmed = false;
+      let videoPlaybackStarted = false;
+
+      function startVideoPlayback() {
+        if (videoPlaybackStarted || !activeVideo) return;
+        videoPlaybackStarted = true;
+
+        // Defensively ensure playback starts from exact frame 0
+        try { activeVideo.currentTime = 0; } catch(e) {}
+
+        console.log('[Step14] Video starting playback at reveal point. currentTime:', activeVideo.currentTime);
+
+        const p = activeVideo.play();
+        if (p) p.catch(e => { if (e.name !== 'AbortError') console.warn('[Step14] play():', e.message); });
+
+        // Homepage reveal ~2s before end
+        activeVideo.addEventListener('timeupdate', function onTU() {
+          if (!activeVideo.duration || activeVideo.duration === Infinity) return;
+          if (activeVideo.duration - activeVideo.currentTime <= 2.0 && !homepageRevealStarted) {
+            activeVideo.removeEventListener('timeupdate', onTU);
+            beginHomepageReveal();
+          }
+        });
+
+        // Ended → freeze final frame
+        activeVideo.addEventListener('ended', () => {
+          introState = 'finishing';
+          completeIntro();
+        }, { once: true });
+      }
+
       function prepareVideo() {
         if (!activeVideo || !doorVideoAperture) {
           console.warn('[DoorIntro] prepareVideo: no video or aperture');
@@ -1404,6 +1462,9 @@
           return;
         }
         introState = 'video';
+        revealTriggered = false;
+        frameConfirmed = false;
+        videoPlaybackStarted = false;
 
         // Record hero position for later restoration
         origParent       = activeVideo.parentElement;
@@ -1422,10 +1483,12 @@
         // Force display:block (Tailwind hidden/md:block must not hide it in aperture)
         activeVideo.style.display = 'block';
 
-        // Move into the aperture (behind the dark interior overlay)
-        doorVideoAperture.appendChild(activeVideo);
-
-        let frameConfirmed = false;
+        // Move into the aperture beneath .video-cinematic-dim
+        if (doorVideoAperture.firstChild) {
+          doorVideoAperture.insertBefore(activeVideo, doorVideoAperture.firstChild);
+        } else {
+          doorVideoAperture.appendChild(activeVideo);
+        }
 
         function onFrameReady() {
           if (frameConfirmed) return;
@@ -1434,33 +1497,22 @@
           // Seek to actual frame 0
           try { activeVideo.currentTime = 0; } catch(e) {}
 
-          // Set opacity:1 — dark overlay still hides this until T=1.45 fade
+          // Ensure video is PAUSED — DO NOT PLAY YET while covered
+          try { activeVideo.pause(); } catch(e) {}
+
+          // Set opacity:1 — frame 0 is decoded & ready behind the mask under .video-cinematic-dim
           activeVideo.style.opacity = '1';
           gsap.set(activeVideo, { opacity: 1 });
 
-          console.log('[Step12] Video frame-0 ready. readyState:', activeVideo.readyState, 'currentTime:', activeVideo.currentTime);
+          console.log('[Step14] Video frame-0 ready and PAUSED. readyState:', activeVideo.readyState, 'currentTime:', activeVideo.currentTime);
 
-          // Play
-          const p = activeVideo.play();
-          if (p) p.catch(e => { if (e.name !== 'AbortError') console.warn('[Step12] play():', e.message); });
-
-          // Homepage reveal ~2s before end
-          activeVideo.addEventListener('timeupdate', function onTU() {
-            if (!activeVideo.duration || activeVideo.duration === Infinity) return;
-            if (activeVideo.duration - activeVideo.currentTime <= 2.0 && !homepageRevealStarted) {
-              activeVideo.removeEventListener('timeupdate', onTU);
-              beginHomepageReveal();
-            }
-          });
-
-          // Ended → freeze final frame
-          activeVideo.addEventListener('ended', () => {
-            introState = 'finishing';
-            completeIntro();
-          }, { once: true });
+          // If reveal point was already reached before video buffered, start playback now
+          if (revealTriggered && !videoPlaybackStarted) {
+            startVideoPlayback();
+          }
         }
 
-        // canplay: browser has enough data to start playback
+        // canplay: browser has enough data to render first frame
         activeVideo.addEventListener('canplay', onFrameReady, { once: true });
 
         // loadeddata fallback (first frame decoded, readyState >= 2)
@@ -1469,7 +1521,7 @@
         }, { once: true });
 
         // Hard timeout fallback
-        setTimeout(() => { if (!frameConfirmed) { console.warn('[Step12] canplay timeout'); onFrameReady(); } }, 6000);
+        setTimeout(() => { if (!frameConfirmed) { console.warn('[Step14] canplay timeout'); onFrameReady(); } }, 6000);
 
         activeVideo.load();
       }
