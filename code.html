@@ -64,7 +64,7 @@
 
 
     /* =====================================================
-       STEP 10 — PRECISION CINEMATIC INTRO
+       STEP 12 — CLEAN CINEMATIC INTRO REARCHITECTURE
        ===================================================== */
 
     /* Prevent layout shift when native scrollbar appears after intro */
@@ -103,16 +103,41 @@
       pointer-events: none;
     }
 
-    /* INTERIOR REVEAL — KEY FIX for duplicate-artwork problem.
-       Before click: opaque → hides hero section video.
-       On click: GSAP fades to 0 → exposes video directly behind doors.
-       Result: door → video, no intermediate duplicate artwork. */
+    /* DARK INTERIOR — covers the area behind the doors before the video is ready.
+       GSAP fades this to 0 as doors open → reveals the video aperture below.
+       Painted on top of #doorVideoAperture (same z-index, later DOM order). */
     #doorInteriorReveal {
       position: absolute;
       inset: 0;
       background: radial-gradient(ellipse at 50% 50%, #1a0810 0%, #0e0507 45%, #090607 100%);
       z-index: 3;
       pointer-events: none;
+    }
+
+    /* VIDEO APERTURE — the hero <video> element is reparented here at click time.
+       DOM order: BEFORE #doorInteriorReveal, so at equal z-index the dark overlay
+       paints on top. When GSAP fades the overlay to 0, the video (already seeked to
+       frame 0 and at opacity:1) becomes visible with zero gap.
+       z-index 3 sits between atmosphere (2) and door stage (4). */
+    #doorVideoAperture {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    #doorVideoAperture > video {
+      /* Override hero Tailwind classes when inside aperture */
+      display: block !important;
+      position: absolute !important;
+      top: 0 !important; right: 0 !important;
+      bottom: 0 !important; left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      transform: none !important;
+      opacity: 0; /* JS sets to 1 only after frame-0 is confirmed */
+      will-change: opacity;
     }
 
     /* Soft secondary bloom */
@@ -143,23 +168,17 @@
     .door-left  { transform-origin: 0%   50%; }
     .door-right { transform-origin: 100% 50%; }
 
-    /* Door leaf inner — crops artwork to correct half.
-       background-size: 200% means each 50vw leaf shows its half.
-       background-position-y: 43% matches the artwork frame focal point. */
+    /* Door leaf inner — background-size + background-position are computed
+       by setDoorLeafBg() in JS on init and every resize, so the door leaves
+       are pixel-perfect halves of the same cover-scaled image shown in
+       #doorArtworkFrame. This fixes the portrait "black band" problem caused
+       by the previous background-size:200% auto approach. */
     .door-leaf-inner {
       position: absolute;
       inset: 0;
       background-image: url('assets/images/wedding-doors-premium.avif');
       background-repeat: no-repeat;
-      background-size: 200% auto;
-      background-position-y: 43%;
-    }
-    #doorLeft  .door-leaf-inner { background-position-x: 0%;   }
-    #doorRight .door-leaf-inner { background-position-x: 100%; }
-    @media (max-width: 767px) {
-      .door-leaf-inner { background-size: 200% auto; background-position-y: 38%; }
-      #doorLeft  .door-leaf-inner { background-position-x: 0%;   }
-      #doorRight .door-leaf-inner { background-position-x: 100%; }
+      /* background-size and background-position set dynamically by setDoorLeafBg() */
     }
 
     /* Edge shadows */
@@ -323,9 +342,13 @@
     <!-- LAYER 2: Atmospheric vignette -->
     <div id="doorAtmosphere"></div>
 
-    <!-- LAYER 3: Dark interior. Hides the hero video before doors open.
-         GSAP fades this to 0 as doors open → reveals video directly.
-         This eliminates the "duplicate doorway artwork" discontinuity. -->
+    <!-- LAYER 3a: Video aperture. The hero video element is reparented here
+         at click-time. Sits below #doorInteriorReveal (same z-index, earlier DOM order).
+         When the interior overlay fades, frame-0 video is already here at opacity:1. -->
+    <div id="doorVideoAperture"></div>
+
+    <!-- LAYER 3b: Dark interior overlay. Paints on top of the aperture initially.
+         GSAP fades this to 0 as doors open → first visible content = frame 0. -->
     <div id="doorInteriorReveal"></div>
 
     <!-- LAYER 4: Soft secondary bloom -->
@@ -1104,6 +1127,8 @@
 
       // Freeze final frame — do NOT reset currentTime
       if (activeVideo) { try { activeVideo.pause(); } catch(e) {} }
+      // Ensure final frame stays visible at opacity:1 (no flash on completion)
+      if (activeVideo) { activeVideo.style.opacity = '1'; gsap.set(activeVideo, { opacity: 1 }); }
 
       beginHomepageReveal();
 
@@ -1136,6 +1161,7 @@
       const doorLightWave      = document.getElementById('doorLightWave');
       const doorCenterSeam     = document.getElementById('doorCenterSeam');
       const doorInteriorReveal = document.getElementById('doorInteriorReveal');
+      const doorVideoAperture  = document.getElementById('doorVideoAperture');
       const doorIgnition       = document.getElementById('doorIgnition');
       const doorEyebrow        = document.getElementById('doorEyebrow');
       const doorNamesDisplay   = document.getElementById('doorNamesDisplay');
@@ -1157,6 +1183,66 @@
         return;
       }
 
+      // ── STEP 12: setDoorLeafBg ────────────────────────────────────────────
+      // The artwork is 1672×941 landscape. #doorArtworkFrame uses:
+      //   background-size: cover
+      //   background-position: 50% Y%
+      //
+      // Each door leaf is 50vw wide × 100vh tall. We need its background to
+      // show the exact corresponding half of the same cover-scaled image.
+      //
+      // Derivation:
+      //   scale = max(vW/1672, vH/941)          — cover scale factor
+      //   renderedW = 1672*scale, renderedH = 941*scale
+      //   overflowX = (renderedW - vW)/2         — px cropped per side (center 50%)
+      //   overflowY = max(0, renderedH - vH)
+      //   offsetY   = overflowY * focalY          — matches CSS background-position-y
+      //
+      // LEFT leaf element origin = page x=0.
+      //   image rendered left edge = page x = -overflowX
+      //   bg-pos-x for left leaf  = -overflowX   (image starts overflowX px left of element)
+      //
+      // RIGHT leaf element origin = page x = vW/2.
+      //   image rendered left edge relative to right leaf = -overflowX - vW/2
+      //   bg-pos-x for right leaf = -(overflowX + vW/2)
+      //
+      const ARTWORK_W = 1672, ARTWORK_H = 941;
+
+      function setDoorLeafBg() {
+        const vW = window.innerWidth;
+        const vH = window.innerHeight;
+
+        const scale     = Math.max(vW / ARTWORK_W, vH / ARTWORK_H);
+        const rendW     = ARTWORK_W * scale;
+        const rendH     = ARTWORK_H * scale;
+        const overflowX = (rendW - vW) / 2;
+        const overflowY = Math.max(0, rendH - vH);
+
+        // Match the CSS focal point used in #doorArtworkFrame background-position
+        let focalY = 0.43;
+        if (vW <= 767)                    focalY = 0.38;
+        else if (vW <= 1023 && vH > vW)  focalY = 0.40;
+
+        const offsetY = overflowY * focalY;
+        const bgSize  = rendW.toFixed(1) + 'px ' + rendH.toFixed(1) + 'px';
+        const bgY     = (-offsetY).toFixed(1) + 'px';
+
+        const leftInner  = doorLeft  && doorLeft.querySelector('.door-leaf-inner');
+        const rightInner = doorRight && doorRight.querySelector('.door-leaf-inner');
+
+        if (leftInner) {
+          leftInner.style.backgroundSize     = bgSize;
+          leftInner.style.backgroundPosition = (-overflowX).toFixed(1) + 'px ' + bgY;
+        }
+        if (rightInner) {
+          rightInner.style.backgroundSize     = bgSize;
+          rightInner.style.backgroundPosition = (-(overflowX + vW / 2)).toFixed(1) + 'px ' + bgY;
+        }
+      }
+
+      setDoorLeafBg();
+      window.addEventListener('resize', setDoorLeafBg);
+
       // Responsive video selection (no load yet — preload:none preserved)
       const isMobile = window.innerWidth < 768;
       const videoSrc = isMobile
@@ -1166,6 +1252,10 @@
       activeVideo = isMobile ? videoMobile : videoDesktop;
       const inactiveVideo = isMobile ? videoDesktop : videoMobile;
       if (inactiveVideo) { inactiveVideo.removeAttribute('src'); }
+
+      // Track original DOM position for reparenting back to hero after intro
+      let origParent = null;
+      let origNextSibling = null;
 
       // GSAP initial states
       if (doorLeft)  gsap.set(doorLeft,  { transformOrigin: '0% 50%',   rotateY: 0 });
@@ -1211,6 +1301,9 @@
         doorRoundBtn.disabled = true;
         introEntrance.kill();
 
+        // Start loading video immediately so canplay fires early
+        prepareVideo();
+
         const tl = gsap.timeline();
 
         // T=0 — Button press-in + welcome text yields
@@ -1239,40 +1332,46 @@
         // T=0.08 — Bloom sustains through door movement
         if (doorLightBloom) tl.to(doorLightBloom, { opacity: 0.88, duration: 1.90, ease: 'power2.out' }, 0.08);
 
-        // T=0.10 — RADIAL WAVE EXPANDS (the cinematic centrepiece)
+        // T=0.10 — RADIAL WAVE EXPANDS (cinematic centrepiece)
         if (doorLightWave) {
           tl.to(doorLightWave, { opacity: 0.92, duration: 0.14, ease: 'power3.out' }, 0.10);
           tl.to(doorLightWave, { scale: 1, duration: 1.30, ease: 'power2.out' }, 0.10);
           tl.to(doorLightWave, { opacity: 0, duration: 0.72, ease: 'power1.in' }, 0.92);
         }
 
-        // T=0.20 — Doors open (heavy, physical)
+        // T=0.20 — Doors open (heavy, physical, hinged)
         if (doorLeft)  tl.to(doorLeft,  { rotateY: -95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
         if (doorRight) tl.to(doorRight, { rotateY:  95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
 
-        // T=0.35 — Load and play video in parallel with door opening
-        tl.call(() => { prepareAndPlayVideo(); }, null, 0.35);
+        // T=1.45 — Dark interior overlay fades out → video aperture revealed.
+        // The video is already in the aperture at opacity:1 and currentTime=0.
+        // First visible video content IS frame 0.
+        if (doorInteriorReveal) tl.to(doorInteriorReveal, { opacity: 0, duration: 0.80, ease: 'power2.inOut' }, 1.45);
 
-        // T=1.90 — Interior reveal fades → video is directly visible
-        if (doorInteriorReveal) tl.to(doorInteriorReveal, { opacity: 0, duration: 0.65, ease: 'power2.inOut' }, 1.90);
+        // T=2.20 — Bloom fades
+        if (doorLightBloom) tl.to(doorLightBloom, { opacity: 0, duration: 0.85, ease: 'power1.in' }, 2.20);
 
-        // T=2.15 — Bloom fades
-        if (doorLightBloom) tl.to(doorLightBloom, { opacity: 0, duration: 0.85, ease: 'power1.in' }, 2.15);
-
-        // T=2.50 — Artwork frame fades (leaves are folded back)
+        // T=2.30 — Artwork frame + atmosphere fades (doors folded back)
         const doorArtworkFrame = document.getElementById('doorArtworkFrame');
         const doorAtmosphere   = document.getElementById('doorAtmosphere');
         tl.to([doorArtworkFrame, doorAtmosphere].filter(Boolean),
-          { opacity: 0, duration: 0.60, ease: 'power1.in' }, 2.50);
+          { opacity: 0, duration: 0.55, ease: 'power1.in' }, 2.30);
 
-        // T=2.80 — Progress rail fades
-        if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.40, ease: 'power1.in' }, 2.80);
+        // T=2.55 — Door stage (leaves) fade out
+        const doorStage = document.getElementById('doorStage');
+        if (doorStage) tl.to(doorStage, { opacity: 0, duration: 0.40, ease: 'power1.in' }, 2.55);
 
-        // T=2.90 — Overlay becomes non-blocking (video continues playing behind)
+        // T=2.65 — Progress rail fades
+        if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.35, ease: 'power1.in' }, 2.65);
+
+        // T=2.75 — Return video to hero BEFORE overlay becomes visible (smooth seam)
+        tl.call(() => { returnVideoToHero(); }, null, 2.75);
+
+        // T=2.80 — Overlay becomes non-blocking
         tl.to(weddingIntro, {
-          opacity: 0, duration: 0.45, ease: 'power1.in',
+          opacity: 0, duration: 0.35, ease: 'power1.in',
           onComplete: () => { weddingIntro.style.pointerEvents = 'none'; }
-        }, 2.90);
+        }, 2.80);
 
         // Progress rail fill animation
         if (doorProgressFill && doorProgressDot) {
@@ -1283,31 +1382,69 @@
         // Failsafe
         failsafeTimer = setTimeout(() => {
           if (introState !== 'complete') {
-            console.warn('[DoorIntro] Failsafe triggered.');
+            console.warn('[DoorIntro] Failsafe triggered — completing.');
+            returnVideoToHero();
             completeIntro();
           }
-        }, 12000);
+        }, 14000);
       }
 
-      // prepareAndPlayVideo: assigns src on click → waits canplay → seeks frame 0
-      // → plays → fades to opacity 1. First visible frame IS frame 0.
-      function prepareAndPlayVideo() {
-        if (!activeVideo) { setTimeout(completeIntro, 2400); return; }
+      // ── prepareVideo ─────────────────────────────────────────────────────
+      // ONE-VIDEO ARCHITECTURE (Step 12):
+      // 1. Record original hero DOM position
+      // 2. Set src + load
+      // 3. Move video into #doorVideoAperture
+      // 4. On canplay: seek to 0, set opacity:1 (frame-0 confirmed), then play
+      // The dark interior overlay is still opaque when opacity:1 is set,
+      // so the user sees nothing yet. GSAP fades the overlay at T=1.45.
+      function prepareVideo() {
+        if (!activeVideo || !doorVideoAperture) {
+          console.warn('[DoorIntro] prepareVideo: no video or aperture');
+          setTimeout(completeIntro, 3000);
+          return;
+        }
         introState = 'video';
 
-        activeVideo.src = videoSrc;
-        activeVideo.load();
+        // Record hero position for later restoration
+        origParent       = activeVideo.parentElement;
+        origNextSibling  = activeVideo.nextSibling;
 
-        function onCanPlay() {
-          activeVideo.currentTime = 0;
-          const playPromise = activeVideo.play();
-          gsap.to(activeVideo, { opacity: 1, duration: 0.80, ease: 'power2.out' });
-          if (playPromise !== undefined) {
-            playPromise.catch((err) => {
-              console.warn('[DoorIntro] Video play failed:', err);
-              completeIntro();
-            });
-          }
+        // Clear any GSAP tweens + hero opacity class
+        gsap.killTweensOf(activeVideo);
+        activeVideo.style.opacity = '0';
+
+        // Assign source
+        activeVideo.src     = videoSrc;
+        activeVideo.preload = 'auto';
+        activeVideo.muted   = true;
+        activeVideo.loop    = false;
+
+        // Force display:block (Tailwind hidden/md:block must not hide it in aperture)
+        activeVideo.style.display = 'block';
+
+        // Move into the aperture (behind the dark interior overlay)
+        doorVideoAperture.appendChild(activeVideo);
+
+        let frameConfirmed = false;
+
+        function onFrameReady() {
+          if (frameConfirmed) return;
+          frameConfirmed = true;
+
+          // Seek to actual frame 0
+          try { activeVideo.currentTime = 0; } catch(e) {}
+
+          // Set opacity:1 — dark overlay still hides this until T=1.45 fade
+          activeVideo.style.opacity = '1';
+          gsap.set(activeVideo, { opacity: 1 });
+
+          console.log('[Step12] Video frame-0 ready. readyState:', activeVideo.readyState, 'currentTime:', activeVideo.currentTime);
+
+          // Play
+          const p = activeVideo.play();
+          if (p) p.catch(e => { if (e.name !== 'AbortError') console.warn('[Step12] play():', e.message); });
+
+          // Homepage reveal ~2s before end
           activeVideo.addEventListener('timeupdate', function onTU() {
             if (!activeVideo.duration || activeVideo.duration === Infinity) return;
             if (activeVideo.duration - activeVideo.currentTime <= 2.0 && !homepageRevealStarted) {
@@ -1315,18 +1452,61 @@
               beginHomepageReveal();
             }
           });
+
+          // Ended → freeze final frame
           activeVideo.addEventListener('ended', () => {
             introState = 'finishing';
             completeIntro();
           }, { once: true });
         }
 
-        activeVideo.addEventListener('canplay', onCanPlay, { once: true });
-        activeVideo.addEventListener('loadedmetadata', function onMeta() {
-          setTimeout(() => {
-            if (introState === 'video' && activeVideo.readyState >= 3) onCanPlay();
-          }, 2500);
+        // canplay: browser has enough data to start playback
+        activeVideo.addEventListener('canplay', onFrameReady, { once: true });
+
+        // loadeddata fallback (first frame decoded, readyState >= 2)
+        activeVideo.addEventListener('loadeddata', function() {
+          setTimeout(() => { if (!frameConfirmed && activeVideo.readyState >= 2) onFrameReady(); }, 400);
         }, { once: true });
+
+        // Hard timeout fallback
+        setTimeout(() => { if (!frameConfirmed) { console.warn('[Step12] canplay timeout'); onFrameReady(); } }, 6000);
+
+        activeVideo.load();
+      }
+
+      // ── returnVideoToHero ─────────────────────────────────────────────────
+      // Moves the active video back to its original hero DOM position.
+      // currentTime and paused state are preserved. Opacity stays at 1.
+      function returnVideoToHero() {
+        if (!activeVideo || !origParent) return;
+
+        // Remove aperture-specific inline overrides
+        activeVideo.style.removeProperty('display');
+        activeVideo.style.removeProperty('position');
+        activeVideo.style.removeProperty('top');
+        activeVideo.style.removeProperty('right');
+        activeVideo.style.removeProperty('bottom');
+        activeVideo.style.removeProperty('left');
+        activeVideo.style.removeProperty('width');
+        activeVideo.style.removeProperty('height');
+        activeVideo.style.removeProperty('object-fit');
+        activeVideo.style.removeProperty('transform');
+
+        // Keep opacity:1 — preserve final frame
+        activeVideo.style.opacity = '1';
+        gsap.set(activeVideo, { opacity: 1, clearProps: 'transform' });
+
+        // Restore to hero
+        try {
+          if (origNextSibling && origNextSibling.parentNode === origParent) {
+            origParent.insertBefore(activeVideo, origNextSibling);
+          } else {
+            origParent.appendChild(activeVideo);
+          }
+          console.log('[Step12] Video returned to hero. currentTime:', activeVideo.currentTime.toFixed(3));
+        } catch(e) {
+          console.warn('[Step12] returnVideoToHero error:', e);
+        }
       }
     }
 
