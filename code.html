@@ -267,71 +267,61 @@
       opacity: 0; pointer-events: none; z-index: 11; will-change: opacity;
     }
 
-    /* Welcome text group: centred stack (eyebrow → names → button) */
+    /* Welcome text group: stacked above medallion (eyebrow → names) */
     #doorWelcomeGroup {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
+      position: absolute;
+      left: 50%;
+      top: calc(var(--medallion-y, 50%) - var(--medallion-size, 120px) * 0.5 - 28px);
+      transform: translate(-50%, -100%);
       z-index: 16;
       display: flex; flex-direction: column; align-items: center;
       pointer-events: none; white-space: nowrap; will-change: opacity;
     }
     #doorEyebrow {
-      font-family: 'Manrope', sans-serif; font-size: 9px; font-weight: 500;
-      letter-spacing: 0.40em; text-transform: uppercase;
-      color: rgba(226,193,151,0.65); margin-bottom: 20px;
+      font-family: 'Manrope', sans-serif; font-size: 11px; font-weight: 500;
+      letter-spacing: 0.38em; text-transform: uppercase;
+      color: rgba(226,193,151,0.85); margin-bottom: 18px;
       opacity: 0; will-change: opacity, transform;
     }
     #doorNamesDisplay {
-      font-family: 'Playfair Display', serif; font-size: clamp(22px, 4vw, 38px);
+      font-family: 'Playfair Display', serif; font-size: clamp(36px, 3.5vw, 50px);
       font-weight: 400; font-style: italic;
-      color: rgba(234,224,225,0.88); letter-spacing: 0.04em;
-      line-height: 1.2; text-align: center; margin-bottom: 32px;
+      color: rgba(255,248,240,0.96); letter-spacing: 0.04em;
+      line-height: 1.2; text-align: center; margin-bottom: 0;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.55), 0 1px 6px rgba(0,0,0,0.40);
       opacity: 0; will-change: opacity, transform;
     }
-    #doorNamesDisplay .ampersand { font-size: 0.75em; color: rgba(226,193,151,0.72); display: inline-block; margin: 0 0.2em; }
+    #doorNamesDisplay .ampersand { font-size: 0.75em; color: rgba(226,193,151,0.80); display: inline-block; margin: 0 0.2em; }
 
-    /* Round ceremonial button */
+    /* Transparent medallion hotspot — invisible accessible hit target */
     #doorRoundBtn {
-      position: relative; width: 80px; height: 80px; border-radius: 50%;
-      cursor: pointer; border: none; background: transparent; padding: 0;
-      pointer-events: auto; -webkit-tap-highlight-color: transparent;
-      opacity: 0; will-change: opacity, transform;
+      position: absolute;
+      left: 50%;
+      top: var(--medallion-y, 50%);
+      width: var(--medallion-size, 120px);
+      height: var(--medallion-size, 120px);
+      transform: translate(-50%, -50%);
+      background: transparent;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+      opacity: 0;
+      z-index: 20;
+      will-change: opacity;
     }
     @media (max-width: 767px) {
-      #doorRoundBtn { width: 68px; height: 68px; }
-      #doorNamesDisplay { font-size: clamp(18px, 5vw, 26px); margin-bottom: 24px; }
-      #doorEyebrow { font-size: 8px; letter-spacing: 0.32em; margin-bottom: 14px; }
+      #doorEyebrow { font-size: 9px; letter-spacing: 0.34em; margin-bottom: 14px; }
+      #doorNamesDisplay { font-size: clamp(24px, 6.8vw, 32px); }
     }
-    .door-btn-inner {
-      position: absolute; inset: 0; border-radius: 50%;
-      background: radial-gradient(circle at 50% 42%, rgba(35,14,20,0.85) 0%, rgba(20,8,13,0.93) 58%, rgba(9,5,7,0.97) 100%);
-      box-shadow: 0 0 0 1.5px rgba(226,193,151,0.72), inset 0 0 0 1px rgba(226,193,151,0.28), 0 0 22px 6px rgba(226,193,151,0.15), 0 0 45px 12px rgba(74,16,29,0.35);
+    #doorRoundBtn:focus-visible {
+      outline: 1.5px solid rgba(226,193,151,0.45);
+      outline-offset: 6px;
     }
-    .door-btn-inner::before {
-      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      width: 58%; height: 58%; border-radius: 50%; border: 1px solid rgba(226,193,151,0.35);
-    }
-    .door-btn-inner::after {
-      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      width: 18%; height: 18%; border-radius: 50%;
-      background: rgba(226,193,151,0.60); box-shadow: 0 0 10px rgba(226,193,151,0.70);
-    }
-    /* "TAP HERE TO OPEN" label below button */
-    #doorCtaLabel {
-      position: absolute; top: calc(100% + 13px); left: 50%; transform: translateX(-50%);
-      font-family: 'Manrope', sans-serif; font-size: 8px; font-weight: 500;
-      letter-spacing: 0.40em; text-transform: uppercase;
-      color: rgba(226,193,151,0.55); white-space: nowrap; pointer-events: none;
-    }
-    @media (max-width: 767px) { #doorCtaLabel { font-size: 7px; letter-spacing: 0.34em; top: calc(100% + 10px); } }
-
-    @keyframes doorBtnBreathe {
-      0%, 100% { box-shadow: 0 0 0 1.5px rgba(226,193,151,0.72), inset 0 0 0 1px rgba(226,193,151,0.28), 0 0 22px 6px rgba(226,193,151,0.15), 0 0 45px 12px rgba(74,16,29,0.35); }
-      50%       { box-shadow: 0 0 0 1.5px rgba(226,193,151,0.90), inset 0 0 0 1px rgba(226,193,151,0.48), 0 0 32px 10px rgba(226,193,151,0.28), 0 0 60px 18px rgba(74,16,29,0.55); }
-    }
-    #doorRoundBtn:not(:disabled) .door-btn-inner { animation: doorBtnBreathe 3.4s ease-in-out infinite; }
-    #doorRoundBtn:focus-visible .door-btn-inner { box-shadow: 0 0 0 2px rgba(226,193,151,0.92), 0 0 0 4px rgba(226,193,151,0.32), inset 0 0 0 1px rgba(226,193,151,0.52), 0 0 30px 8px rgba(226,193,151,0.30); }
     #doorRoundBtn:disabled { cursor: default; pointer-events: none; }
+
+
 
     /* Cinematic progress rail — deliberate design element, not a fake scrollbar */
     #doorProgressRail {
@@ -434,13 +424,10 @@
       <!-- Couple names — large italic serif -->
       <div id="doorNamesDisplay">Binshad <span class="ampersand">&amp;</span> Shahina</div>
 
-      <!-- Round ceremonial button -->
-      <button id="doorRoundBtn" aria-label="Enter the celebration">
-        <div class="door-btn-inner"></div>
-        <span id="doorCtaLabel">Tap Here to Open</span>
-      </button>
-
     </div>
+
+    <!-- Transparent medallion hotspot — outside welcome group, positioned directly to weddingIntro -->
+    <button id="doorRoundBtn" aria-label="Open wedding invitation"></button>
 
     <!-- Cinematic progress rail — right edge, deliberate design element -->
     <div id="doorProgressRail">
@@ -1251,8 +1238,9 @@
       const ARTWORK_W = 1672, ARTWORK_H = 941;
 
       function setDoorLeafBg() {
-        const vW = window.innerWidth;
-        const vH = window.innerHeight;
+        const intro = document.getElementById('weddingIntro');
+        const vW = intro ? intro.clientWidth : window.innerWidth;
+        const vH = intro ? intro.clientHeight : window.innerHeight;
 
         const scale     = Math.max(vW / ARTWORK_W, vH / ARTWORK_H);
         const rendW     = ARTWORK_W * scale;
@@ -1279,6 +1267,15 @@
         if (rightInner) {
           rightInner.style.backgroundSize     = bgSize;
           rightInner.style.backgroundPosition = (-(overflowX + vW / 2)).toFixed(1) + 'px ' + bgY;
+        }
+
+        // Inject medallion CSS custom properties for hotspot + welcome group positioning
+        // Native medallion center: cx=835.5px (≈seam), cy=464.0px; outer diameter=148.0px
+        const medY    = 464.0 * scale - offsetY;
+        const medDiam = 148.0 * scale;
+        if (weddingIntro) {
+          weddingIntro.style.setProperty('--medallion-y',    medY.toFixed(1) + 'px');
+          weddingIntro.style.setProperty('--medallion-size', medDiam.toFixed(1) + 'px');
         }
       }
 
@@ -1308,7 +1305,6 @@
           transformOrigin: '50% 50%'
         });
       }
-      if (doorRoundBtn) gsap.set(doorRoundBtn, { transformOrigin: '50% 50%' });
 
       // Welcome text entrance — slow, restrained
       const introEntrance = gsap.timeline({ delay: 0.5 });
@@ -1324,8 +1320,8 @@
       }
       if (doorRoundBtn) {
         introEntrance.fromTo(doorRoundBtn,
-          { opacity: 0, y: 6, scale: 0.94 },
-          { opacity: 1, y: 0, scale: 1,   duration: 1.6, ease: 'power2.out' }, 0.55);
+          { opacity: 0 },
+          { opacity: 1, duration: 1.6, ease: 'power2.out' }, 0.55);
       }
       if (doorProgressRail) {
         introEntrance.to(doorProgressRail,
@@ -1348,8 +1344,8 @@
 
         const tl = gsap.timeline();
 
-        // T=0 — Button press-in + welcome text yields
-        tl.to(doorRoundBtn, { scale: 0.85, opacity: 0.5, duration: 0.20, ease: 'power2.inOut' }, 0);
+        // T=0 — Welcome text yields (button is invisible hotspot — just fade it out)
+        tl.to(doorRoundBtn, { opacity: 0, duration: 0.20, ease: 'power2.inOut' }, 0);
         tl.to([doorEyebrow, doorNamesDisplay].filter(Boolean),
           { opacity: 0, y: -8, filter: 'blur(3px)', duration: 0.45, ease: 'power2.in', stagger: 0.06 }, 0);
 
