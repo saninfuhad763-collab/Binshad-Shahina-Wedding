@@ -293,31 +293,50 @@
     }
     #doorNamesDisplay .ampersand { font-size: 0.75em; color: rgba(226,193,151,0.80); display: inline-block; margin: 0 0.2em; }
 
-    /* Transparent medallion hotspot — invisible accessible hit target */
+    /* Ceremonial medallion button — interactive luxury seal */
     #doorRoundBtn {
       position: absolute;
       left: 50%;
       top: var(--medallion-y, 50%);
-      width: var(--medallion-size, 120px);
-      height: var(--medallion-size, 120px);
+      width: var(--medallion-size, 200px);
+      height: var(--medallion-size, 200px);
       transform: translate(-50%, -50%);
       background: transparent;
       border: none;
       border-radius: 50%;
+      padding: 0;
       cursor: pointer;
       pointer-events: auto;
       -webkit-tap-highlight-color: transparent;
       opacity: 0;
       z-index: 20;
-      will-change: opacity;
+      will-change: opacity, transform;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .door-medallion-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+      filter: drop-shadow(0 10px 28px rgba(0,0,0,0.85)) drop-shadow(0 3px 8px rgba(0,0,0,0.9));
+      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    #doorRoundBtn:hover .door-medallion-svg {
+      transform: scale(1.025);
+    }
+    #doorRoundBtn:active .door-medallion-svg {
+      transform: scale(0.975);
     }
     @media (max-width: 767px) {
       #doorEyebrow { font-size: 9px; letter-spacing: 0.34em; margin-bottom: 14px; }
       #doorNamesDisplay { font-size: clamp(24px, 6.8vw, 32px); }
     }
     #doorRoundBtn:focus-visible {
-      outline: 1.5px solid rgba(226,193,151,0.45);
-      outline-offset: 6px;
+      outline: 2px solid rgba(244,216,154,0.65);
+      outline-offset: 8px;
     }
     #doorRoundBtn:disabled { cursor: default; pointer-events: none; }
 
@@ -426,8 +445,182 @@
 
     </div>
 
-    <!-- Transparent medallion hotspot — outside welcome group, positioned directly to weddingIntro -->
-    <button id="doorRoundBtn" aria-label="Open wedding invitation"></button>
+    <!-- Ceremonial medallion CTA — interactive luxury wedding seal -->
+    <button id="doorRoundBtn" aria-label="Open wedding invitation">
+      <svg class="door-medallion-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="doorPlaqueBg" cx="50%" cy="45%" r="58%">
+            <stop offset="0%" stop-color="#1e1014"/>
+            <stop offset="55%" stop-color="#12090c"/>
+            <stop offset="85%" stop-color="#090506"/>
+            <stop offset="100%" stop-color="#040203"/>
+          </radialGradient>
+          <linearGradient id="doorGoldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fff8db"/>
+            <stop offset="18%" stop-color="#ebd289"/>
+            <stop offset="42%" stop-color="#9d7426"/>
+            <stop offset="65%" stop-color="#f8dc9b"/>
+            <stop offset="85%" stop-color="#ad7c27"/>
+            <stop offset="100%" stop-color="#5a390c"/>
+          </linearGradient>
+          <linearGradient id="doorGoldBevel" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#462c07"/>
+            <stop offset="35%" stop-color="#8c5f1c"/>
+            <stop offset="70%" stop-color="#e2ba66"/>
+            <stop offset="100%" stop-color="#fffce8"/>
+          </linearGradient>
+          <linearGradient id="doorGoldPetal" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#fff9df"/>
+            <stop offset="45%" stop-color="#dba84d"/>
+            <stop offset="85%" stop-color="#805315"/>
+            <stop offset="100%" stop-color="#523208"/>
+          </linearGradient>
+          <radialGradient id="doorGoldBead" cx="35%" cy="30%" r="60%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="35%" stop-color="#f7d98c"/>
+            <stop offset="75%" stop-color="#a67724"/>
+            <stop offset="100%" stop-color="#4d3007"/>
+          </radialGradient>
+          <linearGradient id="doorTextGold" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="25%" stop-color="#fffbf2"/>
+            <stop offset="60%" stop-color="#faebd0"/>
+            <stop offset="100%" stop-color="#f2d184"/>
+          </linearGradient>
+          <radialGradient id="doorInnerGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="65%" stop-color="rgba(214,171,94,0)"/>
+            <stop offset="92%" stop-color="rgba(214,171,94,0.12)"/>
+            <stop offset="100%" stop-color="rgba(214,171,94,0.28)"/>
+          </radialGradient>
+          <!-- Filigree petal symbol for 24-spoke outer rosette -->
+          <g id="doorFiligreePetal">
+            <path d="M 98,3.5 C 99,0 101,0 102,3.5 C 103.2,6.5 101.6,9.8 100,10.8 C 98.4,9.8 96.8,6.5 98,3.5 Z" fill="url(#doorGoldPetal)" stroke="#52350c" stroke-width="0.35"/>
+            <circle cx="100" cy="1.6" r="1.3" fill="#fffbe8" stroke="#875c1a" stroke-width="0.35"/>
+            <circle cx="100" cy="11.2" r="0.9" fill="#1e1008"/>
+          </g>
+          <!-- Outer bead dot for 48-point beaded ring -->
+          <circle id="doorBeadDot" cx="100" cy="14.2" r="0.8" fill="url(#doorGoldBead)"/>
+        </defs>
+
+        <!-- 1. OPAQUE BASE (covers old 148px medallion completely) -->
+        <circle cx="100" cy="100" r="99" fill="#0d0709" stroke="#362109" stroke-width="0.8"/>
+
+        <!-- 2. ORNATE OUTER ROSETTE CROWN (24 petals) -->
+        <use href="#doorFiligreePetal"/>
+        <use href="#doorFiligreePetal" transform="rotate(15 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(30 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(45 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(60 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(75 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(90 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(105 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(120 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(135 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(150 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(165 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(180 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(195 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(210 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(225 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(240 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(255 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(270 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(285 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(300 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(315 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(330 100 100)"/>
+        <use href="#doorFiligreePetal" transform="rotate(345 100 100)"/>
+
+        <!-- Stepped concentric gold bezels -->
+        <circle cx="100" cy="100" r="88" fill="none" stroke="url(#doorGoldLinear)" stroke-width="2.6"/>
+        <circle cx="100" cy="100" r="86.2" fill="none" stroke="#2c1a05" stroke-width="0.8"/>
+        <circle cx="100" cy="100" r="84.8" fill="url(#doorGoldBevel)" stroke="#5f4010" stroke-width="0.6"/>
+
+        <!-- 48-Point Beaded cord track -->
+        <g>
+          <use href="#doorBeadDot"/><use href="#doorBeadDot" transform="rotate(7.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(15 100 100)"/><use href="#doorBeadDot" transform="rotate(22.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(30 100 100)"/><use href="#doorBeadDot" transform="rotate(37.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(45 100 100)"/><use href="#doorBeadDot" transform="rotate(52.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(60 100 100)"/><use href="#doorBeadDot" transform="rotate(67.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(75 100 100)"/><use href="#doorBeadDot" transform="rotate(82.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(90 100 100)"/><use href="#doorBeadDot" transform="rotate(97.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(105 100 100)"/><use href="#doorBeadDot" transform="rotate(112.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(120 100 100)"/><use href="#doorBeadDot" transform="rotate(127.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(135 100 100)"/><use href="#doorBeadDot" transform="rotate(142.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(150 100 100)"/><use href="#doorBeadDot" transform="rotate(157.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(165 100 100)"/><use href="#doorBeadDot" transform="rotate(172.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(180 100 100)"/><use href="#doorBeadDot" transform="rotate(187.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(195 100 100)"/><use href="#doorBeadDot" transform="rotate(202.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(210 100 100)"/><use href="#doorBeadDot" transform="rotate(217.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(225 100 100)"/><use href="#doorBeadDot" transform="rotate(232.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(240 100 100)"/><use href="#doorBeadDot" transform="rotate(247.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(255 100 100)"/><use href="#doorBeadDot" transform="rotate(262.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(270 100 100)"/><use href="#doorBeadDot" transform="rotate(277.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(285 100 100)"/><use href="#doorBeadDot" transform="rotate(292.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(300 100 100)"/><use href="#doorBeadDot" transform="rotate(307.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(315 100 100)"/><use href="#doorBeadDot" transform="rotate(322.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(330 100 100)"/><use href="#doorBeadDot" transform="rotate(337.5 100 100)"/>
+          <use href="#doorBeadDot" transform="rotate(345 100 100)"/><use href="#doorBeadDot" transform="rotate(352.5 100 100)"/>
+        </g>
+
+        <circle cx="100" cy="100" r="82.5" fill="none" stroke="url(#doorGoldLinear)" stroke-width="1.2"/>
+        <circle cx="100" cy="100" r="80.5" fill="none" stroke="#221204" stroke-width="0.8"/>
+
+        <!-- 3. INNER OBSIDIAN-MAROON PLAQUE -->
+        <circle cx="100" cy="100" r="79.5" fill="url(#doorPlaqueBg)"/>
+        <circle cx="100" cy="100" r="79.5" fill="url(#doorInnerGlow)"/>
+
+        <!-- Concentric etched gold rings -->
+        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorGoldLinear)" stroke-width="0.8" opacity="0.85"/>
+        <circle cx="100" cy="100" r="73.5" fill="none" stroke="#d4ab59" stroke-width="0.4" stroke-dasharray="1.2 2" opacity="0.6"/>
+        <circle cx="100" cy="100" r="71" fill="none" stroke="url(#doorGoldBevel)" stroke-width="0.5" opacity="0.5"/>
+
+        <!-- 4. TOP CROWN ORNAMENT (delicate diamond crest) -->
+        <g transform="translate(100, 62)">
+          <path d="M 0,-4.5 L 3.5,0 L 0,4.5 L -3.5,0 Z" fill="url(#doorGoldLinear)" stroke="#4a3009" stroke-width="0.4"/>
+          <circle cx="0" cy="0" r="1.1" fill="#ffffff"/>
+          <path d="M -5,0 C -9,-0.8 -14,-3 -18,-1 C -14,1.5 -8,1 -5,0 Z" fill="url(#doorGoldLinear)" opacity="0.85"/>
+          <path d="M 5,0 C 9,-0.8 14,-3 18,-1 C 14,1.5 8,1 5,0 Z" fill="url(#doorGoldLinear)" opacity="0.85"/>
+          <circle cx="-19" cy="-1" r="0.75" fill="#fdf0cd"/>
+          <circle cx="19" cy="-1" r="0.75" fill="#fdf0cd"/>
+        </g>
+
+        <!-- 5. CALL TO ACTION TYPOGRAPHY: Tap To Open -->
+        <g style="filter: drop-shadow(0 2px 5px rgba(0,0,0,0.95)) drop-shadow(0 1px 2px rgba(0,0,0,0.9));">
+          <text x="100" y="102.5"
+                font-family="'Playfair Display', 'Cinzel', 'Georgia', serif"
+                font-size="14.5"
+                font-weight="700"
+                letter-spacing="0.20em"
+                text-anchor="middle"
+                dominant-baseline="central"
+                fill="url(#doorTextGold)"
+                stroke="#2a1604"
+                stroke-width="0.4"
+                paint-order="stroke fill">
+            Tap To Open
+          </text>
+        </g>
+
+        <!-- 6. BOTTOM ORNAMENT (inverted laurel flourish) -->
+        <g transform="translate(100, 137)">
+          <circle cx="0" cy="0" r="1.6" fill="url(#doorGoldBead)" stroke="#52350c" stroke-width="0.3"/>
+          <path d="M -3.5,0 C -7,-0.5 -12,-2.2 -15,-0.5 C -12,1.2 -6,0.8 -3.5,0 Z" fill="url(#doorGoldLinear)" opacity="0.8"/>
+          <path d="M 3.5,0 C 7,-0.5 12,-2.2 15,-0.5 C 12,1.2 6,0.8 3.5,0 Z" fill="url(#doorGoldLinear)" opacity="0.8"/>
+          <circle cx="-16" cy="-0.5" r="0.65" fill="#fdf0cd"/>
+          <circle cx="16" cy="-0.5" r="0.65" fill="#fdf0cd"/>
+        </g>
+
+        <!-- 7. SPECULAR TOP SHEEN (luxury metallic gleam) -->
+        <path d="M 40,30 C 58,18 78,13 100,13 C 122,13 142,18 160,30"
+              fill="none"
+              stroke="rgba(255,250,230,0.55)"
+              stroke-width="1.2"
+              stroke-linecap="round"
+              opacity="0.7"/>
+      </svg>
+    </button>
 
     <!-- Cinematic progress rail — right edge, deliberate design element -->
     <div id="doorProgressRail">
@@ -1270,9 +1463,9 @@
         }
 
         // Inject medallion CSS custom properties for hotspot + welcome group positioning
-        // Native medallion center: cx=835.5px (≈seam), cy=464.0px; outer diameter=148.0px
+        // Native medallion center: cx=835.5px (≈seam), cy=464.0px; outer diameter=200.0px
         const medY    = 464.0 * scale - offsetY;
-        const medDiam = 148.0 * scale;
+        const medDiam = 200.0 * scale;
         if (weddingIntro) {
           weddingIntro.style.setProperty('--medallion-y',    medY.toFixed(1) + 'px');
           weddingIntro.style.setProperty('--medallion-size', medDiam.toFixed(1) + 'px');
