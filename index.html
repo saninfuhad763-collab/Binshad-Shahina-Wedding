@@ -491,6 +491,33 @@
             <stop offset="100%" stop-color="#040002"/>
           </radialGradient>
 
+
+          <!-- Warm antique-gold diagonal metallic gradient for outer decorative collar -->
+          <linearGradient id="doorOuterGoldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#cf9c48"/>
+            <stop offset="18%" stop-color="#b78332"/>
+            <stop offset="42%" stop-color="#9d6b24"/>
+            <stop offset="65%" stop-color="#b78332"/>
+            <stop offset="85%" stop-color="#885416"/>
+            <stop offset="100%" stop-color="#3d2106"/>
+          </linearGradient>
+
+          <!-- Inverse metallic bevel gradient for 3D outer relief -->
+          <linearGradient id="doorOuterGoldBevel" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2a1403"/>
+            <stop offset="28%" stop-color="#5a360c"/>
+            <stop offset="65%" stop-color="#9d6b24"/>
+            <stop offset="100%" stop-color="#cf9c48"/>
+          </linearGradient>
+
+          <!-- Radial bead gradient for outer rim beads -->
+          <radialGradient id="doorOuterGoldBead" cx="35%" cy="30%" r="65%">
+            <stop offset="0%" stop-color="#e0b868"/>
+            <stop offset="35%" stop-color="#b78332"/>
+            <stop offset="75%" stop-color="#885416"/>
+            <stop offset="100%" stop-color="#3d2106"/>
+          </radialGradient>
+
           <!-- Warm antique-gold diagonal metallic gradient -->
           <linearGradient id="doorGoldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#fffde8"/>
@@ -536,12 +563,12 @@
           <!-- Interlocking baroque filigree scroll unit (16 around perimeter) -->
           <g id="doorFiligreeScroll">
             <path d="M 94,15 C 92,10 95,5 100,4 C 105,5 108,10 106,15 C 111,12 118,14 120,20 C 122,26 116,31 110,32 C 106,26 102,23 96,25 C 93,20 87,19 84,23 C 81,18 87,12 94,15 Z"
-                  fill="url(#doorGoldLinear)" stroke="#462b06" stroke-width="0.4"/>
-            <path d="M 100,5 C 100,12 98,18 97,25" stroke="#fffde6" stroke-width="0.7" stroke-linecap="round" opacity="0.9"/>
-            <path d="M 107,15 C 112,17 116,21 114,27" stroke="#fffde6" stroke-width="0.5" stroke-linecap="round" opacity="0.8"/>
+                  fill="url(#doorOuterGoldLinear)" stroke="#462b06" stroke-width="0.4"/>
+            <path d="M 100,5 C 100,12 98,18 97,25" stroke="#d4a34e" stroke-width="0.7" stroke-linecap="round" opacity="0.85"/>
+            <path d="M 107,15 C 112,17 116,21 114,27" stroke="#d4a34e" stroke-width="0.5" stroke-linecap="round" opacity="0.75"/>
             <path d="M 93,16 C 96,19 97,23 97,28" stroke="#331e05" stroke-width="0.6" opacity="0.75"/>
-            <circle cx="100" cy="5" r="1.3" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="119" cy="20" r="1.0" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="100" cy="5" r="1.3" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="119" cy="20" r="1.0" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Cardinal 12 o'clock top crest (extended ornate finial) -->
@@ -550,8 +577,8 @@
                   fill="url(#doorGoldLinear)" stroke="#422906" stroke-width="0.5"/>
             <path d="M 100,3 L 100,28" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round"/>
             <circle cx="100" cy="3" r="1.5" fill="#ffffff" stroke="#52350a" stroke-width="0.35"/>
-            <circle cx="84" cy="7" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="116" cy="7" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="84" cy="7" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="116" cy="7" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Cardinal 6 o'clock bottom pendant -->
@@ -560,8 +587,8 @@
                   fill="url(#doorGoldLinear)" stroke="#422906" stroke-width="0.5"/>
             <path d="M 100,197 L 100,172" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round"/>
             <circle cx="100" cy="197" r="1.5" fill="#ffffff" stroke="#52350a" stroke-width="0.35"/>
-            <circle cx="84" cy="193" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="116" cy="193" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="84" cy="193" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="116" cy="193" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Cardinal 9 o'clock side crest -->
@@ -570,19 +597,19 @@
                   fill="url(#doorGoldLinear)" stroke="#422906" stroke-width="0.5"/>
             <path d="M 3,100 L 28,100" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round"/>
             <circle cx="3" cy="100" r="1.5" fill="#ffffff" stroke="#52350a" stroke-width="0.35"/>
-            <circle cx="7" cy="84" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="7" cy="116" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="7" cy="84" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="7" cy="116" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Beaded track dot -->
-          <circle id="doorRimBead" cx="100" cy="27" r="0.9" fill="url(#doorGoldBead)"/>
+          <circle id="doorRimBead" cx="100" cy="27" r="0.9" fill="url(#doorOuterGoldBead)"/>
         </defs>
 
         <!-- 1. OPAQUE BASE (Solid dark backing circle: r=96 completely covers 148px old medallion) -->
         <circle cx="100" cy="100" r="96" fill="#0d0306" stroke="#362007" stroke-width="0.8"/>
 
         <!-- Solid sculpted gold collar underlay (bridges all scrollwork into continuous metal) -->
-        <circle cx="100" cy="100" r="86" fill="url(#doorGoldBevel)" stroke="#422906" stroke-width="0.6"/>
+        <circle cx="100" cy="100" r="86" fill="url(#doorOuterGoldBevel)" stroke="#422906" stroke-width="0.6"/>
 
         <!-- 2. SCULPTED 16-SPOKE BAROQUE FILIGREE SCROLLWORK -->
         <use href="#doorFiligreeScroll"/>
@@ -609,9 +636,9 @@
         <use href="#doorCrestSide" transform="rotate(180 100 100)"/>
 
         <!-- Stepped concentric gold bezels (framing the inner plaque) -->
-        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorGoldLinear)" stroke-width="2.4"/>
+        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorOuterGoldLinear)" stroke-width="2.4"/>
         <circle cx="100" cy="100" r="74.2" fill="none" stroke="#221303" stroke-width="0.8"/>
-        <circle cx="100" cy="100" r="72.8" fill="url(#doorGoldBevel)" stroke="#52350a" stroke-width="0.6"/>
+        <circle cx="100" cy="100" r="72.8" fill="url(#doorOuterGoldBevel)" stroke="#52350a" stroke-width="0.6"/>
 
         <!-- Beaded cord track around bezel perimeter (32 beads) -->
         <g>
@@ -633,7 +660,7 @@
           <use href="#doorRimBead" transform="rotate(337.5 100 100)"/><use href="#doorRimBead" transform="rotate(348.75 100 100)"/>
         </g>
 
-        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorGoldLinear)" stroke-width="1.0"/>
+        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorOuterGoldLinear)" stroke-width="1.0"/>
         <circle cx="100" cy="100" r="69.2" fill="none" stroke="#1c0a02" stroke-width="0.8"/>
 
         <!-- 3. INNER ROYAL BURGUNDY VELVET PLAQUE (r=68.5 corresponds to ~104px native diameter) -->
@@ -738,6 +765,33 @@
             <stop offset="100%" stop-color="#040002"/>
           </radialGradient>
 
+
+          <!-- Warm antique-gold diagonal metallic gradient for outer decorative collar -->
+          <linearGradient id="doorOuterGoldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#cf9c48"/>
+            <stop offset="18%" stop-color="#b78332"/>
+            <stop offset="42%" stop-color="#9d6b24"/>
+            <stop offset="65%" stop-color="#b78332"/>
+            <stop offset="85%" stop-color="#885416"/>
+            <stop offset="100%" stop-color="#3d2106"/>
+          </linearGradient>
+
+          <!-- Inverse metallic bevel gradient for 3D outer relief -->
+          <linearGradient id="doorOuterGoldBevel" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2a1403"/>
+            <stop offset="28%" stop-color="#5a360c"/>
+            <stop offset="65%" stop-color="#9d6b24"/>
+            <stop offset="100%" stop-color="#cf9c48"/>
+          </linearGradient>
+
+          <!-- Radial bead gradient for outer rim beads -->
+          <radialGradient id="doorOuterGoldBead" cx="35%" cy="30%" r="65%">
+            <stop offset="0%" stop-color="#e0b868"/>
+            <stop offset="35%" stop-color="#b78332"/>
+            <stop offset="75%" stop-color="#885416"/>
+            <stop offset="100%" stop-color="#3d2106"/>
+          </radialGradient>
+
           <!-- Warm antique-gold diagonal metallic gradient -->
           <linearGradient id="doorGoldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#fffde8"/>
@@ -783,12 +837,12 @@
           <!-- Interlocking baroque filigree scroll unit (16 around perimeter) -->
           <g id="doorFiligreeScroll">
             <path d="M 94,15 C 92,10 95,5 100,4 C 105,5 108,10 106,15 C 111,12 118,14 120,20 C 122,26 116,31 110,32 C 106,26 102,23 96,25 C 93,20 87,19 84,23 C 81,18 87,12 94,15 Z"
-                  fill="url(#doorGoldLinear)" stroke="#462b06" stroke-width="0.4"/>
-            <path d="M 100,5 C 100,12 98,18 97,25" stroke="#fffde6" stroke-width="0.7" stroke-linecap="round" opacity="0.9"/>
-            <path d="M 107,15 C 112,17 116,21 114,27" stroke="#fffde6" stroke-width="0.5" stroke-linecap="round" opacity="0.8"/>
+                  fill="url(#doorOuterGoldLinear)" stroke="#462b06" stroke-width="0.4"/>
+            <path d="M 100,5 C 100,12 98,18 97,25" stroke="#d4a34e" stroke-width="0.7" stroke-linecap="round" opacity="0.85"/>
+            <path d="M 107,15 C 112,17 116,21 114,27" stroke="#d4a34e" stroke-width="0.5" stroke-linecap="round" opacity="0.75"/>
             <path d="M 93,16 C 96,19 97,23 97,28" stroke="#331e05" stroke-width="0.6" opacity="0.75"/>
-            <circle cx="100" cy="5" r="1.3" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="119" cy="20" r="1.0" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="100" cy="5" r="1.3" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="119" cy="20" r="1.0" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Cardinal 12 o'clock top crest (extended ornate finial) -->
@@ -797,8 +851,8 @@
                   fill="url(#doorGoldLinear)" stroke="#422906" stroke-width="0.5"/>
             <path d="M 100,3 L 100,28" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round"/>
             <circle cx="100" cy="3" r="1.5" fill="#ffffff" stroke="#52350a" stroke-width="0.35"/>
-            <circle cx="84" cy="7" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="116" cy="7" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="84" cy="7" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="116" cy="7" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Cardinal 6 o'clock bottom pendant -->
@@ -807,8 +861,8 @@
                   fill="url(#doorGoldLinear)" stroke="#422906" stroke-width="0.5"/>
             <path d="M 100,197 L 100,172" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round"/>
             <circle cx="100" cy="197" r="1.5" fill="#ffffff" stroke="#52350a" stroke-width="0.35"/>
-            <circle cx="84" cy="193" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="116" cy="193" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="84" cy="193" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="116" cy="193" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Cardinal 9 o'clock side crest -->
@@ -817,19 +871,19 @@
                   fill="url(#doorGoldLinear)" stroke="#422906" stroke-width="0.5"/>
             <path d="M 3,100 L 28,100" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round"/>
             <circle cx="3" cy="100" r="1.5" fill="#ffffff" stroke="#52350a" stroke-width="0.35"/>
-            <circle cx="7" cy="84" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="7" cy="116" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="7" cy="84" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="7" cy="116" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Beaded track dot -->
-          <circle id="doorRimBead" cx="100" cy="27" r="0.9" fill="url(#doorGoldBead)"/>
+          <circle id="doorRimBead" cx="100" cy="27" r="0.9" fill="url(#doorOuterGoldBead)"/>
         </defs>
 
         <!-- 1. OPAQUE BASE (Solid dark backing circle: r=96 completely covers 148px old medallion) -->
         <circle cx="100" cy="100" r="96" fill="#0d0306" stroke="#362007" stroke-width="0.8"/>
 
         <!-- Solid sculpted gold collar underlay (bridges all scrollwork into continuous metal) -->
-        <circle cx="100" cy="100" r="86" fill="url(#doorGoldBevel)" stroke="#422906" stroke-width="0.6"/>
+        <circle cx="100" cy="100" r="86" fill="url(#doorOuterGoldBevel)" stroke="#422906" stroke-width="0.6"/>
 
         <!-- 2. SCULPTED 16-SPOKE BAROQUE FILIGREE SCROLLWORK -->
         <use href="#doorFiligreeScroll"/>
@@ -856,9 +910,9 @@
         <use href="#doorCrestSide" transform="rotate(180 100 100)"/>
 
         <!-- Stepped concentric gold bezels (framing the inner plaque) -->
-        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorGoldLinear)" stroke-width="2.4"/>
+        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorOuterGoldLinear)" stroke-width="2.4"/>
         <circle cx="100" cy="100" r="74.2" fill="none" stroke="#221303" stroke-width="0.8"/>
-        <circle cx="100" cy="100" r="72.8" fill="url(#doorGoldBevel)" stroke="#52350a" stroke-width="0.6"/>
+        <circle cx="100" cy="100" r="72.8" fill="url(#doorOuterGoldBevel)" stroke="#52350a" stroke-width="0.6"/>
 
         <!-- Beaded cord track around bezel perimeter (32 beads) -->
         <g>
@@ -880,7 +934,7 @@
           <use href="#doorRimBead" transform="rotate(337.5 100 100)"/><use href="#doorRimBead" transform="rotate(348.75 100 100)"/>
         </g>
 
-        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorGoldLinear)" stroke-width="1.0"/>
+        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorOuterGoldLinear)" stroke-width="1.0"/>
         <circle cx="100" cy="100" r="69.2" fill="none" stroke="#1c0a02" stroke-width="0.8"/>
 
         <!-- 3. INNER ROYAL BURGUNDY VELVET PLAQUE (r=68.5 corresponds to ~104px native diameter) -->
@@ -1007,6 +1061,33 @@
             <stop offset="100%" stop-color="#040002"/>
           </radialGradient>
 
+
+          <!-- Warm antique-gold diagonal metallic gradient for outer decorative collar -->
+          <linearGradient id="doorOuterGoldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#cf9c48"/>
+            <stop offset="18%" stop-color="#b78332"/>
+            <stop offset="42%" stop-color="#9d6b24"/>
+            <stop offset="65%" stop-color="#b78332"/>
+            <stop offset="85%" stop-color="#885416"/>
+            <stop offset="100%" stop-color="#3d2106"/>
+          </linearGradient>
+
+          <!-- Inverse metallic bevel gradient for 3D outer relief -->
+          <linearGradient id="doorOuterGoldBevel" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2a1403"/>
+            <stop offset="28%" stop-color="#5a360c"/>
+            <stop offset="65%" stop-color="#9d6b24"/>
+            <stop offset="100%" stop-color="#cf9c48"/>
+          </linearGradient>
+
+          <!-- Radial bead gradient for outer rim beads -->
+          <radialGradient id="doorOuterGoldBead" cx="35%" cy="30%" r="65%">
+            <stop offset="0%" stop-color="#e0b868"/>
+            <stop offset="35%" stop-color="#b78332"/>
+            <stop offset="75%" stop-color="#885416"/>
+            <stop offset="100%" stop-color="#3d2106"/>
+          </radialGradient>
+
           <!-- Warm antique-gold diagonal metallic gradient -->
           <linearGradient id="doorGoldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#fffde8"/>
@@ -1052,12 +1133,12 @@
           <!-- Interlocking baroque filigree scroll unit (16 around perimeter) -->
           <g id="doorFiligreeScroll">
             <path d="M 94,15 C 92,10 95,5 100,4 C 105,5 108,10 106,15 C 111,12 118,14 120,20 C 122,26 116,31 110,32 C 106,26 102,23 96,25 C 93,20 87,19 84,23 C 81,18 87,12 94,15 Z"
-                  fill="url(#doorGoldLinear)" stroke="#462b06" stroke-width="0.4"/>
-            <path d="M 100,5 C 100,12 98,18 97,25" stroke="#fffde6" stroke-width="0.7" stroke-linecap="round" opacity="0.9"/>
-            <path d="M 107,15 C 112,17 116,21 114,27" stroke="#fffde6" stroke-width="0.5" stroke-linecap="round" opacity="0.8"/>
+                  fill="url(#doorOuterGoldLinear)" stroke="#462b06" stroke-width="0.4"/>
+            <path d="M 100,5 C 100,12 98,18 97,25" stroke="#d4a34e" stroke-width="0.7" stroke-linecap="round" opacity="0.85"/>
+            <path d="M 107,15 C 112,17 116,21 114,27" stroke="#d4a34e" stroke-width="0.5" stroke-linecap="round" opacity="0.75"/>
             <path d="M 93,16 C 96,19 97,23 97,28" stroke="#331e05" stroke-width="0.6" opacity="0.75"/>
-            <circle cx="100" cy="5" r="1.3" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="119" cy="20" r="1.0" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="100" cy="5" r="1.3" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="119" cy="20" r="1.0" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Cardinal 12 o'clock top crest (extended ornate finial) -->
@@ -1066,8 +1147,8 @@
                   fill="url(#doorGoldLinear)" stroke="#422906" stroke-width="0.5"/>
             <path d="M 100,3 L 100,28" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round"/>
             <circle cx="100" cy="3" r="1.5" fill="#ffffff" stroke="#52350a" stroke-width="0.35"/>
-            <circle cx="84" cy="7" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="116" cy="7" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="84" cy="7" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="116" cy="7" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Cardinal 6 o'clock bottom pendant -->
@@ -1076,8 +1157,8 @@
                   fill="url(#doorGoldLinear)" stroke="#422906" stroke-width="0.5"/>
             <path d="M 100,197 L 100,172" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round"/>
             <circle cx="100" cy="197" r="1.5" fill="#ffffff" stroke="#52350a" stroke-width="0.35"/>
-            <circle cx="84" cy="193" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="116" cy="193" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="84" cy="193" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="116" cy="193" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Cardinal 9 o'clock side crest -->
@@ -1086,19 +1167,19 @@
                   fill="url(#doorGoldLinear)" stroke="#422906" stroke-width="0.5"/>
             <path d="M 3,100 L 28,100" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round"/>
             <circle cx="3" cy="100" r="1.5" fill="#ffffff" stroke="#52350a" stroke-width="0.35"/>
-            <circle cx="7" cy="84" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
-            <circle cx="7" cy="116" r="1.1" fill="url(#doorGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="7" cy="84" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
+            <circle cx="7" cy="116" r="1.1" fill="url(#doorOuterGoldBead)" stroke="#52350a" stroke-width="0.3"/>
           </g>
 
           <!-- Beaded track dot -->
-          <circle id="doorRimBead" cx="100" cy="27" r="0.9" fill="url(#doorGoldBead)"/>
+          <circle id="doorRimBead" cx="100" cy="27" r="0.9" fill="url(#doorOuterGoldBead)"/>
         </defs>
 
         <!-- 1. OPAQUE BASE (Solid dark backing circle: r=96 completely covers 148px old medallion) -->
         <circle cx="100" cy="100" r="96" fill="#0d0306" stroke="#362007" stroke-width="0.8"/>
 
         <!-- Solid sculpted gold collar underlay (bridges all scrollwork into continuous metal) -->
-        <circle cx="100" cy="100" r="86" fill="url(#doorGoldBevel)" stroke="#422906" stroke-width="0.6"/>
+        <circle cx="100" cy="100" r="86" fill="url(#doorOuterGoldBevel)" stroke="#422906" stroke-width="0.6"/>
 
         <!-- 2. SCULPTED 16-SPOKE BAROQUE FILIGREE SCROLLWORK -->
         <use href="#doorFiligreeScroll"/>
@@ -1125,9 +1206,9 @@
         <use href="#doorCrestSide" transform="rotate(180 100 100)"/>
 
         <!-- Stepped concentric gold bezels (framing the inner plaque) -->
-        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorGoldLinear)" stroke-width="2.4"/>
+        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorOuterGoldLinear)" stroke-width="2.4"/>
         <circle cx="100" cy="100" r="74.2" fill="none" stroke="#221303" stroke-width="0.8"/>
-        <circle cx="100" cy="100" r="72.8" fill="url(#doorGoldBevel)" stroke="#52350a" stroke-width="0.6"/>
+        <circle cx="100" cy="100" r="72.8" fill="url(#doorOuterGoldBevel)" stroke="#52350a" stroke-width="0.6"/>
 
         <!-- Beaded cord track around bezel perimeter (32 beads) -->
         <g>
@@ -1149,7 +1230,7 @@
           <use href="#doorRimBead" transform="rotate(337.5 100 100)"/><use href="#doorRimBead" transform="rotate(348.75 100 100)"/>
         </g>
 
-        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorGoldLinear)" stroke-width="1.0"/>
+        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorOuterGoldLinear)" stroke-width="1.0"/>
         <circle cx="100" cy="100" r="69.2" fill="none" stroke="#1c0a02" stroke-width="0.8"/>
 
         <!-- 3. INNER ROYAL BURGUNDY VELVET PLAQUE (r=68.5 corresponds to ~104px native diameter) -->
