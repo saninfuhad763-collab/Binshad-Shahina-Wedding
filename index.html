@@ -334,7 +334,7 @@
       cursor: pointer;
       pointer-events: auto;
       -webkit-tap-highlight-color: transparent;
-      opacity: 0;
+      opacity: 1; /* STEP 30A: Static landing state */
       z-index: 20;
       will-change: opacity, transform;
       display: flex;
@@ -366,20 +366,13 @@
     }
     #doorRoundBtn:disabled { cursor: default; pointer-events: none; }
 
-    /* STEP 29C-R3: Single 2D zoom wrapper for closed-door visual system */
+    /* STEP 30A: Stationary wrapper for closed-door visual system (scale 1.000, no zoom) */
     #doorZoomWrapper {
       position: absolute;
       inset: 0;
       z-index: 4;
       pointer-events: none;
-      transform-origin: 50% 43%;
-      will-change: transform;
-    }
-    @media (max-width: 1023px) and (orientation: portrait) {
-      #doorZoomWrapper { transform-origin: 50% 40%; }
-    }
-    @media (max-width: 767px) {
-      #doorZoomWrapper { transform-origin: 50% 38%; }
+      transform: scale(1);
     }
 
     /* Opaque base cover on door leaves — covers old baked CTA at all times from frame 0 */
@@ -557,53 +550,53 @@
           </radialGradient>
 
 
-          <!-- Soft glowing maroon edge illumination halo -->
-          <radialGradient id="doorOuterMaroonHalo" cx="50%" cy="50%" r="50%">
-            <stop offset="70%" stop-color="rgba(163,59,85,0)"/>
-            <stop offset="85%" stop-color="rgba(163,59,85,0.22)"/>
-            <stop offset="95%" stop-color="rgba(138,43,67,0.38)"/>
-            <stop offset="100%" stop-color="rgba(85,19,38,0)"/>
+          <!-- Soft glowing dark warm brown edge illumination halo -->
+          <radialGradient id="doorOuterBrownHalo" cx="50%" cy="50%" r="50%">
+            <stop offset="70%" stop-color="rgba(85,55,34,0)"/>
+            <stop offset="85%" stop-color="rgba(85,55,34,0.22)"/>
+            <stop offset="95%" stop-color="rgba(65,40,24,0.38)"/>
+            <stop offset="100%" stop-color="rgba(36,21,14,0)"/>
           </radialGradient>
 
-          <!-- Rich deep maroon / burgundy structural collar underlay -->
-          <radialGradient id="doorOuterMaroonBase" cx="50%" cy="36%" r="64%">
-            <stop offset="0%" stop-color="#4e0e1e"/>
-            <stop offset="38%" stop-color="#360a16"/>
-            <stop offset="72%" stop-color="#24070f"/>
-            <stop offset="100%" stop-color="#120206"/>
+          <!-- Rich deep warm brown structural collar underlay -->
+          <radialGradient id="doorOuterBrownBase" cx="50%" cy="36%" r="64%">
+            <stop offset="0%" stop-color="#4a301f"/>
+            <stop offset="38%" stop-color="#352117"/>
+            <stop offset="72%" stop-color="#24150e"/>
+            <stop offset="100%" stop-color="#140b07"/>
           </radialGradient>
 
-          <!-- Wine-red / ruby linear gradient for baroque scrollwork -->
-          <linearGradient id="doorOuterMaroonFiligree" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#8a2b43"/>
-            <stop offset="25%" stop-color="#6d1930"/>
-            <stop offset="50%" stop-color="#4e0e1e"/>
-            <stop offset="80%" stop-color="#360a16"/>
-            <stop offset="100%" stop-color="#1c040b"/>
+          <!-- Dark warm brown / wood linear gradient for baroque scrollwork -->
+          <linearGradient id="doorOuterBrownFiligree" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#60442d"/>
+            <stop offset="25%" stop-color="#4c3321"/>
+            <stop offset="50%" stop-color="#382418"/>
+            <stop offset="80%" stop-color="#26170f"/>
+            <stop offset="100%" stop-color="#160c07"/>
           </linearGradient>
 
-          <!-- 3D dimensional maroon bevel gradient -->
-          <linearGradient id="doorOuterMaroonBevel" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#140207"/>
-            <stop offset="28%" stop-color="#3a0b18"/>
-            <stop offset="65%" stop-color="#7a243a"/>
-            <stop offset="100%" stop-color="#b84b65"/>
+          <!-- 3D dimensional warm brown bevel gradient -->
+          <linearGradient id="doorOuterBrownBevel" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#120a06"/>
+            <stop offset="28%" stop-color="#2e1b12"/>
+            <stop offset="65%" stop-color="#553823"/>
+            <stop offset="100%" stop-color="#805739"/>
           </linearGradient>
 
-          <!-- Restrained antique metal & ruby accent for fine veins and spines -->
-          <linearGradient id="doorOuterMaroonAccent" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#d4a34e" stop-opacity="0.85"/>
-            <stop offset="40%" stop-color="#9b7040" stop-opacity="0.75"/>
-            <stop offset="75%" stop-color="#7a243a" stop-opacity="0.8"/>
-            <stop offset="100%" stop-color="#4e0e1e" stop-opacity="0.9"/>
+          <!-- Restrained antique bronze-brown accent for fine veins and spines -->
+          <linearGradient id="doorOuterBrownAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#b88d48" stop-opacity="0.85"/>
+            <stop offset="40%" stop-color="#856038" stop-opacity="0.80"/>
+            <stop offset="75%" stop-color="#553823" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#352117" stop-opacity="0.9"/>
           </linearGradient>
 
-          <!-- Ruby-shaded antique bronze pearl bead gradient -->
-          <radialGradient id="doorOuterMaroonBead" cx="35%" cy="30%" r="65%">
+          <!-- Antique bronze pearl bead gradient -->
+          <radialGradient id="doorOuterBrownBead" cx="35%" cy="30%" r="65%">
             <stop offset="0%" stop-color="#fcedb4"/>
-            <stop offset="35%" stop-color="#c98a58"/>
-            <stop offset="65%" stop-color="#7a243a"/>
-            <stop offset="100%" stop-color="#1c040b"/>
+            <stop offset="35%" stop-color="#ba8e55"/>
+            <stop offset="65%" stop-color="#664628"/>
+            <stop offset="100%" stop-color="#190e08"/>
           </radialGradient>
 
           <!-- Warm antique-gold diagonal metallic gradient -->
@@ -648,60 +641,60 @@
             <stop offset="100%" stop-color="rgba(244,206,109,0)"/>
           </radialGradient>
 
-          <!-- Interlocking baroque filigree scroll unit in sculpted deep maroon & antique accents -->
+          <!-- Interlocking baroque filigree scroll unit in sculpted dark warm brown & antique accents -->
           <g id="doorFiligreeScroll">
             <path d="M 94,15 C 92,10 95,5 100,4 C 105,5 108,10 106,15 C 111,12 118,14 120,20 C 122,26 116,31 110,32 C 106,26 102,23 96,25 C 93,20 87,19 84,23 C 81,18 87,12 94,15 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.4"/>
-            <path d="M 100,5 C 100,12 98,18 97,25" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.7" stroke-linecap="round"/>
-            <path d="M 107,15 C 112,17 116,21 114,27" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.5" stroke-linecap="round"/>
-            <path d="M 93,16 C 96,19 97,23 97,28" stroke="#120206" stroke-width="0.6" opacity="0.8"/>
-            <circle cx="100" cy="5" r="1.3" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="119" cy="20" r="1.0" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.4"/>
+            <path d="M 100,5 C 100,12 98,18 97,25" stroke="url(#doorOuterBrownAccent)" stroke-width="0.7" stroke-linecap="round"/>
+            <path d="M 107,15 C 112,17 116,21 114,27" stroke="url(#doorOuterBrownAccent)" stroke-width="0.5" stroke-linecap="round"/>
+            <path d="M 93,16 C 96,19 97,23 97,28" stroke="#100704" stroke-width="0.6" opacity="0.8"/>
+            <circle cx="100" cy="5" r="1.3" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="119" cy="20" r="1.0" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
-          <!-- Cardinal 12 o'clock top crest in sculpted maroon -->
+          <!-- Cardinal 12 o'clock top crest in sculpted dark warm brown -->
           <g id="doorCrestTop">
             <path d="M 100,2 C 104,5 110,8 116,6 C 120,10 116,16 110,18 C 117,19 122,25 119,30 C 115,34 108,34 104,29 C 102,34 98,34 96,29 C 92,34 85,34 81,30 C 78,25 83,19 90,18 C 84,16 80,10 84,6 C 90,8 96,5 100,2 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.5"/>
-            <path d="M 100,3 L 100,28" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.8" stroke-linecap="round"/>
-            <circle cx="100" cy="3" r="1.5" fill="#fcedb4" stroke="#24070f" stroke-width="0.35"/>
-            <circle cx="84" cy="7" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="116" cy="7" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.5"/>
+            <path d="M 100,3 L 100,28" stroke="url(#doorOuterBrownAccent)" stroke-width="0.8" stroke-linecap="round"/>
+            <circle cx="100" cy="3" r="1.5" fill="#fcedb4" stroke="#24150e" stroke-width="0.35"/>
+            <circle cx="84" cy="7" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="116" cy="7" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
-          <!-- Cardinal 6 o'clock bottom pendant in sculpted maroon -->
+          <!-- Cardinal 6 o'clock bottom pendant in sculpted dark warm brown -->
           <g id="doorCrestBottom">
             <path d="M 100,198 C 104,195 110,192 116,194 C 120,190 116,184 110,182 C 117,181 122,175 119,170 C 115,166 108,166 104,171 C 102,166 98,166 96,171 C 92,166 85,166 81,170 C 78,175 83,181 90,182 C 84,184 80,190 84,194 C 90,192 96,195 100,198 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.5"/>
-            <path d="M 100,197 L 100,172" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.8" stroke-linecap="round"/>
-            <circle cx="100" cy="197" r="1.5" fill="#fcedb4" stroke="#24070f" stroke-width="0.35"/>
-            <circle cx="84" cy="193" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="116" cy="193" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.5"/>
+            <path d="M 100,197 L 100,172" stroke="url(#doorOuterBrownAccent)" stroke-width="0.8" stroke-linecap="round"/>
+            <circle cx="100" cy="197" r="1.5" fill="#fcedb4" stroke="#24150e" stroke-width="0.35"/>
+            <circle cx="84" cy="193" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="116" cy="193" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
-          <!-- Cardinal 9 o'clock side crest in sculpted maroon -->
+          <!-- Cardinal 9 o'clock side crest in sculpted dark warm brown -->
           <g id="doorCrestSide">
             <path d="M 2,100 C 5,104 8,110 6,116 C 10,120 16,116 18,110 C 19,117 25,122 30,119 C 34,115 34,108 29,104 C 34,102 34,98 29,96 C 34,92 34,85 30,81 C 25,78 19,83 18,90 C 16,84 10,80 6,84 C 8,90 5,96 2,100 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.5"/>
-            <path d="M 3,100 L 28,100" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.8" stroke-linecap="round"/>
-            <circle cx="3" cy="100" r="1.5" fill="#fcedb4" stroke="#24070f" stroke-width="0.35"/>
-            <circle cx="7" cy="84" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="7" cy="116" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.5"/>
+            <path d="M 3,100 L 28,100" stroke="url(#doorOuterBrownAccent)" stroke-width="0.8" stroke-linecap="round"/>
+            <circle cx="3" cy="100" r="1.5" fill="#fcedb4" stroke="#24150e" stroke-width="0.35"/>
+            <circle cx="7" cy="84" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="7" cy="116" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
           <!-- Beaded track dot -->
-          <circle id="doorRimBead" cx="100" cy="27" r="0.95" fill="url(#doorOuterMaroonBead)"/>
+          <circle id="doorRimBead" cx="100" cy="27" r="0.95" fill="url(#doorOuterBrownBead)"/>
         </defs>
 
-        <!-- 0. SUBTLE GLOWING MAROON EDGE ILLUMINATION HALO -->
-        <circle cx="100" cy="100" r="99" fill="url(#doorOuterMaroonHalo)"/>
+        <!-- 0. SUBTLE GLOWING WARM BROWN EDGE ILLUMINATION HALO -->
+        <circle cx="100" cy="100" r="99" fill="url(#doorOuterBrownHalo)"/>
 
         <!-- 1. OPAQUE BASE (Solid dark backing circle: r=96 completely covers 148px old medallion) -->
-        <circle cx="100" cy="100" r="96" fill="#0d0306" stroke="#24070f" stroke-width="0.8"/>
+        <circle cx="100" cy="100" r="96" fill="#0d0306" stroke="#24150e" stroke-width="0.8"/>
 
-        <!-- Solid sculpted maroon collar underlay (bridges all scrollwork into continuous sculpted metal) -->
-        <circle cx="100" cy="100" r="86" fill="url(#doorOuterMaroonBase)" stroke="#1a040a" stroke-width="0.6"/>
-        <circle cx="100" cy="100" r="85" fill="none" stroke="url(#doorOuterMaroonBevel)" stroke-width="1.2" opacity="0.85"/>
+        <!-- Solid sculpted dark warm brown collar underlay -->
+        <circle cx="100" cy="100" r="86" fill="url(#doorOuterBrownBase)" stroke="#160c07" stroke-width="0.6"/>
+        <circle cx="100" cy="100" r="85" fill="none" stroke="url(#doorOuterBrownBevel)" stroke-width="1.2" opacity="0.85"/>
 
         <!-- 2. SCULPTED 16-SPOKE BAROQUE FILIGREE SCROLLWORK -->
         <use href="#doorFiligreeScroll"/>
@@ -727,10 +720,10 @@
         <use href="#doorCrestSide"/>
         <use href="#doorCrestSide" transform="rotate(180 100 100)"/>
 
-        <!-- Stepped concentric maroon & antique-metal bezels (framing the inner plaque) -->
-        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorOuterMaroonFiligree)" stroke-width="2.4"/>
-        <circle cx="100" cy="100" r="74.2" fill="none" stroke="#140207" stroke-width="0.8"/>
-        <circle cx="100" cy="100" r="72.8" fill="url(#doorOuterMaroonBevel)" stroke="#3a0b18" stroke-width="0.6"/>
+        <!-- Stepped concentric dark warm brown & antique-metal bezels (framing the inner plaque) -->
+        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorOuterBrownFiligree)" stroke-width="2.4"/>
+        <circle cx="100" cy="100" r="74.2" fill="none" stroke="#100704" stroke-width="0.8"/>
+        <circle cx="100" cy="100" r="72.8" fill="url(#doorOuterBrownBevel)" stroke="#352117" stroke-width="0.6"/>
 
         <!-- Beaded cord track around bezel perimeter (32 beads) -->
         <g>
@@ -752,8 +745,8 @@
           <use href="#doorRimBead" transform="rotate(337.5 100 100)"/><use href="#doorRimBead" transform="rotate(348.75 100 100)"/>
         </g>
 
-        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorOuterMaroonAccent)" stroke-width="1.0" opacity="0.9"/>
-        <circle cx="100" cy="100" r="69.2" fill="none" stroke="#120206" stroke-width="0.8"/>
+        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorOuterBrownAccent)" stroke-width="1.0" opacity="0.9"/>
+        <circle cx="100" cy="100" r="69.2" fill="none" stroke="#100704" stroke-width="0.8"/>
 
         <!-- 3. INNER ROYAL BURGUNDY VELVET PLAQUE (r=68.5 corresponds to ~104px native diameter) -->
         <circle cx="100" cy="100" r="68.5" fill="url(#doorPlaqueBg)"/>
@@ -864,53 +857,53 @@
           </radialGradient>
 
 
-          <!-- Soft glowing maroon edge illumination halo -->
-          <radialGradient id="doorOuterMaroonHalo" cx="50%" cy="50%" r="50%">
-            <stop offset="70%" stop-color="rgba(163,59,85,0)"/>
-            <stop offset="85%" stop-color="rgba(163,59,85,0.22)"/>
-            <stop offset="95%" stop-color="rgba(138,43,67,0.38)"/>
-            <stop offset="100%" stop-color="rgba(85,19,38,0)"/>
+          <!-- Soft glowing dark warm brown edge illumination halo -->
+          <radialGradient id="doorOuterBrownHalo" cx="50%" cy="50%" r="50%">
+            <stop offset="70%" stop-color="rgba(85,55,34,0)"/>
+            <stop offset="85%" stop-color="rgba(85,55,34,0.22)"/>
+            <stop offset="95%" stop-color="rgba(65,40,24,0.38)"/>
+            <stop offset="100%" stop-color="rgba(36,21,14,0)"/>
           </radialGradient>
 
-          <!-- Rich deep maroon / burgundy structural collar underlay -->
-          <radialGradient id="doorOuterMaroonBase" cx="50%" cy="36%" r="64%">
-            <stop offset="0%" stop-color="#4e0e1e"/>
-            <stop offset="38%" stop-color="#360a16"/>
-            <stop offset="72%" stop-color="#24070f"/>
-            <stop offset="100%" stop-color="#120206"/>
+          <!-- Rich deep warm brown structural collar underlay -->
+          <radialGradient id="doorOuterBrownBase" cx="50%" cy="36%" r="64%">
+            <stop offset="0%" stop-color="#4a301f"/>
+            <stop offset="38%" stop-color="#352117"/>
+            <stop offset="72%" stop-color="#24150e"/>
+            <stop offset="100%" stop-color="#140b07"/>
           </radialGradient>
 
-          <!-- Wine-red / ruby linear gradient for baroque scrollwork -->
-          <linearGradient id="doorOuterMaroonFiligree" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#8a2b43"/>
-            <stop offset="25%" stop-color="#6d1930"/>
-            <stop offset="50%" stop-color="#4e0e1e"/>
-            <stop offset="80%" stop-color="#360a16"/>
-            <stop offset="100%" stop-color="#1c040b"/>
+          <!-- Dark warm brown / wood linear gradient for baroque scrollwork -->
+          <linearGradient id="doorOuterBrownFiligree" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#60442d"/>
+            <stop offset="25%" stop-color="#4c3321"/>
+            <stop offset="50%" stop-color="#382418"/>
+            <stop offset="80%" stop-color="#26170f"/>
+            <stop offset="100%" stop-color="#160c07"/>
           </linearGradient>
 
-          <!-- 3D dimensional maroon bevel gradient -->
-          <linearGradient id="doorOuterMaroonBevel" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#140207"/>
-            <stop offset="28%" stop-color="#3a0b18"/>
-            <stop offset="65%" stop-color="#7a243a"/>
-            <stop offset="100%" stop-color="#b84b65"/>
+          <!-- 3D dimensional warm brown bevel gradient -->
+          <linearGradient id="doorOuterBrownBevel" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#120a06"/>
+            <stop offset="28%" stop-color="#2e1b12"/>
+            <stop offset="65%" stop-color="#553823"/>
+            <stop offset="100%" stop-color="#805739"/>
           </linearGradient>
 
-          <!-- Restrained antique metal & ruby accent for fine veins and spines -->
-          <linearGradient id="doorOuterMaroonAccent" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#d4a34e" stop-opacity="0.85"/>
-            <stop offset="40%" stop-color="#9b7040" stop-opacity="0.75"/>
-            <stop offset="75%" stop-color="#7a243a" stop-opacity="0.8"/>
-            <stop offset="100%" stop-color="#4e0e1e" stop-opacity="0.9"/>
+          <!-- Restrained antique bronze-brown accent for fine veins and spines -->
+          <linearGradient id="doorOuterBrownAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#b88d48" stop-opacity="0.85"/>
+            <stop offset="40%" stop-color="#856038" stop-opacity="0.80"/>
+            <stop offset="75%" stop-color="#553823" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#352117" stop-opacity="0.9"/>
           </linearGradient>
 
-          <!-- Ruby-shaded antique bronze pearl bead gradient -->
-          <radialGradient id="doorOuterMaroonBead" cx="35%" cy="30%" r="65%">
+          <!-- Antique bronze pearl bead gradient -->
+          <radialGradient id="doorOuterBrownBead" cx="35%" cy="30%" r="65%">
             <stop offset="0%" stop-color="#fcedb4"/>
-            <stop offset="35%" stop-color="#c98a58"/>
-            <stop offset="65%" stop-color="#7a243a"/>
-            <stop offset="100%" stop-color="#1c040b"/>
+            <stop offset="35%" stop-color="#ba8e55"/>
+            <stop offset="65%" stop-color="#664628"/>
+            <stop offset="100%" stop-color="#190e08"/>
           </radialGradient>
 
           <!-- Warm antique-gold diagonal metallic gradient -->
@@ -955,60 +948,60 @@
             <stop offset="100%" stop-color="rgba(244,206,109,0)"/>
           </radialGradient>
 
-          <!-- Interlocking baroque filigree scroll unit in sculpted deep maroon & antique accents -->
+          <!-- Interlocking baroque filigree scroll unit in sculpted dark warm brown & antique accents -->
           <g id="doorFiligreeScroll">
             <path d="M 94,15 C 92,10 95,5 100,4 C 105,5 108,10 106,15 C 111,12 118,14 120,20 C 122,26 116,31 110,32 C 106,26 102,23 96,25 C 93,20 87,19 84,23 C 81,18 87,12 94,15 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.4"/>
-            <path d="M 100,5 C 100,12 98,18 97,25" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.7" stroke-linecap="round"/>
-            <path d="M 107,15 C 112,17 116,21 114,27" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.5" stroke-linecap="round"/>
-            <path d="M 93,16 C 96,19 97,23 97,28" stroke="#120206" stroke-width="0.6" opacity="0.8"/>
-            <circle cx="100" cy="5" r="1.3" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="119" cy="20" r="1.0" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.4"/>
+            <path d="M 100,5 C 100,12 98,18 97,25" stroke="url(#doorOuterBrownAccent)" stroke-width="0.7" stroke-linecap="round"/>
+            <path d="M 107,15 C 112,17 116,21 114,27" stroke="url(#doorOuterBrownAccent)" stroke-width="0.5" stroke-linecap="round"/>
+            <path d="M 93,16 C 96,19 97,23 97,28" stroke="#100704" stroke-width="0.6" opacity="0.8"/>
+            <circle cx="100" cy="5" r="1.3" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="119" cy="20" r="1.0" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
-          <!-- Cardinal 12 o'clock top crest in sculpted maroon -->
+          <!-- Cardinal 12 o'clock top crest in sculpted dark warm brown -->
           <g id="doorCrestTop">
             <path d="M 100,2 C 104,5 110,8 116,6 C 120,10 116,16 110,18 C 117,19 122,25 119,30 C 115,34 108,34 104,29 C 102,34 98,34 96,29 C 92,34 85,34 81,30 C 78,25 83,19 90,18 C 84,16 80,10 84,6 C 90,8 96,5 100,2 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.5"/>
-            <path d="M 100,3 L 100,28" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.8" stroke-linecap="round"/>
-            <circle cx="100" cy="3" r="1.5" fill="#fcedb4" stroke="#24070f" stroke-width="0.35"/>
-            <circle cx="84" cy="7" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="116" cy="7" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.5"/>
+            <path d="M 100,3 L 100,28" stroke="url(#doorOuterBrownAccent)" stroke-width="0.8" stroke-linecap="round"/>
+            <circle cx="100" cy="3" r="1.5" fill="#fcedb4" stroke="#24150e" stroke-width="0.35"/>
+            <circle cx="84" cy="7" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="116" cy="7" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
-          <!-- Cardinal 6 o'clock bottom pendant in sculpted maroon -->
+          <!-- Cardinal 6 o'clock bottom pendant in sculpted dark warm brown -->
           <g id="doorCrestBottom">
             <path d="M 100,198 C 104,195 110,192 116,194 C 120,190 116,184 110,182 C 117,181 122,175 119,170 C 115,166 108,166 104,171 C 102,166 98,166 96,171 C 92,166 85,166 81,170 C 78,175 83,181 90,182 C 84,184 80,190 84,194 C 90,192 96,195 100,198 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.5"/>
-            <path d="M 100,197 L 100,172" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.8" stroke-linecap="round"/>
-            <circle cx="100" cy="197" r="1.5" fill="#fcedb4" stroke="#24070f" stroke-width="0.35"/>
-            <circle cx="84" cy="193" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="116" cy="193" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.5"/>
+            <path d="M 100,197 L 100,172" stroke="url(#doorOuterBrownAccent)" stroke-width="0.8" stroke-linecap="round"/>
+            <circle cx="100" cy="197" r="1.5" fill="#fcedb4" stroke="#24150e" stroke-width="0.35"/>
+            <circle cx="84" cy="193" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="116" cy="193" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
-          <!-- Cardinal 9 o'clock side crest in sculpted maroon -->
+          <!-- Cardinal 9 o'clock side crest in sculpted dark warm brown -->
           <g id="doorCrestSide">
             <path d="M 2,100 C 5,104 8,110 6,116 C 10,120 16,116 18,110 C 19,117 25,122 30,119 C 34,115 34,108 29,104 C 34,102 34,98 29,96 C 34,92 34,85 30,81 C 25,78 19,83 18,90 C 16,84 10,80 6,84 C 8,90 5,96 2,100 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.5"/>
-            <path d="M 3,100 L 28,100" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.8" stroke-linecap="round"/>
-            <circle cx="3" cy="100" r="1.5" fill="#fcedb4" stroke="#24070f" stroke-width="0.35"/>
-            <circle cx="7" cy="84" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="7" cy="116" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.5"/>
+            <path d="M 3,100 L 28,100" stroke="url(#doorOuterBrownAccent)" stroke-width="0.8" stroke-linecap="round"/>
+            <circle cx="3" cy="100" r="1.5" fill="#fcedb4" stroke="#24150e" stroke-width="0.35"/>
+            <circle cx="7" cy="84" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="7" cy="116" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
           <!-- Beaded track dot -->
-          <circle id="doorRimBead" cx="100" cy="27" r="0.95" fill="url(#doorOuterMaroonBead)"/>
+          <circle id="doorRimBead" cx="100" cy="27" r="0.95" fill="url(#doorOuterBrownBead)"/>
         </defs>
 
-        <!-- 0. SUBTLE GLOWING MAROON EDGE ILLUMINATION HALO -->
-        <circle cx="100" cy="100" r="99" fill="url(#doorOuterMaroonHalo)"/>
+        <!-- 0. SUBTLE GLOWING WARM BROWN EDGE ILLUMINATION HALO -->
+        <circle cx="100" cy="100" r="99" fill="url(#doorOuterBrownHalo)"/>
 
         <!-- 1. OPAQUE BASE (Solid dark backing circle: r=96 completely covers 148px old medallion) -->
-        <circle cx="100" cy="100" r="96" fill="#0d0306" stroke="#24070f" stroke-width="0.8"/>
+        <circle cx="100" cy="100" r="96" fill="#0d0306" stroke="#24150e" stroke-width="0.8"/>
 
-        <!-- Solid sculpted maroon collar underlay (bridges all scrollwork into continuous sculpted metal) -->
-        <circle cx="100" cy="100" r="86" fill="url(#doorOuterMaroonBase)" stroke="#1a040a" stroke-width="0.6"/>
-        <circle cx="100" cy="100" r="85" fill="none" stroke="url(#doorOuterMaroonBevel)" stroke-width="1.2" opacity="0.85"/>
+        <!-- Solid sculpted dark warm brown collar underlay -->
+        <circle cx="100" cy="100" r="86" fill="url(#doorOuterBrownBase)" stroke="#160c07" stroke-width="0.6"/>
+        <circle cx="100" cy="100" r="85" fill="none" stroke="url(#doorOuterBrownBevel)" stroke-width="1.2" opacity="0.85"/>
 
         <!-- 2. SCULPTED 16-SPOKE BAROQUE FILIGREE SCROLLWORK -->
         <use href="#doorFiligreeScroll"/>
@@ -1034,10 +1027,10 @@
         <use href="#doorCrestSide"/>
         <use href="#doorCrestSide" transform="rotate(180 100 100)"/>
 
-        <!-- Stepped concentric maroon & antique-metal bezels (framing the inner plaque) -->
-        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorOuterMaroonFiligree)" stroke-width="2.4"/>
-        <circle cx="100" cy="100" r="74.2" fill="none" stroke="#140207" stroke-width="0.8"/>
-        <circle cx="100" cy="100" r="72.8" fill="url(#doorOuterMaroonBevel)" stroke="#3a0b18" stroke-width="0.6"/>
+        <!-- Stepped concentric dark warm brown & antique-metal bezels (framing the inner plaque) -->
+        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorOuterBrownFiligree)" stroke-width="2.4"/>
+        <circle cx="100" cy="100" r="74.2" fill="none" stroke="#100704" stroke-width="0.8"/>
+        <circle cx="100" cy="100" r="72.8" fill="url(#doorOuterBrownBevel)" stroke="#352117" stroke-width="0.6"/>
 
         <!-- Beaded cord track around bezel perimeter (32 beads) -->
         <g>
@@ -1059,8 +1052,8 @@
           <use href="#doorRimBead" transform="rotate(337.5 100 100)"/><use href="#doorRimBead" transform="rotate(348.75 100 100)"/>
         </g>
 
-        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorOuterMaroonAccent)" stroke-width="1.0" opacity="0.9"/>
-        <circle cx="100" cy="100" r="69.2" fill="none" stroke="#120206" stroke-width="0.8"/>
+        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorOuterBrownAccent)" stroke-width="1.0" opacity="0.9"/>
+        <circle cx="100" cy="100" r="69.2" fill="none" stroke="#100704" stroke-width="0.8"/>
 
         <!-- 3. INNER ROYAL BURGUNDY VELVET PLAQUE (r=68.5 corresponds to ~104px native diameter) -->
         <circle cx="100" cy="100" r="68.5" fill="url(#doorPlaqueBg)"/>
@@ -1176,53 +1169,53 @@
           </radialGradient>
 
 
-          <!-- Soft glowing maroon edge illumination halo -->
-          <radialGradient id="doorOuterMaroonHalo" cx="50%" cy="50%" r="50%">
-            <stop offset="70%" stop-color="rgba(163,59,85,0)"/>
-            <stop offset="85%" stop-color="rgba(163,59,85,0.22)"/>
-            <stop offset="95%" stop-color="rgba(138,43,67,0.38)"/>
-            <stop offset="100%" stop-color="rgba(85,19,38,0)"/>
+          <!-- Soft glowing dark warm brown edge illumination halo -->
+          <radialGradient id="doorOuterBrownHalo" cx="50%" cy="50%" r="50%">
+            <stop offset="70%" stop-color="rgba(85,55,34,0)"/>
+            <stop offset="85%" stop-color="rgba(85,55,34,0.22)"/>
+            <stop offset="95%" stop-color="rgba(65,40,24,0.38)"/>
+            <stop offset="100%" stop-color="rgba(36,21,14,0)"/>
           </radialGradient>
 
-          <!-- Rich deep maroon / burgundy structural collar underlay -->
-          <radialGradient id="doorOuterMaroonBase" cx="50%" cy="36%" r="64%">
-            <stop offset="0%" stop-color="#4e0e1e"/>
-            <stop offset="38%" stop-color="#360a16"/>
-            <stop offset="72%" stop-color="#24070f"/>
-            <stop offset="100%" stop-color="#120206"/>
+          <!-- Rich deep warm brown structural collar underlay -->
+          <radialGradient id="doorOuterBrownBase" cx="50%" cy="36%" r="64%">
+            <stop offset="0%" stop-color="#4a301f"/>
+            <stop offset="38%" stop-color="#352117"/>
+            <stop offset="72%" stop-color="#24150e"/>
+            <stop offset="100%" stop-color="#140b07"/>
           </radialGradient>
 
-          <!-- Wine-red / ruby linear gradient for baroque scrollwork -->
-          <linearGradient id="doorOuterMaroonFiligree" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#8a2b43"/>
-            <stop offset="25%" stop-color="#6d1930"/>
-            <stop offset="50%" stop-color="#4e0e1e"/>
-            <stop offset="80%" stop-color="#360a16"/>
-            <stop offset="100%" stop-color="#1c040b"/>
+          <!-- Dark warm brown / wood linear gradient for baroque scrollwork -->
+          <linearGradient id="doorOuterBrownFiligree" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#60442d"/>
+            <stop offset="25%" stop-color="#4c3321"/>
+            <stop offset="50%" stop-color="#382418"/>
+            <stop offset="80%" stop-color="#26170f"/>
+            <stop offset="100%" stop-color="#160c07"/>
           </linearGradient>
 
-          <!-- 3D dimensional maroon bevel gradient -->
-          <linearGradient id="doorOuterMaroonBevel" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#140207"/>
-            <stop offset="28%" stop-color="#3a0b18"/>
-            <stop offset="65%" stop-color="#7a243a"/>
-            <stop offset="100%" stop-color="#b84b65"/>
+          <!-- 3D dimensional warm brown bevel gradient -->
+          <linearGradient id="doorOuterBrownBevel" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#120a06"/>
+            <stop offset="28%" stop-color="#2e1b12"/>
+            <stop offset="65%" stop-color="#553823"/>
+            <stop offset="100%" stop-color="#805739"/>
           </linearGradient>
 
-          <!-- Restrained antique metal & ruby accent for fine veins and spines -->
-          <linearGradient id="doorOuterMaroonAccent" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#d4a34e" stop-opacity="0.85"/>
-            <stop offset="40%" stop-color="#9b7040" stop-opacity="0.75"/>
-            <stop offset="75%" stop-color="#7a243a" stop-opacity="0.8"/>
-            <stop offset="100%" stop-color="#4e0e1e" stop-opacity="0.9"/>
+          <!-- Restrained antique bronze-brown accent for fine veins and spines -->
+          <linearGradient id="doorOuterBrownAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#b88d48" stop-opacity="0.85"/>
+            <stop offset="40%" stop-color="#856038" stop-opacity="0.80"/>
+            <stop offset="75%" stop-color="#553823" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#352117" stop-opacity="0.9"/>
           </linearGradient>
 
-          <!-- Ruby-shaded antique bronze pearl bead gradient -->
-          <radialGradient id="doorOuterMaroonBead" cx="35%" cy="30%" r="65%">
+          <!-- Antique bronze pearl bead gradient -->
+          <radialGradient id="doorOuterBrownBead" cx="35%" cy="30%" r="65%">
             <stop offset="0%" stop-color="#fcedb4"/>
-            <stop offset="35%" stop-color="#c98a58"/>
-            <stop offset="65%" stop-color="#7a243a"/>
-            <stop offset="100%" stop-color="#1c040b"/>
+            <stop offset="35%" stop-color="#ba8e55"/>
+            <stop offset="65%" stop-color="#664628"/>
+            <stop offset="100%" stop-color="#190e08"/>
           </radialGradient>
 
           <!-- Warm antique-gold diagonal metallic gradient -->
@@ -1267,60 +1260,60 @@
             <stop offset="100%" stop-color="rgba(244,206,109,0)"/>
           </radialGradient>
 
-          <!-- Interlocking baroque filigree scroll unit in sculpted deep maroon & antique accents -->
+          <!-- Interlocking baroque filigree scroll unit in sculpted dark warm brown & antique accents -->
           <g id="doorFiligreeScroll">
             <path d="M 94,15 C 92,10 95,5 100,4 C 105,5 108,10 106,15 C 111,12 118,14 120,20 C 122,26 116,31 110,32 C 106,26 102,23 96,25 C 93,20 87,19 84,23 C 81,18 87,12 94,15 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.4"/>
-            <path d="M 100,5 C 100,12 98,18 97,25" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.7" stroke-linecap="round"/>
-            <path d="M 107,15 C 112,17 116,21 114,27" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.5" stroke-linecap="round"/>
-            <path d="M 93,16 C 96,19 97,23 97,28" stroke="#120206" stroke-width="0.6" opacity="0.8"/>
-            <circle cx="100" cy="5" r="1.3" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="119" cy="20" r="1.0" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.4"/>
+            <path d="M 100,5 C 100,12 98,18 97,25" stroke="url(#doorOuterBrownAccent)" stroke-width="0.7" stroke-linecap="round"/>
+            <path d="M 107,15 C 112,17 116,21 114,27" stroke="url(#doorOuterBrownAccent)" stroke-width="0.5" stroke-linecap="round"/>
+            <path d="M 93,16 C 96,19 97,23 97,28" stroke="#100704" stroke-width="0.6" opacity="0.8"/>
+            <circle cx="100" cy="5" r="1.3" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="119" cy="20" r="1.0" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
-          <!-- Cardinal 12 o'clock top crest in sculpted maroon -->
+          <!-- Cardinal 12 o'clock top crest in sculpted dark warm brown -->
           <g id="doorCrestTop">
             <path d="M 100,2 C 104,5 110,8 116,6 C 120,10 116,16 110,18 C 117,19 122,25 119,30 C 115,34 108,34 104,29 C 102,34 98,34 96,29 C 92,34 85,34 81,30 C 78,25 83,19 90,18 C 84,16 80,10 84,6 C 90,8 96,5 100,2 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.5"/>
-            <path d="M 100,3 L 100,28" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.8" stroke-linecap="round"/>
-            <circle cx="100" cy="3" r="1.5" fill="#fcedb4" stroke="#24070f" stroke-width="0.35"/>
-            <circle cx="84" cy="7" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="116" cy="7" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.5"/>
+            <path d="M 100,3 L 100,28" stroke="url(#doorOuterBrownAccent)" stroke-width="0.8" stroke-linecap="round"/>
+            <circle cx="100" cy="3" r="1.5" fill="#fcedb4" stroke="#24150e" stroke-width="0.35"/>
+            <circle cx="84" cy="7" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="116" cy="7" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
-          <!-- Cardinal 6 o'clock bottom pendant in sculpted maroon -->
+          <!-- Cardinal 6 o'clock bottom pendant in sculpted dark warm brown -->
           <g id="doorCrestBottom">
             <path d="M 100,198 C 104,195 110,192 116,194 C 120,190 116,184 110,182 C 117,181 122,175 119,170 C 115,166 108,166 104,171 C 102,166 98,166 96,171 C 92,166 85,166 81,170 C 78,175 83,181 90,182 C 84,184 80,190 84,194 C 90,192 96,195 100,198 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.5"/>
-            <path d="M 100,197 L 100,172" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.8" stroke-linecap="round"/>
-            <circle cx="100" cy="197" r="1.5" fill="#fcedb4" stroke="#24070f" stroke-width="0.35"/>
-            <circle cx="84" cy="193" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="116" cy="193" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.5"/>
+            <path d="M 100,197 L 100,172" stroke="url(#doorOuterBrownAccent)" stroke-width="0.8" stroke-linecap="round"/>
+            <circle cx="100" cy="197" r="1.5" fill="#fcedb4" stroke="#24150e" stroke-width="0.35"/>
+            <circle cx="84" cy="193" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="116" cy="193" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
-          <!-- Cardinal 9 o'clock side crest in sculpted maroon -->
+          <!-- Cardinal 9 o'clock side crest in sculpted dark warm brown -->
           <g id="doorCrestSide">
             <path d="M 2,100 C 5,104 8,110 6,116 C 10,120 16,116 18,110 C 19,117 25,122 30,119 C 34,115 34,108 29,104 C 34,102 34,98 29,96 C 34,92 34,85 30,81 C 25,78 19,83 18,90 C 16,84 10,80 6,84 C 8,90 5,96 2,100 Z"
-                  fill="url(#doorOuterMaroonFiligree)" stroke="#1a040a" stroke-width="0.5"/>
-            <path d="M 3,100 L 28,100" stroke="url(#doorOuterMaroonAccent)" stroke-width="0.8" stroke-linecap="round"/>
-            <circle cx="3" cy="100" r="1.5" fill="#fcedb4" stroke="#24070f" stroke-width="0.35"/>
-            <circle cx="7" cy="84" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
-            <circle cx="7" cy="116" r="1.1" fill="url(#doorOuterMaroonBead)" stroke="#24070f" stroke-width="0.3"/>
+                  fill="url(#doorOuterBrownFiligree)" stroke="#160c07" stroke-width="0.5"/>
+            <path d="M 3,100 L 28,100" stroke="url(#doorOuterBrownAccent)" stroke-width="0.8" stroke-linecap="round"/>
+            <circle cx="3" cy="100" r="1.5" fill="#fcedb4" stroke="#24150e" stroke-width="0.35"/>
+            <circle cx="7" cy="84" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
+            <circle cx="7" cy="116" r="1.1" fill="url(#doorOuterBrownBead)" stroke="#24150e" stroke-width="0.3"/>
           </g>
 
           <!-- Beaded track dot -->
-          <circle id="doorRimBead" cx="100" cy="27" r="0.95" fill="url(#doorOuterMaroonBead)"/>
+          <circle id="doorRimBead" cx="100" cy="27" r="0.95" fill="url(#doorOuterBrownBead)"/>
         </defs>
 
-        <!-- 0. SUBTLE GLOWING MAROON EDGE ILLUMINATION HALO -->
-        <circle cx="100" cy="100" r="99" fill="url(#doorOuterMaroonHalo)"/>
+        <!-- 0. SUBTLE GLOWING WARM BROWN EDGE ILLUMINATION HALO -->
+        <circle cx="100" cy="100" r="99" fill="url(#doorOuterBrownHalo)"/>
 
         <!-- 1. OPAQUE BASE (Solid dark backing circle: r=96 completely covers 148px old medallion) -->
-        <circle cx="100" cy="100" r="96" fill="#0d0306" stroke="#24070f" stroke-width="0.8"/>
+        <circle cx="100" cy="100" r="96" fill="#0d0306" stroke="#24150e" stroke-width="0.8"/>
 
-        <!-- Solid sculpted maroon collar underlay (bridges all scrollwork into continuous sculpted metal) -->
-        <circle cx="100" cy="100" r="86" fill="url(#doorOuterMaroonBase)" stroke="#1a040a" stroke-width="0.6"/>
-        <circle cx="100" cy="100" r="85" fill="none" stroke="url(#doorOuterMaroonBevel)" stroke-width="1.2" opacity="0.85"/>
+        <!-- Solid sculpted dark warm brown collar underlay -->
+        <circle cx="100" cy="100" r="86" fill="url(#doorOuterBrownBase)" stroke="#160c07" stroke-width="0.6"/>
+        <circle cx="100" cy="100" r="85" fill="none" stroke="url(#doorOuterBrownBevel)" stroke-width="1.2" opacity="0.85"/>
 
         <!-- 2. SCULPTED 16-SPOKE BAROQUE FILIGREE SCROLLWORK -->
         <use href="#doorFiligreeScroll"/>
@@ -1346,10 +1339,10 @@
         <use href="#doorCrestSide"/>
         <use href="#doorCrestSide" transform="rotate(180 100 100)"/>
 
-        <!-- Stepped concentric maroon & antique-metal bezels (framing the inner plaque) -->
-        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorOuterMaroonFiligree)" stroke-width="2.4"/>
-        <circle cx="100" cy="100" r="74.2" fill="none" stroke="#140207" stroke-width="0.8"/>
-        <circle cx="100" cy="100" r="72.8" fill="url(#doorOuterMaroonBevel)" stroke="#3a0b18" stroke-width="0.6"/>
+        <!-- Stepped concentric dark warm brown & antique-metal bezels (framing the inner plaque) -->
+        <circle cx="100" cy="100" r="76" fill="none" stroke="url(#doorOuterBrownFiligree)" stroke-width="2.4"/>
+        <circle cx="100" cy="100" r="74.2" fill="none" stroke="#100704" stroke-width="0.8"/>
+        <circle cx="100" cy="100" r="72.8" fill="url(#doorOuterBrownBevel)" stroke="#352117" stroke-width="0.6"/>
 
         <!-- Beaded cord track around bezel perimeter (32 beads) -->
         <g>
@@ -1371,8 +1364,8 @@
           <use href="#doorRimBead" transform="rotate(337.5 100 100)"/><use href="#doorRimBead" transform="rotate(348.75 100 100)"/>
         </g>
 
-        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorOuterMaroonAccent)" stroke-width="1.0" opacity="0.9"/>
-        <circle cx="100" cy="100" r="69.2" fill="none" stroke="#120206" stroke-width="0.8"/>
+        <circle cx="100" cy="100" r="70.5" fill="none" stroke="url(#doorOuterBrownAccent)" stroke-width="1.0" opacity="0.9"/>
+        <circle cx="100" cy="100" r="69.2" fill="none" stroke="#100704" stroke-width="0.8"/>
 
         <!-- 3. INNER ROYAL BURGUNDY VELVET PLAQUE (r=68.5 corresponds to ~104px native diameter) -->
         <circle cx="100" cy="100" r="68.5" fill="url(#doorPlaqueBg)"/>
@@ -2353,21 +2346,7 @@
       const doorZoomWrapper = document.getElementById('doorZoomWrapper');
       let doorZoomTween = null;
       if (doorZoomWrapper) {
-        const vW = window.innerWidth;
-        const vH = window.innerHeight;
-        let zoomOrigin = '50% 43%';
-        if (vW <= 767) {
-          zoomOrigin = '50% 38%';
-        } else if (vW <= 1023 && vH > vW) {
-          zoomOrigin = '50% 40%';
-        }
-        gsap.set(doorZoomWrapper, { scale: 1.0, transformOrigin: zoomOrigin });
-        doorZoomTween = gsap.to(doorZoomWrapper, {
-          scale: 1.018,
-          duration: 3.0,
-          ease: 'power1.out',
-          overwrite: 'auto'
-        });
+        gsap.set(doorZoomWrapper, { scale: 1.0 });
       }
 
       // Welcome text entrance — slow, restrained
@@ -2382,11 +2361,7 @@
           { opacity: 0, y: 8, filter: 'blur(4px)' },
           { opacity: 1, y: 0,  filter: 'blur(0px)', duration: 1.8, ease: 'power2.out' }, 0);
       }
-      if (doorRoundBtn) {
-        introEntrance.fromTo(doorRoundBtn,
-          { opacity: 0 },
-          { opacity: 1, duration: 1.8, ease: 'power2.out' }, 0);
-      }
+      // STEP 30A: Center button is static on landing (opacity: 1 from frame 0, no entrance tween)
       if (doorProgressRail) {
         introEntrance.to(doorProgressRail,
           { opacity: 1, duration: 1.2, ease: 'power2.out' }, 1.2);
