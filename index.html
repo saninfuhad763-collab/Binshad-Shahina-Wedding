@@ -70,6 +70,25 @@
     /* Prevent layout shift when native scrollbar appears after intro */
     html { scrollbar-gutter: stable; }
 
+    /* =====================================================
+       STEP 29B — FIRST-PAINT GEOMETRY INITIALIZATION
+       Eliminates refresh flicker & split-leaf lateral jump
+       Matches setDoorLeafBg() geometry directly in CSS
+       ===================================================== */
+    :root {
+      --door-rend-w: max(100vw, calc(100vh * (1672 / 941)));
+      --door-rend-h: max(calc(100vw * (941 / 1672)), 100vh);
+      --door-bg-y: 0px;
+      --medallion-size: max(calc(100vw * (152 / 1672)), calc(100vh * (152 / 941)));
+      --medallion-y: max(calc(100vw * (464 / 1672)), calc(100vh * (464 / 941)));
+    }
+    @media (min-aspect-ratio: 1672/941) {
+      :root {
+        --door-bg-y: calc(-0.43 * (calc(100vw * (941 / 1672)) - 100vh));
+        --medallion-y: calc(max(calc(100vw * (464 / 1672)), calc(100vh * (464 / 941))) + var(--door-bg-y));
+      }
+    }
+
     /* ARTWORK FRAME: fills entire viewport, no black bars.
        Artwork is 1672×941 landscape. background-size: cover always fills.
        background-position keeps the central medallion (≈50% x, 43% y) in view. */
@@ -216,7 +235,14 @@
       inset: 0;
       background-image: url('assets/images/wedding-doors-premium.avif');
       background-repeat: no-repeat;
-      /* background-size and background-position set dynamically by setDoorLeafBg() */
+      background-size: var(--door-rend-w) var(--door-rend-h);
+      background-position-y: var(--door-bg-y);
+    }
+    #doorLeft .door-leaf-inner {
+      background-position-x: calc(50vw - var(--door-rend-w) * 0.5);
+    }
+    #doorRight .door-leaf-inner {
+      background-position-x: calc(-0.5 * var(--door-rend-w));
     }
 
     /* Edge shadows */
