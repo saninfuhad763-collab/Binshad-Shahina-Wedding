@@ -366,7 +366,61 @@
     }
     #doorRoundBtn:disabled { cursor: default; pointer-events: none; }
 
-    /* Door leaf medallion coverage overlays — eliminate old baked CTA during 3D opening */
+    /* STEP 29C-R3: Single 2D zoom wrapper for closed-door visual system */
+    #doorZoomWrapper {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      transform-origin: 50% 43%;
+      will-change: transform;
+    }
+    @media (max-width: 1023px) and (orientation: portrait) {
+      #doorZoomWrapper { transform-origin: 50% 40%; }
+    }
+    @media (max-width: 767px) {
+      #doorZoomWrapper { transform-origin: 50% 38%; }
+    }
+
+    /* Opaque base cover on door leaves — covers old baked CTA at all times from frame 0 */
+    .door-legacy-cover {
+      position: absolute;
+      top: var(--medallion-y, 50%);
+      width: calc(var(--medallion-size, 152px) * 0.5);
+      height: var(--medallion-size, 152px);
+      transform: translateY(-50%);
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 9;
+    }
+    .door-legacy-cover-left {
+      right: 0;
+    }
+    .door-legacy-cover-left .door-medallion-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--medallion-size, 152px);
+      height: var(--medallion-size, 152px);
+      display: block;
+      pointer-events: none;
+      filter: none;
+    }
+    .door-legacy-cover-right {
+      left: 0;
+    }
+    .door-legacy-cover-right .door-medallion-svg {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: var(--medallion-size, 152px);
+      height: var(--medallion-size, 152px);
+      display: block;
+      pointer-events: none;
+      filter: none;
+    }
+
+    /* Door leaf medallion coverage overlays — decorative split halves reveal at click time during 3D opening */
     .door-medallion-leaf {
       position: absolute;
       top: var(--medallion-y, 50%);
@@ -376,6 +430,8 @@
       overflow: hidden;
       pointer-events: none;
       z-index: 10;
+      opacity: 0;
+      will-change: opacity;
     }
     .door-medallion-leaf-left {
       right: 0;
@@ -472,14 +528,23 @@
     <!-- LAYER 4: Soft secondary bloom -->
     <div id="doorLightBloom"></div>
 
-    <!-- LAYER 5: 3D Door Stage — only the rotating door leaves live here -->
-    <div id="doorStage">
+    <!-- 2D ZOOM WRAPPER: Subtle cinematic push-in on closed-door visual system -->
+    <div id="doorZoomWrapper">
 
-      <!-- Left Door Leaf — hinged on LEFT edge (transform-origin: 0% 50%) -->
-      <div class="door-panel door-left absolute top-0 left-0 w-1/2 h-full" id="doorLeft">
-        <div class="door-leaf-inner"></div>
-        <div class="door-panel-edge"></div>
-        <div class="door-medallion-leaf door-medallion-leaf-left">
+      <!-- LAYER 5: 3D Door Stage — only the rotating door leaves live here -->
+      <div id="doorStage">
+
+        <!-- Left Door Leaf — hinged on LEFT edge (transform-origin: 0% 50%) -->
+        <div class="door-panel door-left absolute top-0 left-0 w-1/2 h-full" id="doorLeft">
+          <div class="door-leaf-inner"></div>
+          <div class="door-panel-edge"></div>
+          <!-- OPAQUE LEGACY COVER: covers old baked CTA at all times from frame 0 -->
+          <div class="door-legacy-cover door-legacy-cover-left">
+            <svg class="door-medallion-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="100" cy="100" r="96" fill="#0d0306" stroke="#362007" stroke-width="0.8"/>
+            </svg>
+          </div>
+          <div class="door-medallion-leaf door-medallion-leaf-left">
       <svg class="door-medallion-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <!-- Deep royal burgundy velvet plaque gradient -->
@@ -753,6 +818,12 @@
       <div class="door-panel door-right absolute top-0 right-0 w-1/2 h-full" id="doorRight">
         <div class="door-leaf-inner"></div>
         <div class="door-panel-edge"></div>
+        <!-- OPAQUE LEGACY COVER: covers old baked CTA at all times from frame 0 -->
+        <div class="door-legacy-cover door-legacy-cover-right">
+          <svg class="door-medallion-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="96" fill="#0d0306" stroke="#362007" stroke-width="0.8"/>
+          </svg>
+        </div>
         <div class="door-medallion-leaf door-medallion-leaf-right">
       <svg class="door-medallion-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -1037,17 +1108,6 @@
     <!-- LAYER 8: Vertical seam ignition glow -->
     <div id="doorLightSeam"></div>
 
-    <!-- LAYER 9: Welcome text composition + ceremonial button -->
-    <div id="doorWelcomeGroup">
-
-      <!-- Small uppercase eyebrow -->
-      <div id="doorEyebrow">A Welcome to Our Celebration</div>
-
-      <!-- Couple names — large italic serif -->
-      <div id="doorNamesDisplay">Binshad <span class="ampersand">&amp;</span> Shahina</div>
-
-    </div>
-
     <!-- Ceremonial medallion CTA — interactive luxury wedding seal -->
     <button id="doorRoundBtn" aria-label="Open wedding invitation">
       <svg class="door-medallion-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1317,6 +1377,19 @@
         </g>
       </svg>
     </button>
+
+    </div>
+
+    <!-- LAYER 9: Welcome text composition (OUTSIDE zoom wrapper — unscaled) -->
+    <div id="doorWelcomeGroup">
+
+      <!-- Small uppercase eyebrow -->
+      <div id="doorEyebrow">A Welcome to Our Celebration</div>
+
+      <!-- Couple names — large italic serif -->
+      <div id="doorNamesDisplay">Binshad <span class="ampersand">&amp;</span> Shahina</div>
+
+    </div>
 
     <!-- Cinematic progress rail — right edge, deliberate design element -->
     <div id="doorProgressRail">
@@ -2195,6 +2268,27 @@
         });
       }
 
+      // STEP 29C-R3: Subtle cinematic push-in on the closed-door visual system (scale 1.000 -> 1.018 over 3.0s, power1.out)
+      const doorZoomWrapper = document.getElementById('doorZoomWrapper');
+      let doorZoomTween = null;
+      if (doorZoomWrapper) {
+        const vW = window.innerWidth;
+        const vH = window.innerHeight;
+        let zoomOrigin = '50% 43%';
+        if (vW <= 767) {
+          zoomOrigin = '50% 38%';
+        } else if (vW <= 1023 && vH > vW) {
+          zoomOrigin = '50% 40%';
+        }
+        gsap.set(doorZoomWrapper, { scale: 1.0, transformOrigin: zoomOrigin });
+        doorZoomTween = gsap.to(doorZoomWrapper, {
+          scale: 1.018,
+          duration: 3.0,
+          ease: 'power1.out',
+          overwrite: 'auto'
+        });
+      }
+
       // Welcome text entrance — slow, restrained
       const introEntrance = gsap.timeline({ delay: 0.5 });
       if (doorEyebrow) {
@@ -2227,6 +2321,12 @@
         introState = 'opening';
         doorRoundBtn.disabled = true;
         introEntrance.kill();
+        if (doorZoomTween) {
+          doorZoomTween.pause();
+        }
+
+        // Reveal decorative medallion halves on door leaves for 3D swing
+        gsap.set(['.door-medallion-leaf-left', '.door-medallion-leaf-right'], { opacity: 1 });
 
         // Start loading video immediately so canplay fires early
         prepareVideo();
@@ -2293,9 +2393,10 @@
         tl.to([doorArtworkFrame, doorAtmosphere].filter(Boolean),
           { opacity: 0, duration: 0.35, ease: 'power1.in' }, 2.30);
 
-        // T=2.50 — Door stage (leaves) fade out completely
+        // T=2.50 — Door stage (leaves) and zoom wrapper fade out completely
         const doorStage = document.getElementById('doorStage');
         if (doorStage) tl.to(doorStage, { opacity: 0, duration: 0.30, ease: 'power1.in' }, 2.50);
+        if (doorZoomWrapper) tl.to(doorZoomWrapper, { opacity: 0, duration: 0.30, ease: 'power1.in' }, 2.50);
 
         // T=2.70 — Progress rail fades
         if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.25, ease: 'power1.in' }, 2.70);
