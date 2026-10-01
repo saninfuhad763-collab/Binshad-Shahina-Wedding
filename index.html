@@ -1629,8 +1629,11 @@
               
               <!-- Slide 1: Shahina Veil Portrait -->
               <div class="story-slide-layer opacity-100" id="storySlide1">
-                <div class="w-full h-full bg-cover bg-center will-change-transform" id="storyImg1" style="background-image: url('assets/images/story-bindhu.avif');"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent"></div>
+                <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg1"
+                       src="assets/videos/bride-veil-manor-scrub.mp4"
+                       poster="assets/images/story-bride-frame0.webp"
+                       muted playsinline preload="auto"></video>
+                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
                 <div class="absolute bottom-6 left-6 flex items-center gap-3">
                   <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate I ΓÇó Shahina</span>
                 </div>
@@ -1638,8 +1641,11 @@
 
               <!-- Slide 2: Binshad Black Tie Portrait -->
               <div class="story-slide-layer opacity-0" id="storySlide2">
-                <div class="w-full h-full bg-cover bg-center will-change-transform" id="storyImg2" style="background-image: url('assets/images/story-arjun.avif');"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent"></div>
+                <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg2"
+                       src="assets/videos/groom-luxury-interior-scrub.mp4"
+                       poster="assets/images/story-groom-frame0.webp"
+                       muted playsinline preload="auto"></video>
+                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
                 <div class="absolute bottom-6 left-6 flex items-center gap-3">
                   <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate II ΓÇó Binshad</span>
                 </div>
@@ -1647,8 +1653,11 @@
 
               <!-- Slide 3: Couple Archway Candlelight -->
               <div class="story-slide-layer opacity-0" id="storySlide3">
-                <div class="w-full h-full bg-cover bg-center will-change-transform" id="storyImg3" style="background-image: url('assets/images/story-couple.avif');"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent"></div>
+                <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg3"
+                       src="assets/videos/couple-staircase-scrub.mp4"
+                       poster="assets/images/story-couple-frame0.webp"
+                       muted playsinline preload="auto"></video>
+                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
                 <div class="absolute bottom-6 left-6 flex items-center gap-3">
                   <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate III ΓÇó The Vow</span>
                 </div>
@@ -1737,7 +1746,11 @@
         <!-- Item 1 -->
         <div class="space-y-6">
           <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
-            <img alt="Shahina Veil Portrait" class="w-full h-full object-cover" src="assets/images/story-bindhu.avif"/>
+            <video class="w-full h-full object-cover" id="storyMobileVideo1"
+                   src="assets/videos/bride-veil-manor-scrub.mp4"
+                   poster="assets/images/story-bride-frame0.webp"
+                   muted playsinline preload="auto"
+                   aria-label="Shahina Veil Portrait"></video>
           </div>
           <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter I ΓÇó Autumn 2021</span>
           <h3 class="font-headline-lg text-3xl text-on-surface font-light">The Meeting in <span class="italic text-secondary">Florence</span></h3>
@@ -1748,7 +1761,11 @@
         <!-- Item 2 -->
         <div class="space-y-6">
           <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
-            <img alt="Binshad Black Tie Portrait" class="w-full h-full object-cover" src="assets/images/story-arjun.avif"/>
+            <video class="w-full h-full object-cover" id="storyMobileVideo2"
+                   src="assets/videos/groom-luxury-interior-scrub.mp4"
+                   poster="assets/images/story-groom-frame0.webp"
+                   muted playsinline preload="auto"
+                   aria-label="Binshad Black Tie Portrait"></video>
           </div>
           <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter II ΓÇó 2022ΓÇô2024</span>
           <h3 class="font-headline-lg text-3xl text-on-surface font-light">Across Continents, <span class="italic text-secondary">One Horizon</span></h3>
@@ -1759,7 +1776,11 @@
         <!-- Item 3 -->
         <div class="space-y-6">
           <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
-            <img alt="Couple Archway Candlelight Portrait" class="w-full h-full object-cover" src="assets/images/story-couple.avif"/>
+            <video class="w-full h-full object-cover" id="storyMobileVideo3"
+                   src="assets/videos/couple-staircase-scrub.mp4"
+                   poster="assets/images/story-couple-frame0.webp"
+                   muted playsinline preload="auto"
+                   aria-label="Couple Archway Candlelight Portrait"></video>
           </div>
           <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter III ΓÇó The Vow</span>
           <h3 class="font-headline-lg text-3xl text-on-surface font-light">Under the <span class="italic text-secondary">Tuscan Stars</span></h3>
@@ -1838,11 +1859,11 @@
         <div class="relative pl-6 md:pl-0" id="timelineContainer">
           <!-- Drawing Golden Hairline Desktop -->
           <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-secondary/20 -translate-x-1/2">
-            <div class="w-full bg-secondary h-0 will-change-transform" id="timelineProgressLine"></div>
+            <div class="w-full h-full bg-secondary will-change-transform" id="timelineProgressLine"></div>
           </div>
           <!-- Drawing Golden Hairline Mobile -->
           <div class="block md:hidden absolute left-3 top-0 bottom-0 w-[1px] bg-secondary/20">
-            <div class="w-full bg-secondary h-0 will-change-transform" id="timelineProgressLineMobile"></div>
+            <div class="w-full h-full bg-secondary will-change-transform" id="timelineProgressLineMobile"></div>
           </div>
 
           <div class="space-y-16 lg:space-y-24">
@@ -2742,7 +2763,59 @@
       const ch2 = document.getElementById('storyChapter2');
       const ch3 = document.getElementById('storyChapter3');
 
-      // TIER 1: DESKTOP ΓÇö 1200px AND ABOVE (Full Cinematic Master Pinning)
+      // Coordinated Seek Controller for All-Intra interactive scrub
+      function createVideoScrubber(video) {
+        if (!video) return { setProgress: () => {} };
+
+        let isSeeking = false;
+        let pendingTime = null;
+
+        video.addEventListener('seeked', () => {
+          isSeeking = false;
+          if (pendingTime !== null) {
+            const nextTime = pendingTime;
+            pendingTime = null;
+            if (Math.abs(video.currentTime - nextTime) > 0.01) {
+              isSeeking = true;
+              video.currentTime = nextTime;
+            }
+          }
+        });
+
+        function setProgress(progress) {
+          if (!video.duration || isNaN(video.duration)) return;
+          const p = Math.max(0, Math.min(1, progress));
+          const targetTime = p * video.duration;
+
+          if (Math.abs(video.currentTime - targetTime) <= 0.01) return;
+
+          if (isSeeking) {
+            pendingTime = targetTime;
+          } else {
+            isSeeking = true;
+            video.currentTime = targetTime;
+          }
+        }
+
+        return { setProgress };
+      }
+
+      const scrubber1 = createVideoScrubber(img1);
+      const scrubber2 = createVideoScrubber(img2);
+      const scrubber3 = createVideoScrubber(img3);
+
+      // Initialize desktop videos to paused and warm first frame on metadata
+      [img1, img2, img3].forEach(v => {
+        if (v && v.tagName === 'VIDEO') {
+          v.pause();
+          v.addEventListener('loadedmetadata', () => {
+            if (v.currentTime === 0) v.currentTime = 0.001;
+            ScrollTrigger.refresh();
+          }, { once: true });
+        }
+      });
+
+      // TIER 1: DESKTOP — 1200px AND ABOVE (Full Cinematic Master Pinning)
       storyMm.add("(min-width: 1200px)", () => {
         gsap.set(slide1, { autoAlpha: 1 });
         gsap.set([slide2, slide3], { autoAlpha: 0 });
@@ -2753,6 +2826,9 @@
         gsap.set(ch2, { autoAlpha: 0, y: 35 });
         gsap.set(ch3, { autoAlpha: 0, y: 35 });
 
+        const scrubProgress = { v1: 0, v2: 0, v3: 0 };
+        let activePlate = 1;
+
         const storyTl = gsap.timeline({
           scrollTrigger: {
             trigger: storyPinSection,
@@ -2762,14 +2838,34 @@
             pinSpacing: true,
             scrub: 0.5,
             anticipatePin: 1
+          },
+          onUpdate: () => {
+            const t = storyTl.time();
+            const newPlate = t >= 3.4 ? 3 : (t >= 1.4 ? 2 : 1);
+            if (newPlate !== activePlate) {
+              activePlate = newPlate;
+            }
+            if (activePlate === 1) {
+              scrubber1.setProgress(scrubProgress.v1);
+            } else if (activePlate === 2) {
+              scrubber2.setProgress(scrubProgress.v2);
+            } else if (activePlate === 3) {
+              scrubber3.setProgress(scrubProgress.v3);
+            }
           }
         });
 
-        // Chapter 1: Shahina portrait begins slightly zoomed and settles
+        // Chapter 1: Bride video scrubs from 0 to duration while scale settles
         storyTl.to(img1, {
           scale: 1.00,
           duration: 1.2,
           ease: 'power1.out'
+        }, 0);
+
+        storyTl.to(scrubProgress, {
+          v1: 1,
+          duration: 1.2,
+          ease: 'none'
         }, 0);
 
         // Phase A: Transition from Chapter 1 to Chapter 2 (around 33% progress)
@@ -2796,6 +2892,12 @@
           scale: 1.00,
           duration: 1.2,
           ease: 'power1.out'
+        }, 1.4);
+
+        storyTl.to(scrubProgress, {
+          v2: 1,
+          duration: 1.6,
+          ease: 'none'
         }, 1.4);
 
         storyTl.to(ch2, {
@@ -2831,6 +2933,12 @@
           ease: 'power1.out'
         }, 3.4);
 
+        storyTl.to(scrubProgress, {
+          v3: 1,
+          duration: 1.2,
+          ease: 'none'
+        }, 3.4);
+
         storyTl.to(ch3, {
           autoAlpha: 1,
           y: 0,
@@ -2839,10 +2947,10 @@
         }, 3.9);
 
         // Settle smoothly before releasing
-        storyTl.to({}, { duration: 0.9 }, 4.7);
+        storyTl.to({}, { duration: 0.2 }, 4.6);
       });
 
-      // TIER 2: TABLET / SMALL LAPTOP ΓÇö 768px TO 1199px (Simplified Cinematic Pinning)
+      // TIER 2: TABLET / SMALL LAPTOP — 768px TO 1199px (Simplified Cinematic Pinning)
       storyMm.add("(min-width: 768px) and (max-width: 1199px)", () => {
         gsap.set(slide1, { autoAlpha: 1 });
         gsap.set([slide2, slide3], { autoAlpha: 0 });
@@ -2852,6 +2960,9 @@
         gsap.set(ch1, { autoAlpha: 1, y: 0 });
         gsap.set(ch2, { autoAlpha: 0, y: 25 });
         gsap.set(ch3, { autoAlpha: 0, y: 25 });
+
+        const scrubProgress = { v1: 0, v2: 0, v3: 0 };
+        let activePlate = 1;
 
         // Compact scroll range (+1600px) calibrated for tablet touch/trackpad
         const storyTl = gsap.timeline({
@@ -2863,14 +2974,34 @@
             pinSpacing: true,
             scrub: 0.4,
             anticipatePin: 1
+          },
+          onUpdate: () => {
+            const t = storyTl.time();
+            const newPlate = t >= 2.7 ? 3 : (t >= 1.1 ? 2 : 1);
+            if (newPlate !== activePlate) {
+              activePlate = newPlate;
+            }
+            if (activePlate === 1) {
+              scrubber1.setProgress(scrubProgress.v1);
+            } else if (activePlate === 2) {
+              scrubber2.setProgress(scrubProgress.v2);
+            } else if (activePlate === 3) {
+              scrubber3.setProgress(scrubProgress.v3);
+            }
           }
         });
 
-        // Chapter 1 settles
+        // Chapter 1 settles & scrubs
         storyTl.to(img1, {
           scale: 1.00,
           duration: 1.0,
           ease: 'power1.out'
+        }, 0);
+
+        storyTl.to(scrubProgress, {
+          v1: 1,
+          duration: 1.0,
+          ease: 'none'
         }, 0);
 
         // Phase A: Ch 1 -> Ch 2 (~33% progress)
@@ -2897,6 +3028,12 @@
           scale: 1.00,
           duration: 1.0,
           ease: 'power1.out'
+        }, 1.1);
+
+        storyTl.to(scrubProgress, {
+          v2: 1,
+          duration: 1.3,
+          ease: 'none'
         }, 1.1);
 
         storyTl.to(ch2, {
@@ -2932,6 +3069,12 @@
           ease: 'power1.out'
         }, 2.7);
 
+        storyTl.to(scrubProgress, {
+          v3: 1,
+          duration: 1.0,
+          ease: 'none'
+        }, 2.7);
+
         storyTl.to(ch3, {
           autoAlpha: 1,
           y: 0,
@@ -2939,14 +3082,17 @@
           ease: 'power2.out'
         }, 3.1);
 
-        storyTl.to({}, { duration: 0.6 }, 3.7);
+        storyTl.to({}, { duration: 0.15 }, 3.7);
       });
 
-      // TIER 3: MOBILE ΓÇö BELOW 768px (Vertical Narrative Layout)
+      // TIER 3: MOBILE — BELOW 768px (Vertical Narrative Layout with Autoplay-Once)
       storyMm.add("(max-width: 767px)", () => {
         const mobileItems = document.querySelectorAll('#storyMobileContainer > div');
         mobileItems.forEach(item => {
-          const img = item.querySelector('img');
+          const media = item.querySelector('img, video');
+          const video = item.querySelector('video');
+
+          // Entrance animation
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: item,
@@ -2960,12 +3106,36 @@
             duration: 0.7,
             ease: 'power2.out'
           });
-          if (img) {
-            tl.from(img, {
+          if (media) {
+            tl.from(media, {
               scale: 1.06,
               duration: 0.9,
               ease: 'power1.out'
             }, 0);
+          }
+
+          // Autoplay-once when entering viewport
+          if (video) {
+            let hasPlayed = false;
+            ScrollTrigger.create({
+              trigger: item,
+              start: 'top 75%',
+              onEnter: () => {
+                if (!hasPlayed) {
+                  hasPlayed = true;
+                  video.muted = true;
+                  video.playsInline = true;
+                  video.currentTime = 0;
+                  const playPromise = video.play();
+                  if (playPromise !== undefined) {
+                    playPromise.catch(e => {
+                      // Autoplay blocked: fallback to poster
+                      console.log('Mobile video autoplay blocked:', e);
+                    });
+                  }
+                }
+              }
+            });
           }
         });
       });
@@ -3019,8 +3189,9 @@
       if (!container) return;
 
       if (progressLine) {
+        gsap.set(progressLine, { scaleY: 0, transformOrigin: 'top center' });
         gsap.to(progressLine, {
-          height: '100%',
+          scaleY: 1,
           ease: 'none',
           scrollTrigger: {
             trigger: container,
@@ -3032,8 +3203,9 @@
       }
 
       if (progressLineMobile) {
+        gsap.set(progressLineMobile, { scaleY: 0, transformOrigin: 'top center' });
         gsap.to(progressLineMobile, {
-          height: '100%',
+          scaleY: 1,
           ease: 'none',
           scrollTrigger: {
             trigger: container,
