@@ -2841,8 +2841,8 @@
       storyMm.add("(min-width: 1200px)", () => {
         gsap.set(slide1, { autoAlpha: 1 });
         gsap.set([slide2, slide3], { autoAlpha: 0 });
-        gsap.set(img1, { scale: 1.10 });
-        gsap.set([img2, img3], { scale: 1.08 });
+        gsap.set(img1, { scale: 1.00 });
+        gsap.set([img2, img3], { scale: 1.00 });
 
         gsap.set(ch1, { autoAlpha: 1, y: 0 });
         gsap.set(ch2, { autoAlpha: 0, y: 35 });
@@ -2877,13 +2877,7 @@
           }
         });
 
-        // Chapter 1: Bride video scrubs from 0 to duration while scale settles
-        storyTl.to(img1, {
-          scale: 1.00,
-          duration: 1.2,
-          ease: 'power1.out'
-        }, 0);
-
+        // Chapter 1: Bride video scrubs from 0 to duration
         storyTl.to(scrubProgress, {
           v1: 1,
           duration: 1.2,
@@ -2908,12 +2902,6 @@
           autoAlpha: 1,
           duration: 1.0,
           ease: 'power1.inOut'
-        }, 1.4);
-
-        storyTl.to(img2, {
-          scale: 1.00,
-          duration: 1.2,
-          ease: 'power1.out'
         }, 1.4);
 
         storyTl.to(scrubProgress, {
@@ -2949,12 +2937,6 @@
           ease: 'power1.inOut'
         }, 3.4);
 
-        storyTl.to(img3, {
-          scale: 1.00,
-          duration: 1.2,
-          ease: 'power1.out'
-        }, 3.4);
-
         storyTl.to(scrubProgress, {
           v3: 1,
           duration: 1.2,
@@ -2976,8 +2958,8 @@
       storyMm.add("(min-width: 768px) and (max-width: 1199px)", () => {
         gsap.set(slide1, { autoAlpha: 1 });
         gsap.set([slide2, slide3], { autoAlpha: 0 });
-        gsap.set(img1, { scale: 1.06 });
-        gsap.set([img2, img3], { scale: 1.05 });
+        gsap.set(img1, { scale: 1.00 });
+        gsap.set([img2, img3], { scale: 1.00 });
 
         gsap.set(ch1, { autoAlpha: 1, y: 0 });
         gsap.set(ch2, { autoAlpha: 0, y: 25 });
@@ -3014,12 +2996,6 @@
         });
 
         // Chapter 1 settles & scrubs
-        storyTl.to(img1, {
-          scale: 1.00,
-          duration: 1.0,
-          ease: 'power1.out'
-        }, 0);
-
         storyTl.to(scrubProgress, {
           v1: 1,
           duration: 1.0,
@@ -3044,12 +3020,6 @@
           autoAlpha: 1,
           duration: 0.8,
           ease: 'power1.inOut'
-        }, 1.1);
-
-        storyTl.to(img2, {
-          scale: 1.00,
-          duration: 1.0,
-          ease: 'power1.out'
         }, 1.1);
 
         storyTl.to(scrubProgress, {
@@ -3083,12 +3053,6 @@
           autoAlpha: 1,
           duration: 0.8,
           ease: 'power1.inOut'
-        }, 2.7);
-
-        storyTl.to(img3, {
-          scale: 1.00,
-          duration: 1.0,
-          ease: 'power1.out'
         }, 2.7);
 
         storyTl.to(scrubProgress, {
