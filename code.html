@@ -58,8 +58,17 @@
     }
     .story-chapter-card {
       position: absolute;
-      inset-x: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
       will-change: opacity, transform;
+    }
+
+    /* Pinned Story Visual Frame: 768px Portrait Usable-Aperture Centering */
+    @media (width: 768px) and (orientation: portrait) {
+      #storyVisualFrame {
+        top: 64px;
+      }
     }
 
 
@@ -1703,7 +1712,7 @@
                 <p class="font-body-lg text-sm md:text-base xl:text-lg text-on-surface-variant font-light leading-relaxed">
                   Flights across twilight zones, handwritten dispatches sealed in red wax, and midnight calls across six timezones became the architecture of our devotion. Every city we walked alone was only ever half-seen until we walked it together.
                 </p>
-                <div class="flex items-center gap-4 md:gap-6 pt-2 text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-outline">
+                <div class="flex flex-wrap items-center gap-x-4 md:gap-x-6 gap-y-2 pt-2 text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-outline">
                   <span>London</span>
                   <span>ΓÇó</span>
                   <span>New York</span>
