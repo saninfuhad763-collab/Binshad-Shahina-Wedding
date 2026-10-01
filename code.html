@@ -3223,15 +3223,21 @@
       const nav = document.getElementById('mainNav');
       if (!nav) return;
 
+      let isScrolled = false;
+
       ScrollTrigger.create({
         start: 'top -50',
         onUpdate: (self) => {
-          if (self.scroll() > 50) {
-            nav.classList.add('bg-background/90', 'backdrop-blur-md', 'border-secondary/20', 'py-4');
-            nav.classList.remove('py-6', 'border-transparent');
-          } else {
-            nav.classList.remove('bg-background/90', 'backdrop-blur-md', 'border-secondary/20', 'py-4');
-            nav.classList.add('py-6', 'border-transparent');
+          const scrolled = self.scroll() > 50;
+          if (scrolled !== isScrolled) {
+            isScrolled = scrolled;
+            if (isScrolled) {
+              nav.classList.add('bg-background/90', 'backdrop-blur-md', 'border-secondary/20', 'py-4');
+              nav.classList.remove('py-6', 'border-transparent');
+            } else {
+              nav.classList.remove('bg-background/90', 'backdrop-blur-md', 'border-secondary/20', 'py-4');
+              nav.classList.add('py-6', 'border-transparent');
+            }
           }
         }
       });
