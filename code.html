@@ -2763,20 +2763,28 @@
       const ch2 = document.getElementById('storyChapter2');
       const ch3 = document.getElementById('storyChapter3');
 
-      // Coordinated Seek Controller for All-Intra interactive scrub
+      // Coordinated Seek Controller for All-Intra interactive scrub (24fps frame-aligned)
+      const STORY_VIDEO_FPS = 24;
+      const FRAME_DURATION = 1 / 24;
+
       function createVideoScrubber(video) {
         if (!video) return { setProgress: () => {} };
 
-        let isSeeking = false;
+        let lastRequestedFrame = -1;
+        let pendingFrame = null;
         let pendingTime = null;
+        let isSeeking = false;
 
         video.addEventListener('seeked', () => {
           isSeeking = false;
-          if (pendingTime !== null) {
+          if (pendingFrame !== null && pendingTime !== null) {
+            const nextFrame = pendingFrame;
             const nextTime = pendingTime;
+            pendingFrame = null;
             pendingTime = null;
-            if (Math.abs(video.currentTime - nextTime) > 0.01) {
+            if (nextFrame !== lastRequestedFrame) {
               isSeeking = true;
+              lastRequestedFrame = nextFrame;
               video.currentTime = nextTime;
             }
           }
@@ -2785,15 +2793,29 @@
         function setProgress(progress) {
           if (!video.duration || isNaN(video.duration)) return;
           const p = Math.max(0, Math.min(1, progress));
-          const targetTime = p * video.duration;
+          const continuousTarget = p * video.duration;
 
-          if (Math.abs(video.currentTime - targetTime) <= 0.01) return;
+          // Frame-index based target model
+          const totalFrames = Math.max(1, Math.round(video.duration * STORY_VIDEO_FPS));
+          const maxFrameIndex = totalFrames - 1;
+          const rawFrameIndex = Math.round(continuousTarget * STORY_VIDEO_FPS);
+          const frameIndex = Math.max(0, Math.min(maxFrameIndex, rawFrameIndex));
+
+          let snappedTime = frameIndex / STORY_VIDEO_FPS;
+          const maxTime = Math.max(0, video.duration - 0.001);
+          snappedTime = Math.max(0, Math.min(maxTime, snappedTime));
+
+          // Seek only when frame index changes
+          if (frameIndex === lastRequestedFrame) return;
 
           if (isSeeking) {
-            pendingTime = targetTime;
+            // Newest target wins
+            pendingFrame = frameIndex;
+            pendingTime = snappedTime;
           } else {
             isSeeking = true;
-            video.currentTime = targetTime;
+            lastRequestedFrame = frameIndex;
+            video.currentTime = snappedTime;
           }
         }
 
