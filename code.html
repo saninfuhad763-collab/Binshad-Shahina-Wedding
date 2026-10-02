@@ -3237,22 +3237,124 @@
           uniform vec2 u_resolution;
           uniform float u_time;
           uniform float u_scroll;
+          uniform float u_motion_scale;
+          uniform vec2 u_flank_anchors;
 
           void main() {
-            // Normalized coordinate system in [-1.0, 1.0] across all viewports
             vec2 normCoord = (gl_FragCoord.xy * 2.0 - u_resolution) / u_resolution;
-            // Aspect ratio correction to keep particles perfectly circular
             vec2 aspect = vec2(u_resolution.x / min(u_resolution.x, u_resolution.y), u_resolution.y / min(u_resolution.x, u_resolution.y));
             
-            float t = u_time * 0.55;
             vec3 color = vec3(0.0);
+            float mScale = u_motion_scale;
 
-            // Responsive Starlight Ember field (8 light points floating naturally across all device widths)
-            for (float i = 1.0; i < 9.0; i++) {
-              vec2 offset = vec2(sin(i * 1.84 + t * 0.4), cos(i * 2.11 + t * 0.35)) * vec2(0.72, 0.65);
+            // 8 Procedural Starlight Embers across 3 Motion Families:
+            // Family A (1-4): Gentle Downward Drift (8-16 px/s, soft boundary fade)
+            // Family B (5-6): Subtle Orbital / Elliptical Drift (35-60s periods, 30-70px radii)
+            // Family C (7-8): Scattered Organic Multi-harmonic Drift (<60px drift radius)
+
+            vec2 offset;
+            float fade = 1.0;
+            float yRaw;
+
+            // Particle 1 (Family A: Far Left Downward Drift)
+            yRaw = 0.35 - 0.034 * u_time;
+            offset.x = -0.68 + 0.04 * mScale * sin(u_time * 0.25 + 1.2);
+            offset.y = mod(yRaw + 0.85, 1.70) - 0.85;
+            fade = clamp((offset.y + 0.85) / 0.20, 0.0, 1.0) * clamp((0.85 - offset.y) / 0.20, 0.0, 1.0);
+            {
               vec2 diff = (normCoord - offset) * aspect;
               float dist = length(diff);
-              float sparkle = sin(u_time * 2.2 + i * 4.0) * 0.45 + 0.55;
+              float sparkle = sin(u_time * 2.2 + 4.0) * 0.45 + 0.55;
+              float ember = (0.018 * (1.0 + u_scroll * 1.4)) / (dist + 0.002);
+              ember += 0.003 / (dist * dist + 0.015);
+              color += vec3(0.92, 0.78, 0.52) * ember * sparkle * fade;
+            }
+
+            // Particle 2 (Family A: Far Right Downward Drift)
+            yRaw = 0.80 - 0.028 * u_time;
+            offset.x = 0.70 + 0.045 * mScale * cos(u_time * 0.22 + 2.8);
+            offset.y = mod(yRaw + 0.85, 1.70) - 0.85;
+            fade = clamp((offset.y + 0.85) / 0.20, 0.0, 1.0) * clamp((0.85 - offset.y) / 0.20, 0.0, 1.0);
+            {
+              vec2 diff = (normCoord - offset) * aspect;
+              float dist = length(diff);
+              float sparkle = sin(u_time * 2.2 + 8.0) * 0.45 + 0.55;
+              float ember = (0.018 * (1.0 + u_scroll * 1.4)) / (dist + 0.002);
+              ember += 0.003 / (dist * dist + 0.015);
+              color += vec3(0.92, 0.78, 0.52) * ember * sparkle * fade;
+            }
+
+            // Particle 3 (Family A: Left Flank Downward Drift)
+            yRaw = 1.25 - 0.038 * u_time;
+            offset.x = u_flank_anchors.x + 0.035 * mScale * sin(u_time * 0.28 + 4.1);
+            offset.y = mod(yRaw + 0.85, 1.70) - 0.85;
+            fade = clamp((offset.y + 0.85) / 0.20, 0.0, 1.0) * clamp((0.85 - offset.y) / 0.20, 0.0, 1.0);
+            {
+              vec2 diff = (normCoord - offset) * aspect;
+              float dist = length(diff);
+              float sparkle = sin(u_time * 2.2 + 12.0) * 0.45 + 0.55;
+              float ember = (0.018 * (1.0 + u_scroll * 1.4)) / (dist + 0.002);
+              ember += 0.003 / (dist * dist + 0.015);
+              color += vec3(0.92, 0.78, 0.52) * ember * sparkle * fade;
+            }
+
+            // Particle 4 (Family A: Right Flank Downward Drift)
+            yRaw = 1.65 - 0.031 * u_time;
+            offset.x = u_flank_anchors.y + 0.04 * mScale * sin(u_time * 0.20 + 5.5);
+            offset.y = mod(yRaw + 0.85, 1.70) - 0.85;
+            fade = clamp((offset.y + 0.85) / 0.20, 0.0, 1.0) * clamp((0.85 - offset.y) / 0.20, 0.0, 1.0);
+            {
+              vec2 diff = (normCoord - offset) * aspect;
+              float dist = length(diff);
+              float sparkle = sin(u_time * 2.2 + 16.0) * 0.45 + 0.55;
+              float ember = (0.018 * (1.0 + u_scroll * 1.4)) / (dist + 0.002);
+              ember += 0.003 / (dist * dist + 0.015);
+              color += vec3(0.92, 0.78, 0.52) * ember * sparkle * fade;
+            }
+
+            // Particle 5 (Family B: Lower-Left Subtle Orbital Drift)
+            offset.x = -0.56 + 0.11 * mScale * cos(u_time * 0.1428 + 1.7);
+            offset.y = -0.42 + 0.09 * mScale * sin(u_time * 0.1428 + 1.7);
+            {
+              vec2 diff = (normCoord - offset) * aspect;
+              float dist = length(diff);
+              float sparkle = sin(u_time * 2.2 + 20.0) * 0.45 + 0.55;
+              float ember = (0.018 * (1.0 + u_scroll * 1.4)) / (dist + 0.002);
+              ember += 0.003 / (dist * dist + 0.015);
+              color += vec3(0.92, 0.78, 0.52) * ember * sparkle;
+            }
+
+            // Particle 6 (Family B: Upper-Right Subtle Orbital Drift)
+            offset.x = 0.58 + 0.13 * mScale * sin(u_time * 0.1208 + 3.9);
+            offset.y = 0.46 + 0.10 * mScale * cos(u_time * 0.1208 + 3.9);
+            {
+              vec2 diff = (normCoord - offset) * aspect;
+              float dist = length(diff);
+              float sparkle = sin(u_time * 2.2 + 24.0) * 0.45 + 0.55;
+              float ember = (0.018 * (1.0 + u_scroll * 1.4)) / (dist + 0.002);
+              ember += 0.003 / (dist * dist + 0.015);
+              color += vec3(0.92, 0.78, 0.52) * ember * sparkle;
+            }
+
+            // Particle 7 (Family C: Upper-Left Scattered Organic Drift)
+            offset.x = -0.28 + mScale * (0.08 * sin(u_time * 0.18 + 0.8) + 0.04 * cos(u_time * 0.31 + 2.1));
+            offset.y =  0.55 + mScale * (0.07 * cos(u_time * 0.15 + 1.4) + 0.03 * sin(u_time * 0.27 + 4.0));
+            {
+              vec2 diff = (normCoord - offset) * aspect;
+              float dist = length(diff);
+              float sparkle = sin(u_time * 2.2 + 28.0) * 0.45 + 0.55;
+              float ember = (0.018 * (1.0 + u_scroll * 1.4)) / (dist + 0.002);
+              ember += 0.003 / (dist * dist + 0.015);
+              color += vec3(0.92, 0.78, 0.52) * ember * sparkle;
+            }
+
+            // Particle 8 (Family C: Lower-Right Scattered Organic Drift)
+            offset.x =  0.32 + mScale * (0.07 * cos(u_time * 0.16 + 4.7) + 0.04 * sin(u_time * 0.29 + 1.1));
+            offset.y = -0.48 + mScale * (0.08 * sin(u_time * 0.19 + 2.5) + 0.03 * cos(u_time * 0.33 + 3.8));
+            {
+              vec2 diff = (normCoord - offset) * aspect;
+              float dist = length(diff);
+              float sparkle = sin(u_time * 2.2 + 32.0) * 0.45 + 0.55;
               float ember = (0.018 * (1.0 + u_scroll * 1.4)) / (dist + 0.002);
               ember += 0.003 / (dist * dist + 0.015);
               color += vec3(0.92, 0.78, 0.52) * ember * sparkle;
@@ -3296,8 +3398,24 @@
         const uRes = gl.getUniformLocation(program, 'u_resolution');
         const uTime = gl.getUniformLocation(program, 'u_time');
         const uScroll = gl.getUniformLocation(program, 'u_scroll');
+        const uMotionScale = gl.getUniformLocation(program, 'u_motion_scale');
+        const uFlankAnchors = gl.getUniformLocation(program, 'u_flank_anchors');
 
         let startTime = performance.now();
+
+        function getMotionScale() {
+          const clientW = canvas.clientWidth || window.innerWidth;
+          if (clientW < 768) return 0.55;
+          if (clientW < 1200) return 0.80;
+          return 1.0;
+        }
+
+        function getFlankAnchors() {
+          const clientW = canvas.clientWidth || window.innerWidth;
+          if (clientW < 768) return [-0.90, 0.90];
+          if (clientW < 1200) return [-0.76, 0.76];
+          return [-0.42, 0.48];
+        }
 
         function renderWebGL() {
           if (!gl) return;
@@ -3306,6 +3424,11 @@
             gl.uniform2f(uRes, canvas.width, canvas.height);
             gl.uniform1f(uTime, 0.0);
             gl.uniform1f(uScroll, 0.5);
+            if (uMotionScale) gl.uniform1f(uMotionScale, 0.0);
+            if (uFlankAnchors) {
+              const anchors = getFlankAnchors();
+              gl.uniform2f(uFlankAnchors, anchors[0], anchors[1]);
+            }
             gl.drawArrays(gl.TRIANGLES, 0, 6);
             return;
           }
@@ -3314,6 +3437,11 @@
           gl.uniform2f(uRes, canvas.width, canvas.height);
           gl.uniform1f(uTime, elapsed);
           gl.uniform1f(uScroll, celebrationScrollProgress);
+          if (uMotionScale) gl.uniform1f(uMotionScale, getMotionScale());
+          if (uFlankAnchors) {
+            const anchors = getFlankAnchors();
+            gl.uniform2f(uFlankAnchors, anchors[0], anchors[1]);
+          }
           gl.drawArrays(gl.TRIANGLES, 0, 6);
           animFrameId = requestAnimationFrame(renderWebGL);
         }
