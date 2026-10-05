@@ -2113,6 +2113,16 @@
     let homepageRevealStarted = false;
     let failsafeTimer = null;
 
+    // --- BACKGROUND MUSIC ENGINE ---
+    const backgroundMusic = new Audio('assets/music/Love Story - Indila (Orchestra Version + Layered ~ Slowed + Reverb).mp3');
+    backgroundMusic.loop = true;
+    backgroundMusic.volume = 0;
+    backgroundMusic.preload = 'auto';
+    backgroundMusic.addEventListener('error', (e) => {
+      console.warn('[Audio] Background music load error:', e);
+    });
+    let musicPlaybackStarted = false;
+
     // beginHomepageReveal: called ~2s before video ends.
     // Reveals nav + hero UI while the film is still playing.
     function beginHomepageReveal() {
@@ -2353,6 +2363,29 @@
         if (introState !== 'locked') return;
         introState = 'opening';
         doorRoundBtn.disabled = true;
+
+        // Start background music from user click gesture (silent start -> 3.0s fade to 0.35)
+        if (backgroundMusic && !musicPlaybackStarted) {
+          musicPlaybackStarted = true;
+          try {
+            backgroundMusic.volume = 0;
+            const playPromise = backgroundMusic.play();
+            if (playPromise !== undefined) {
+              playPromise.then(() => {
+                gsap.to(backgroundMusic, {
+                  volume: 0.35,
+                  duration: 3.0,
+                  ease: 'power1.out',
+                  overwrite: true
+                });
+              }).catch((err) => {
+                console.warn('[Audio] Background music playback prevented or interrupted:', err);
+              });
+            }
+          } catch (err) {
+            console.warn('[Audio] Synchronous play() error:', err);
+          }
+        }
         introEntrance.kill();
         if (doorZoomTween) {
           doorZoomTween.pause();
