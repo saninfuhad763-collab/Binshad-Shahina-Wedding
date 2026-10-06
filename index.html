@@ -1439,8 +1439,8 @@
       </a>
       <!-- Desktop Nav Links -->
       <nav class="hidden md:flex items-center gap-8 text-[11px] uppercase tracking-[0.28em] font-semibold text-on-surface-variant">
-        <a class="hover:text-secondary transition-colors" href="#prologue">Prologue</a>
         <a class="hover:text-secondary transition-colors" href="#chapters">The Story</a>
+        <a class="hover:text-secondary transition-colors" href="#prologue">Prologue</a>
         <a class="hover:text-secondary transition-colors" href="#celebration">Celebration</a>
         <a class="hover:text-secondary transition-colors" href="#itinerary">Itinerary</a>
         <a class="hover:text-secondary transition-colors" href="#gallery">Portraits</a>
@@ -1462,8 +1462,8 @@
   <div class="fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl flex flex-col justify-between p-8 opacity-0 pointer-events-none transition-all duration-500" id="mobileOverlay">
     <div class="pt-20 space-y-6 text-center">
       <div class="flex flex-col gap-6 text-2xl font-headline-md tracking-wider">
-        <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#prologue">Prologue</a>
         <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#chapters">The Chapters</a>
+        <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#prologue">Prologue</a>
         <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#celebration">The Celebration</a>
         <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#itinerary">The Itinerary</a>
         <a class="mobile-nav-link text-on-surface hover:text-secondary transition-colors" href="#gallery">Portraits</a>
@@ -1520,7 +1520,7 @@
       <!-- Scroll Indicator & Downward Prompt -->
       <div class="relative z-10 flex justify-between items-end pt-8 border-t border-white/10 text-outline text-[10px] tracking-[0.3em] uppercase will-change-transform opacity-0 pointer-events-none" id="heroBottomBar">
         <span class="hidden sm:inline">A Private Celebration</span>
-        <a class="flex items-center gap-3 text-secondary/90 hover:text-primary transition-colors group cursor-pointer" href="#prologue" id="heroScrollCue">
+        <a class="flex items-center gap-3 text-secondary/90 hover:text-primary transition-colors group cursor-pointer" href="#chapters" id="heroScrollCue">
           <span>Discover The Story</span>
           <span class="material-symbols-outlined text-sm transform group-hover:translate-y-1 transition-transform">arrow_downward</span>
         </a>
@@ -1528,47 +1528,7 @@
     </section>
 
     <!-- ======================================================== -->
-    <!-- 2. PROLOGUE / INTIMATE OVERTURE                         -->
-    <!-- ======================================================== -->
-    <section class="relative w-full py-28 lg:py-36 px-gutter-mobile lg:px-margin bg-surface-container-lowest border-t border-secondary/15" id="prologue">
-      <div class="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
-        <!-- Editorial Statement -->
-        <div class="lg:col-span-7 space-y-6">
-          <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
-            Chapter 00 ΓÇó The Overture
-          </span>
-          <div class="reveal-mask">
-            <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl lg:text-6xl text-on-surface font-light leading-[1.1]">
-              Two souls.<br/>
-              <span class="italic text-secondary font-normal">One timeless promise.</span>
-            </h2>
-          </div>
-          <div class="w-16 h-[1px] bg-secondary/40"></div>
-          <p class="font-body-lg text-lg sm:text-xl text-on-surface-variant font-light leading-relaxed max-w-2xl">
-            Beyond the passage of days and the restlessness of the world, we found in each other a home without boundaries. We invite you to join us beneath the cypress groves and Renaissance vaults to witness and celebrate the eternal union of our lives.
-          </p>
-          <div class="pt-4 flex items-center gap-4 text-xs uppercase tracking-widest text-outline">
-            <span class="italic font-title-editorial text-base text-secondary normal-case">Florence, Tuscany</span>
-            <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-            <span>A Monograph of Devotion</span>
-          </div>
-        </div>
-        <!-- Archival Quote & Miniature Highlight -->
-        <div class="lg:col-span-5 relative">
-          <div class="border-l border-secondary/30 pl-8 lg:pl-12 py-4 space-y-6">
-            <p class="font-title-editorial italic text-2xl lg:text-3xl text-secondary-fixed leading-snug">
-              ΓÇ£Some lives are linked across centuries; we merely had to arrive at the agreed corner.ΓÇ¥
-            </p>
-            <div class="text-[11px] uppercase tracking-[0.3em] text-outline">
-              Inscription from the Arno River ΓÇó 2021
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================== -->
-    <!-- 3. CENTERPIECE: STICKY MULTI-CHAPTER LOVE STORY         -->
+    <!-- 2. CENTERPIECE: STICKY MULTI-CHAPTER LOVE STORY         -->
     <!-- ======================================================== -->
     <section class="relative w-full bg-background border-t border-secondary/15" id="chapters">
       <!-- Desktop & Tablet Pinned Container (GSAP ScrollTrigger Pinned) -->
@@ -1739,6 +1699,46 @@
           <p class="text-on-surface-variant font-light text-base leading-relaxed">
             On Christmas Eve, surrounded by ancient stone arches and the fragrance of olive wood embers, we seal our bond. A celebration crafted not for spectacle, but for intimacy, truth, and devotion.
           </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- 3. PROLOGUE / INTIMATE OVERTURE                         -->
+    <!-- ======================================================== -->
+    <section class="relative w-full py-28 lg:py-36 px-gutter-mobile lg:px-margin bg-surface-container-lowest border-t border-secondary/15" id="prologue">
+      <div class="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+        <!-- Editorial Statement -->
+        <div class="lg:col-span-7 space-y-6">
+          <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
+            Chapter 00 ΓÇó The Overture
+          </span>
+          <div class="reveal-mask">
+            <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl lg:text-6xl text-on-surface font-light leading-[1.1]">
+              Two souls.<br/>
+              <span class="italic text-secondary font-normal">One timeless promise.</span>
+            </h2>
+          </div>
+          <div class="w-16 h-[1px] bg-secondary/40"></div>
+          <p class="font-body-lg text-lg sm:text-xl text-on-surface-variant font-light leading-relaxed max-w-2xl">
+            Beyond the passage of days and the restlessness of the world, we found in each other a home without boundaries. We invite you to join us beneath the cypress groves and Renaissance vaults to witness and celebrate the eternal union of our lives.
+          </p>
+          <div class="pt-4 flex items-center gap-4 text-xs uppercase tracking-widest text-outline">
+            <span class="italic font-title-editorial text-base text-secondary normal-case">Florence, Tuscany</span>
+            <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+            <span>A Monograph of Devotion</span>
+          </div>
+        </div>
+        <!-- Archival Quote & Miniature Highlight -->
+        <div class="lg:col-span-5 relative">
+          <div class="border-l border-secondary/30 pl-8 lg:pl-12 py-4 space-y-6">
+            <p class="font-title-editorial italic text-2xl lg:text-3xl text-secondary-fixed leading-snug">
+              ΓÇ£Some lives are linked across centuries; we merely had to arrive at the agreed corner.ΓÇ¥
+            </p>
+            <div class="text-[11px] uppercase tracking-[0.3em] text-outline">
+              Inscription from the Arno River ΓÇó 2021
+            </div>
+          </div>
         </div>
       </div>
     </section>
