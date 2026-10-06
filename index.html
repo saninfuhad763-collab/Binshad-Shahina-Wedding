@@ -71,11 +71,19 @@
       }
     }
 
-    /* Monumental Hero Headline: Large Desktop (>= 1280px) Scale Refinement */
-    @media (min-width: 80rem) {
-      .xl\:text-\[8rem\] {
-        font-size: 8rem;
+    /* Monumental Hero Headline: Large Desktop (>= 1200px) Scale Refinement */
+    @media (min-width: 75rem) {
+      .xl\:text-\[100px\] {
+        font-size: 100px;
       }
+    }
+
+    /* Hero Metadata & CTA Spacing Utilities */
+    .p-\[3px\] {
+      padding: 3px;
+    }
+    .pt-9 {
+      padding-top: calc(var(--spacing) * 9);
     }
 
     .whitespace-nowrap {
@@ -1514,13 +1522,13 @@
           </p>
         </div>
         <div class="overflow-hidden mb-6">
-          <h1 class="hero-anim-item font-display-hero text-5xl sm:text-7xl lg:text-[7rem] xl:text-[8rem] leading-[0.95] text-on-surface tracking-tight">
+          <h1 class="hero-anim-item font-display-hero text-5xl sm:text-7xl lg:text-[7rem] xl:text-[100px] leading-[0.95] text-on-surface tracking-tight">
             Binshad <span class="font-title-editorial italic text-secondary font-light">&amp;</span> Shahina
           </h1>
         </div>
         <!-- Symmetrical Date / Location Metadata Row -->
         <div class="overflow-hidden flex justify-center items-center">
-          <div class="hero-anim-item flex items-center justify-center gap-3 sm:gap-4 text-xs md:text-sm uppercase tracking-[0.28em] text-on-surface-variant">
+          <div class="hero-anim-item flex items-center justify-center gap-3 sm:gap-4 text-xs md:text-sm uppercase tracking-[0.28em] text-on-surface-variant p-[3px]">
             <span class="w-8 h-[1px] bg-secondary/50"></span>
             <span>December 24, 2026</span>
             <span class="w-1.5 h-1.5 rounded-full bg-secondary/60"></span>
@@ -1529,17 +1537,15 @@
           </div>
         </div>
         <!-- Centered Attend CTA (Pill Capsule Size Refinement) -->
-        <div class="pt-8 flex justify-center">
+        <div class="pt-9 flex justify-center">
           <a class="hero-anim-item inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-secondary/40 text-[11px] uppercase tracking-[0.25em] text-secondary hover:bg-secondary/10 hover:border-secondary transition-all cursor-pointer whitespace-nowrap" href="#rsvp" id="heroScrollCue">
             <span>ATTEND CEREMONY</span>
           </a>
         </div>
       </div>
 
-      <!-- Hero Bottom Bar & Subtitle -->
-      <div class="relative z-10 flex justify-center items-end pt-8 border-t border-white/10 text-outline text-[10px] tracking-[0.3em] uppercase will-change-transform opacity-0 pointer-events-none" id="heroBottomBar">
-        <span>A Private Celebration</span>
-      </div>
+      <!-- Hero Bottom Bar Placeholder (Preserved for GSAP Architecture) -->
+      <div class="relative z-10 will-change-transform opacity-0 pointer-events-none h-0 overflow-hidden" id="heroBottomBar" aria-hidden="true"></div>
     </section>
 
     <!-- ======================================================== -->
@@ -3218,25 +3224,38 @@
       });
     }
 
-    // --- 6. NAVIGATION GLASS BLUR (Section 19) ---
+    // --- 6. NAVIGATION SCROLL HIDE/SHOW (Section 19) ---
     function initNavScroll() {
       const nav = document.getElementById('mainNav');
       if (!nav) return;
 
       let isScrolled = false;
+      const TOP_THRESHOLD = 8;
 
       ScrollTrigger.create({
-        start: 'top -50',
+        start: 'top top',
         onUpdate: (self) => {
-          const scrolled = self.scroll() > 50;
+          const scrolled = self.scroll() > TOP_THRESHOLD;
           if (scrolled !== isScrolled) {
             isScrolled = scrolled;
             if (isScrolled) {
-              nav.classList.add('bg-background/90', 'backdrop-blur-md', 'border-secondary/20', 'py-4');
-              nav.classList.remove('py-6', 'border-transparent');
+              gsap.to(nav, {
+                yPercent: -100,
+                opacity: 0,
+                duration: 0.45,
+                ease: 'power2.inOut',
+                pointerEvents: 'none',
+                overwrite: 'auto'
+              });
             } else {
-              nav.classList.remove('bg-background/90', 'backdrop-blur-md', 'border-secondary/20', 'py-4');
-              nav.classList.add('py-6', 'border-transparent');
+              gsap.to(nav, {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.5,
+                ease: 'power2.out',
+                pointerEvents: 'auto',
+                overwrite: 'auto'
+              });
             }
           }
         }
