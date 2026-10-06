@@ -71,6 +71,17 @@
       }
     }
 
+    /* Monumental Hero Headline: Large Desktop (>= 1280px) Scale Refinement */
+    @media (min-width: 80rem) {
+      .xl\:text-\[8rem\] {
+        font-size: 8rem;
+      }
+    }
+
+    .whitespace-nowrap {
+      white-space: nowrap;
+    }
+
 
 
     /* =====================================================
@@ -1495,35 +1506,39 @@
         <div class="absolute inset-0 bg-black opacity-0 pointer-events-none will-change-opacity z-20" id="heroDarkOverlay"></div>
       </div>
 
-      <!-- Monumental Editorial Typography (Bottom-Left Asymmetric Anchor) -->
-      <div class="relative z-10 my-auto py-12 max-w-4xl will-change-transform opacity-0 pointer-events-none" id="heroTypography">
+      <!-- Monumental Editorial Typography (Centered Cinematic Composition) -->
+      <div class="relative z-10 my-auto py-12 w-full max-w-6xl mx-auto text-center will-change-transform opacity-0 pointer-events-none" id="heroTypography">
         <div class="overflow-hidden mb-3">
           <p class="hero-anim-item text-xs md:text-sm tracking-[0.4em] uppercase text-secondary font-medium">
             The Celebration of Forever
           </p>
         </div>
         <div class="overflow-hidden mb-6">
-          <h1 class="hero-anim-item font-display-hero text-5xl sm:text-7xl lg:text-[7rem] leading-[0.95] text-on-surface tracking-tight">
+          <h1 class="hero-anim-item font-display-hero text-5xl sm:text-7xl lg:text-[7rem] xl:text-[8rem] leading-[0.95] text-on-surface tracking-tight">
             Binshad <span class="font-title-editorial italic text-secondary font-light">&amp;</span> Shahina
           </h1>
         </div>
-        <div class="overflow-hidden flex items-center gap-6">
-          <div class="hero-anim-item flex items-center gap-4 text-xs md:text-sm uppercase tracking-[0.28em] text-on-surface-variant">
+        <!-- Symmetrical Date / Location Metadata Row -->
+        <div class="overflow-hidden flex justify-center items-center">
+          <div class="hero-anim-item flex items-center justify-center gap-3 sm:gap-4 text-xs md:text-sm uppercase tracking-[0.28em] text-on-surface-variant">
             <span class="w-8 h-[1px] bg-secondary/50"></span>
             <span>December 24, 2026</span>
             <span class="w-1.5 h-1.5 rounded-full bg-secondary/60"></span>
             <span>Florence, Tuscany</span>
+            <span class="w-8 h-[1px] bg-secondary/50"></span>
           </div>
+        </div>
+        <!-- Centered Attend CTA (Pill Capsule Size Refinement) -->
+        <div class="pt-8 flex justify-center">
+          <a class="hero-anim-item inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-secondary/40 text-[11px] uppercase tracking-[0.25em] text-secondary hover:bg-secondary/10 hover:border-secondary transition-all cursor-pointer whitespace-nowrap" href="#rsvp" id="heroScrollCue">
+            <span>ATTEND CEREMONY</span>
+          </a>
         </div>
       </div>
 
-      <!-- Scroll Indicator & Downward Prompt -->
-      <div class="relative z-10 flex justify-between items-end pt-8 border-t border-white/10 text-outline text-[10px] tracking-[0.3em] uppercase will-change-transform opacity-0 pointer-events-none" id="heroBottomBar">
-        <span class="hidden sm:inline">A Private Celebration</span>
-        <a class="flex items-center gap-3 text-secondary/90 hover:text-primary transition-colors group cursor-pointer" href="#chapters" id="heroScrollCue">
-          <span>Discover The Story</span>
-          <span class="material-symbols-outlined text-sm transform group-hover:translate-y-1 transition-transform">arrow_downward</span>
-        </a>
+      <!-- Hero Bottom Bar & Subtitle -->
+      <div class="relative z-10 flex justify-center items-end pt-8 border-t border-white/10 text-outline text-[10px] tracking-[0.3em] uppercase will-change-transform opacity-0 pointer-events-none" id="heroBottomBar">
+        <span>A Private Celebration</span>
       </div>
     </section>
 
