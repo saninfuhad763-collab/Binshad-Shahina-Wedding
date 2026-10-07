@@ -2143,7 +2143,7 @@
     let musicPlaybackStarted = false;
 
     // beginHomepageReveal: reveals nav + hero UI while the film continues looping.
-    // Audited slower, more cinematic timing values (+34% proportional expansion).
+    // Audited slower, softer cinematic timing set (couple-only homepage film).
     function beginHomepageReveal() {
       if (homepageRevealStarted) return;
       homepageRevealStarted = true;
@@ -2157,28 +2157,28 @@
         if (mainNav) {
           mainNav.classList.remove('opacity-0', 'pointer-events-none');
           gsap.fromTo(mainNav,
-            { opacity: 0, y: -10, filter: 'blur(4px)' },
-            { opacity: 1, y: 0,   filter: 'blur(0px)', duration: 1.6, ease: 'power2.out' }
+            { opacity: 0, y: -8, filter: 'blur(5px)' },
+            { opacity: 1, y: 0,  filter: 'blur(0px)', duration: 2.2, ease: 'power2.out' }
           );
         }
         if (heroTypography) {
           heroTypography.classList.remove('opacity-0', 'pointer-events-none');
           gsap.fromTo(heroTypography,
-            { opacity: 0, y: 22, scale: 0.983, filter: 'blur(6px)' },
-            { opacity: 1, y: 0,  scale: 1,     filter: 'blur(0px)', duration: 2.0, ease: 'power3.out', delay: 0.24 }
+            { opacity: 0, y: 16, scale: 0.988, filter: 'blur(8px)' },
+            { opacity: 1, y: 0,  scale: 1,     filter: 'blur(0px)', duration: 2.6, ease: 'power2.out', delay: 0.35 }
           );
         }
         if (heroAnimItems.length > 0) {
           gsap.fromTo(heroAnimItems,
-            { y: 24, opacity: 0 },
-            { y: 0,  opacity: 1, duration: 1.5, stagger: 0.18, ease: 'power3.out', delay: 0.40 }
+            { y: 16, opacity: 0 },
+            { y: 0,  opacity: 1, duration: 2.0, stagger: 0.22, ease: 'power2.out', delay: 0.60 }
           );
         }
         if (heroBottomBar) {
           heroBottomBar.classList.remove('opacity-0', 'pointer-events-none');
           gsap.fromTo(heroBottomBar,
-            { y: 14, opacity: 0 },
-            { y: 0,  opacity: 1, duration: 1.2, ease: 'power2.out', delay: 0.92 }
+            { y: 10, opacity: 0 },
+            { y: 0,  opacity: 1, duration: 1.8, ease: 'power2.out', delay: 1.40 }
           );
         }
       } else {
@@ -2344,8 +2344,8 @@
       // Responsive video selection (no load yet — preload:none preserved)
       const isMobile = window.innerWidth < 768;
       const videoSrc = isMobile
-        ? 'assets/videos/binshad-shahina-wedding-mobile-optimized.mp4'
-        : 'assets/videos/binshad-shahina-wedding-desktop-optimized.mp4';
+        ? 'assets/videos/binshad-shahina-wedding-mobile-couple-only.mp4'
+        : 'assets/videos/binshad-shahina-wedding-desktop-couple-only.mp4';
 
       activeVideo = isMobile ? videoMobile : videoDesktop;
       const inactiveVideo = isMobile ? videoDesktop : videoMobile;
