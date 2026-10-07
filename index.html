@@ -1502,9 +1502,9 @@
       <!-- Background Parallax Image & Video Container -->
       <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <!-- Desktop / Tablet 16:9 Video -->
-        <video id="heroVideoDesktop" class="hidden md:block absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 z-10" muted playsinline preload="none"></video>
+        <video id="heroVideoDesktop" class="hidden md:block absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 z-10" muted playsinline loop preload="none"></video>
         <!-- Mobile 9:16 Portrait Video -->
-        <video id="heroVideoMobile" class="block md:hidden absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 z-10" muted playsinline preload="none"></video>
+        <video id="heroVideoMobile" class="block md:hidden absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 z-10" muted playsinline loop preload="none"></video>
         <div class="w-full h-full bg-cover bg-center will-change-transform z-0" id="heroBg" style="background-image: url('assets/images/hero.avif');"></div>
         <!-- Restored 3-Part Cinematic Video Scrims (Identical to #doorVideoAperture) -->
         <div class="video-scrim-vertical z-20"></div>
@@ -2130,6 +2130,7 @@
     let activeVideo = null;
     let homepageRevealStarted = false;
     let failsafeTimer = null;
+    let returnVideoToHero = null;
 
     // --- BACKGROUND MUSIC ENGINE ---
     const backgroundMusic = new Audio('assets/music/Love Story - Indila (Orchestra Version + Layered ~ Slowed + Reverb).mp3');
@@ -2141,8 +2142,8 @@
     });
     let musicPlaybackStarted = false;
 
-    // beginHomepageReveal: called ~2s before video ends.
-    // Reveals nav + hero UI while the film is still playing.
+    // beginHomepageReveal: reveals nav + hero UI while the film continues looping.
+    // Audited slower, more cinematic timing values (+34% proportional expansion).
     function beginHomepageReveal() {
       if (homepageRevealStarted) return;
       homepageRevealStarted = true;
@@ -2157,27 +2158,27 @@
           mainNav.classList.remove('opacity-0', 'pointer-events-none');
           gsap.fromTo(mainNav,
             { opacity: 0, y: -10, filter: 'blur(4px)' },
-            { opacity: 1, y: 0,   filter: 'blur(0px)', duration: 1.2, ease: 'power2.out' }
+            { opacity: 1, y: 0,   filter: 'blur(0px)', duration: 1.6, ease: 'power2.out' }
           );
         }
         if (heroTypography) {
           heroTypography.classList.remove('opacity-0', 'pointer-events-none');
           gsap.fromTo(heroTypography,
             { opacity: 0, y: 22, scale: 0.983, filter: 'blur(6px)' },
-            { opacity: 1, y: 0,  scale: 1,     filter: 'blur(0px)', duration: 1.5, ease: 'power3.out', delay: 0.18 }
+            { opacity: 1, y: 0,  scale: 1,     filter: 'blur(0px)', duration: 2.0, ease: 'power3.out', delay: 0.24 }
           );
         }
         if (heroAnimItems.length > 0) {
           gsap.fromTo(heroAnimItems,
             { y: 24, opacity: 0 },
-            { y: 0,  opacity: 1, duration: 1.1, stagger: 0.14, ease: 'power3.out', delay: 0.30 }
+            { y: 0,  opacity: 1, duration: 1.5, stagger: 0.18, ease: 'power3.out', delay: 0.40 }
           );
         }
         if (heroBottomBar) {
           heroBottomBar.classList.remove('opacity-0', 'pointer-events-none');
           gsap.fromTo(heroBottomBar,
             { y: 14, opacity: 0 },
-            { y: 0,  opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.70 }
+            { y: 0,  opacity: 1, duration: 1.2, ease: 'power2.out', delay: 0.92 }
           );
         }
       } else {
@@ -2188,37 +2189,54 @@
       }
     }
 
-    // completeIntro: freezes final video frame, restores scroll, removes overlay.
-    function completeIntro() {
-      if (introState === 'complete') return;
+    // triggerHomepageEntrance: called exactly 1.0s after video playback starts.
+    // Reveals homepage UI, unlocks scrolling, and keeps looping video playing.
+    let homepageEntranceTriggered = false;
+    function triggerHomepageEntrance() {
+      if (homepageEntranceTriggered) return;
+      homepageEntranceTriggered = true;
       introState = 'complete';
 
       if (failsafeTimer) { clearTimeout(failsafeTimer); failsafeTimer = null; }
 
-      // Freeze final frame — do NOT reset currentTime
-      if (activeVideo) { try { activeVideo.pause(); } catch(e) {} }
-      // Ensure final frame stays visible at opacity:1 (no flash on completion)
-      if (activeVideo) { activeVideo.style.opacity = '1'; gsap.set(activeVideo, { opacity: 1 }); }
+      // Keep active video playing and visible at opacity:1 (infinite looping background)
+      if (activeVideo) {
+        activeVideo.style.opacity = '1';
+        gsap.set(activeVideo, { opacity: 1 });
+        if (activeVideo.paused) {
+          activeVideo.play().catch(() => {});
+        }
+      }
 
       beginHomepageReveal();
 
-      // Restore native scrolling
+      // Restore native scrolling simultaneously at 1.0s mark
       document.body.classList.remove('overflow-hidden');
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
 
+      // Transfer pointer interactions to homepage; let door timeline complete natural fade-out
       const weddingIntro = document.getElementById('weddingIntro');
       if (weddingIntro) {
-        setTimeout(() => {
-          weddingIntro.style.display = 'none';
-          weddingIntro.setAttribute('aria-hidden', 'true');
-        }, 350);
+        weddingIntro.setAttribute('aria-hidden', 'true');
+        weddingIntro.style.pointerEvents = 'none';
       }
 
       requestAnimationFrame(() => {
         ScrollTrigger.sort();
         ScrollTrigger.refresh();
       });
+    }
+
+    // completeIntro: backward compatibility / failsafe delegate to triggerHomepageEntrance
+    function completeIntro() {
+      triggerHomepageEntrance();
+      const weddingIntro = document.getElementById('weddingIntro');
+      if (weddingIntro) {
+        weddingIntro.style.display = 'none';
+        weddingIntro.setAttribute('aria-hidden', 'true');
+        weddingIntro.style.pointerEvents = 'none';
+      }
     }
 
     function initDoorIntro() {
@@ -2537,23 +2555,32 @@
 
         console.log('[Step14] Video starting playback at reveal point. currentTime:', activeVideo.currentTime);
 
-        const p = activeVideo.play();
-        if (p) p.catch(e => { if (e.name !== 'AbortError') console.warn('[Step14] play():', e.message); });
+        let revealScheduled = false;
+        function onVideoPlaying() {
+          if (revealScheduled) return;
+          revealScheduled = true;
+          activeVideo.removeEventListener('playing', onVideoPlaying);
+          console.log('[Video] playing event detected; triggering homepage entrance in exactly 1.0s');
+          setTimeout(() => {
+            triggerHomepageEntrance();
+          }, 1000);
+        }
 
-        // Homepage reveal ~2s before end
-        activeVideo.addEventListener('timeupdate', function onTU() {
-          if (!activeVideo.duration || activeVideo.duration === Infinity) return;
-          if (activeVideo.duration - activeVideo.currentTime <= 2.0 && !homepageRevealStarted) {
-            activeVideo.removeEventListener('timeupdate', onTU);
-            beginHomepageReveal();
+        activeVideo.addEventListener('playing', onVideoPlaying, { once: true });
+
+        const p = activeVideo.play();
+        if (p) p.catch(e => {
+          if (e.name !== 'AbortError') console.warn('[Step14] play():', e.message);
+          // If playback failed to initiate, fallback to trigger after 1.0s
+          if (!revealScheduled) {
+            onVideoPlaying();
           }
         });
 
-        // Ended → freeze final frame
-        activeVideo.addEventListener('ended', () => {
-          introState = 'finishing';
-          completeIntro();
-        }, { once: true });
+        // Defensive check: if video already started playing
+        if (!activeVideo.paused && activeVideo.currentTime > 0) {
+          onVideoPlaying();
+        }
       }
 
       function prepareVideo() {
@@ -2579,7 +2606,7 @@
         activeVideo.src     = videoSrc;
         activeVideo.preload = 'auto';
         activeVideo.muted   = true;
-        activeVideo.loop    = false;
+        activeVideo.loop    = true;
 
         // Force display:block (Tailwind hidden/md:block must not hide it in aperture)
         activeVideo.style.display = 'block';
@@ -2630,7 +2657,7 @@
       // ── returnVideoToHero ─────────────────────────────────────────────────
       // Moves the active video back to its original hero DOM position.
       // currentTime and paused state are preserved. Opacity stays at 1.
-      function returnVideoToHero() {
+      function doReturnVideoToHero() {
         if (!activeVideo || !origParent) return;
 
         // Remove aperture-specific inline overrides
@@ -2661,6 +2688,12 @@
           console.warn('[Step12] returnVideoToHero error:', e);
         }
 
+        // Defensively ensure playback continues across DOM reparenting
+        if (activeVideo && activeVideo.paused) {
+          const p = activeVideo.play();
+          if (p) p.catch(e => { if (e.name !== 'AbortError') console.warn('[returnVideoToHero] play():', e.message); });
+        }
+
         // Step 19 Bug B: Immediately disable aperture scrim stack once video is safely restored to hero.
         // Prevents double-scrim stacking while #weddingIntro fades out to T=3.10s.
         if (doorVideoAperture) {
@@ -2670,6 +2703,7 @@
           });
         }
       }
+      returnVideoToHero = doReturnVideoToHero;
     }
 
     // --- 1. HERO SECTION MOTION (Sections 5, 6, 7) ---
