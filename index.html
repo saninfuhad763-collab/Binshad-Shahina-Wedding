@@ -16,6 +16,10 @@
   <!-- Local Compiled Tailwind CSS -->
   <link rel="stylesheet" href="style.css"/>
 
+  <!-- Preload Responsive Static Hero End-Frame -->
+  <link rel="preload" as="image" href="assets/images/binshad-shahina-wedding-desktop-final.webp" type="image/webp" media="(min-width: 768px)"/>
+  <link rel="preload" as="image" href="assets/images/binshad-shahina-wedding-mobile-final.webp" type="image/webp" media="(max-width: 767px)"/>
+
   <!-- Local GSAP & ScrollTrigger Libraries -->
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
@@ -1502,10 +1506,16 @@
       <!-- Background Parallax Image & Video Container -->
       <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <!-- Desktop / Tablet 16:9 Video -->
-        <video id="heroVideoDesktop" class="hidden md:block absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 z-10" muted playsinline loop preload="none"></video>
+        <video id="heroVideoDesktop" class="hidden md:block absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 z-10" muted playsinline preload="none"></video>
         <!-- Mobile 9:16 Portrait Video -->
-        <video id="heroVideoMobile" class="block md:hidden absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 z-10" muted playsinline loop preload="none"></video>
-        <div class="w-full h-full bg-cover bg-center will-change-transform z-0" id="heroBg" style="background-image: url('assets/images/hero.avif');"></div>
+        <video id="heroVideoMobile" class="block md:hidden absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 z-10" muted playsinline preload="none"></video>
+        <!-- Static End-Frame Background Image (Underneath Video at z-0) -->
+        <div class="w-full h-full will-change-transform z-0" id="heroBg">
+          <picture class="block w-full h-full">
+            <source media="(min-width: 768px)" srcset="assets/images/binshad-shahina-wedding-desktop-final.webp" type="image/webp"/>
+            <img src="assets/images/binshad-shahina-wedding-mobile-final.webp" alt="Binshad and Shahina" class="w-full h-full object-cover object-center" fetchpriority="high"/>
+          </picture>
+        </div>
         <!-- Restored 3-Part Cinematic Video Scrims (Identical to #doorVideoAperture) -->
         <div class="video-scrim-vertical z-20"></div>
         <div class="video-scrim-vignette z-20"></div>
@@ -2142,8 +2152,8 @@
     });
     let musicPlaybackStarted = false;
 
-    // beginHomepageReveal: reveals nav + hero UI while the film continues looping.
-    // Audited slower, softer cinematic timing set (couple-only homepage film).
+    // beginHomepageReveal: reveals nav + hero UI (couple-only film single-playthrough).
+    // Audited slower, softer cinematic timing set (starts 0.5s after playing).
     function beginHomepageReveal() {
       if (homepageRevealStarted) return;
       homepageRevealStarted = true;
@@ -2157,28 +2167,28 @@
         if (mainNav) {
           mainNav.classList.remove('opacity-0', 'pointer-events-none');
           gsap.fromTo(mainNav,
-            { opacity: 0, y: -8, filter: 'blur(5px)' },
-            { opacity: 1, y: 0,  filter: 'blur(0px)', duration: 2.2, ease: 'power2.out' }
+            { opacity: 0, y: -8, filter: 'blur(4px)' },
+            { opacity: 1, y: 0,  filter: 'blur(0px)', duration: 1.8, ease: 'power2.out' }
           );
         }
         if (heroTypography) {
           heroTypography.classList.remove('opacity-0', 'pointer-events-none');
           gsap.fromTo(heroTypography,
-            { opacity: 0, y: 16, scale: 0.988, filter: 'blur(8px)' },
-            { opacity: 1, y: 0,  scale: 1,     filter: 'blur(0px)', duration: 2.6, ease: 'power2.out', delay: 0.35 }
+            { opacity: 0, y: 14, scale: 0.990, filter: 'blur(6px)' },
+            { opacity: 1, y: 0,  scale: 1,     filter: 'blur(0px)', duration: 2.0, ease: 'power2.out', delay: 0.20 }
           );
         }
         if (heroAnimItems.length > 0) {
           gsap.fromTo(heroAnimItems,
-            { y: 16, opacity: 0 },
-            { y: 0,  opacity: 1, duration: 2.0, stagger: 0.22, ease: 'power2.out', delay: 0.60 }
+            { y: 14, opacity: 0 },
+            { y: 0,  opacity: 1, duration: 1.6, stagger: 0.18, ease: 'power2.out', delay: 0.35 }
           );
         }
         if (heroBottomBar) {
           heroBottomBar.classList.remove('opacity-0', 'pointer-events-none');
           gsap.fromTo(heroBottomBar,
-            { y: 10, opacity: 0 },
-            { y: 0,  opacity: 1, duration: 1.8, ease: 'power2.out', delay: 1.40 }
+            { y: 8, opacity: 0 },
+            { y: 0, opacity: 1, duration: 1.4, ease: 'power2.out', delay: 0.90 }
           );
         }
       } else {
@@ -2189,8 +2199,8 @@
       }
     }
 
-    // triggerHomepageEntrance: called exactly 1.0s after video playback starts.
-    // Reveals homepage UI, unlocks scrolling, and keeps looping video playing.
+    // triggerHomepageEntrance: called exactly 0.5s after video playback starts.
+    // Reveals homepage UI, unlocks scrolling, and keeps film playing to final frame.
     let homepageEntranceTriggered = false;
     function triggerHomepageEntrance() {
       if (homepageEntranceTriggered) return;
@@ -2199,7 +2209,7 @@
 
       if (failsafeTimer) { clearTimeout(failsafeTimer); failsafeTimer = null; }
 
-      // Keep active video playing and visible at opacity:1 (infinite looping background)
+      // Keep active video playing and visible at opacity:1 until it reaches ended
       if (activeVideo) {
         activeVideo.style.opacity = '1';
         gsap.set(activeVideo, { opacity: 1 });
@@ -2210,7 +2220,7 @@
 
       beginHomepageReveal();
 
-      // Restore native scrolling simultaneously at 1.0s mark
+      // Restore native scrolling simultaneously at 0.5s mark
       document.body.classList.remove('overflow-hidden');
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
@@ -2560,10 +2570,10 @@
           if (revealScheduled) return;
           revealScheduled = true;
           activeVideo.removeEventListener('playing', onVideoPlaying);
-          console.log('[Video] playing event detected; triggering homepage entrance in exactly 1.0s');
+          console.log('[Video] playing event detected; triggering homepage entrance in exactly 0.5s');
           setTimeout(() => {
             triggerHomepageEntrance();
-          }, 1000);
+          }, 500);
         }
 
         activeVideo.addEventListener('playing', onVideoPlaying, { once: true });
@@ -2571,7 +2581,7 @@
         const p = activeVideo.play();
         if (p) p.catch(e => {
           if (e.name !== 'AbortError') console.warn('[Step14] play():', e.message);
-          // If playback failed to initiate, fallback to trigger after 1.0s
+          // If playback failed to initiate, fallback to trigger after 0.5s
           if (!revealScheduled) {
             onVideoPlaying();
           }
@@ -2606,7 +2616,24 @@
         activeVideo.src     = videoSrc;
         activeVideo.preload = 'auto';
         activeVideo.muted   = true;
-        activeVideo.loop    = true;
+        activeVideo.loop    = false;
+
+        // When video reaches its final couple frame, fade out to reveal the static image underneath
+        function onVideoEnded() {
+          console.log('[Video] ended event detected; fading out video to reveal static final frame');
+          if (activeVideo) {
+            gsap.to(activeVideo, {
+              opacity: 0,
+              duration: 0.4,
+              ease: 'power1.out',
+              onComplete: () => {
+                try { activeVideo.pause(); } catch(e) {}
+                activeVideo.style.display = 'none';
+              }
+            });
+          }
+        }
+        activeVideo.addEventListener('ended', onVideoEnded, { once: true });
 
         // Force display:block (Tailwind hidden/md:block must not hide it in aperture)
         activeVideo.style.display = 'block';
