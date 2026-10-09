@@ -1506,10 +1506,10 @@
       <!-- Background Parallax Image & Video Container -->
       <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <!-- Desktop / Tablet 16:9 Video -->
-        <video id="heroVideoDesktop" class="hidden md:block absolute inset-0 w-full h-full object-cover object-center will-change-transform opacity-0 z-10" muted playsinline preload="none"></video>
+        <video id="heroVideoDesktop" class="hidden md:block absolute inset-0 w-full h-full object-cover object-center will-change-transform opacity-0 z-10" muted playsinline loop preload="none"></video>
         <!-- Mobile 9:16 Portrait Video -->
-        <video id="heroVideoMobile" class="block md:hidden absolute inset-0 w-full h-full object-cover object-center will-change-transform opacity-0 z-10" muted playsinline preload="none"></video>
-        <!-- Static End-Frame Background Image (Underneath Video at z-0) -->
+        <video id="heroVideoMobile" class="block md:hidden absolute inset-0 w-full h-full object-cover object-center will-change-transform opacity-0 z-10" muted playsinline loop preload="none"></video>
+        <!-- Fallback Background Image (Underneath Video at z-0) -->
         <div class="absolute inset-0 w-full h-full will-change-transform z-0" id="heroBg">
           <picture class="block w-full h-full">
             <source media="(min-width: 768px)" srcset="assets/images/binshad-shahina-wedding-desktop-final.webp" type="image/webp"/>
@@ -2218,7 +2218,7 @@
 
       if (failsafeTimer) { clearTimeout(failsafeTimer); failsafeTimer = null; }
 
-      // Keep active video playing and visible at opacity:1 until it reaches ended
+      // Keep active video playing and visible at opacity:1 as permanent seamless loop background
       if (activeVideo) {
         activeVideo.style.opacity = '1';
         gsap.set(activeVideo, { opacity: 1 });
@@ -2361,14 +2361,99 @@
       window.addEventListener('resize', setDoorLeafBg);
 
       // Responsive video selection (no load yet — preload:none preserved)
-      const isMobile = window.innerWidth < 768;
+      let isMobile = window.innerWidth < 768;
       const videoSrc = isMobile
-        ? 'assets/videos/binshad-shahina-wedding-mobile-couple-only.mp4'
-        : 'assets/videos/binshad-shahina-wedding-desktop-couple-only.mp4';
+        ? 'assets/videos/hero-couple-mobile-loop-final.mp4'
+        : 'assets/videos/hero-couple-desktop-loop-final.mp4';
 
       activeVideo = isMobile ? videoMobile : videoDesktop;
       const inactiveVideo = isMobile ? videoDesktop : videoMobile;
       if (inactiveVideo) { inactiveVideo.removeAttribute('src'); }
+
+      // Dynamic responsive source switcher: handles live viewport resize & orientation changes across 768px
+      function handleResponsiveVideoSwitch() {
+        const newIsMobile = window.innerWidth < 768;
+        if (newIsMobile === isMobile) return;
+        isMobile = newIsMobile;
+
+        const newActiveVideo = isMobile ? videoMobile : videoDesktop;
+        const oldActiveVideo = isMobile ? videoDesktop : videoMobile;
+        const newSrc = isMobile
+          ? 'assets/videos/hero-couple-mobile-loop-final.mp4'
+          : 'assets/videos/hero-couple-desktop-loop-final.mp4';
+
+        // Pre-launch state: door has not opened yet, preserve preload:none and do not initiate download
+        if (introState !== 'video' && introState !== 'complete') {
+          activeVideo = newActiveVideo;
+          if (oldActiveVideo) {
+            try { oldActiveVideo.pause(); } catch(e) {}
+            oldActiveVideo.removeAttribute('src');
+          }
+          return;
+        }
+
+        // Active state: video has been prepared or is actively playing
+        let progressTime = 0;
+        let oldDuration = 0;
+        if (oldActiveVideo) {
+          progressTime = oldActiveVideo.currentTime || 0;
+          oldDuration = oldActiveVideo.duration || 0;
+          try { oldActiveVideo.pause(); } catch(e) {}
+          oldActiveVideo.removeAttribute('src');
+          oldActiveVideo.load();
+          oldActiveVideo.style.opacity = '0';
+          oldActiveVideo.style.removeProperty('display');
+        }
+
+        // Normalized relative phase mapping: maps loop progress proportionally (0% to 100%)
+        // across differing durations (6.25s desktop vs 7.50s mobile) avoiding modulo seam wrap jumps
+        const knownOldDuration = oldDuration > 0 ? oldDuration : (isMobile ? 6.25 : 7.5);
+        const knownNewDuration = isMobile ? 7.5 : 6.25;
+        const progressRatio = knownOldDuration > 0
+          ? Math.min(Math.max(progressTime / knownOldDuration, 0), 0.999)
+          : 0;
+        const targetTime = progressRatio * knownNewDuration;
+
+        activeVideo = newActiveVideo;
+        activeVideo.src = newSrc;
+        activeVideo.preload = 'auto';
+        activeVideo.muted = true;
+        activeVideo.loop = true;
+        activeVideo.style.opacity = '1';
+        gsap.set(activeVideo, { opacity: 1 });
+
+        // If inside door aperture (during opening animation before returnVideoToHero)
+        if (doorVideoAperture && introState === 'video' && !homepageEntranceTriggered) {
+          activeVideo.style.display = 'block';
+          if (!doorVideoAperture.contains(activeVideo)) {
+            doorVideoAperture.insertBefore(activeVideo, doorVideoAperture.firstChild);
+          }
+        } else {
+          activeVideo.style.removeProperty('display');
+        }
+
+        // Align playback to matching visual camera phase
+        const syncProgress = () => {
+          if (targetTime > 0 && activeVideo.duration) {
+            try {
+              activeVideo.currentTime = Math.min(targetTime, activeVideo.duration - 0.15);
+            } catch(e) {}
+          }
+          const p = activeVideo.play();
+          if (p) p.catch(() => {});
+        };
+
+        if (activeVideo.readyState >= 1) {
+          syncProgress();
+        } else {
+          activeVideo.addEventListener('loadedmetadata', syncProgress, { once: true });
+        }
+        const p = activeVideo.play();
+        if (p) p.catch(() => {});
+      }
+
+      window.addEventListener('resize', handleResponsiveVideoSwitch);
+      window.addEventListener('orientationchange', handleResponsiveVideoSwitch);
 
       // Track original DOM position for reparenting back to hero after intro
       let origParent = null;
@@ -2621,28 +2706,24 @@
         gsap.killTweensOf(activeVideo);
         activeVideo.style.opacity = '0';
 
-        // Assign source
-        activeVideo.src     = videoSrc;
+        // Re-confirm responsive selection at prepare time
+        const isMobileNow = window.innerWidth < 768;
+        activeVideo = isMobileNow ? videoMobile : videoDesktop;
+        const currentInactiveVideo = isMobileNow ? videoDesktop : videoMobile;
+        if (currentInactiveVideo) {
+          try { currentInactiveVideo.pause(); } catch(e) {}
+          currentInactiveVideo.removeAttribute('src');
+        }
+
+        // Assign source to active video only
+        const activeSrc = isMobileNow
+          ? 'assets/videos/hero-couple-mobile-loop-final.mp4'
+          : 'assets/videos/hero-couple-desktop-loop-final.mp4';
+
+        activeVideo.src     = activeSrc;
         activeVideo.preload = 'auto';
         activeVideo.muted   = true;
-        activeVideo.loop    = false;
-
-        // When video reaches its final couple frame, fade out to reveal the static image underneath
-        function onVideoEnded() {
-          console.log('[Video] ended event detected; fading out video to reveal static final frame');
-          if (activeVideo) {
-            try { activeVideo.pause(); } catch(e) {}
-            gsap.to(activeVideo, {
-              opacity: 0,
-              duration: 0.4,
-              ease: 'power1.out',
-              onComplete: () => {
-                activeVideo.style.display = 'none';
-              }
-            });
-          }
-        }
-        activeVideo.addEventListener('ended', onVideoEnded, { once: true });
+        activeVideo.loop    = true;
 
         // Force display:block (Tailwind hidden/md:block must not hide it in aperture)
         activeVideo.style.display = 'block';
@@ -2708,7 +2789,7 @@
         activeVideo.style.removeProperty('object-fit');
         activeVideo.style.removeProperty('transform');
 
-        // Keep opacity:1 — preserve final frame
+        // Keep opacity:1 — seamless loop playback continues in hero
         activeVideo.style.opacity = '1';
         gsap.set(activeVideo, { opacity: 1, clearProps: 'transform' });
 
