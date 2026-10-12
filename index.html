@@ -2360,11 +2360,55 @@
       setDoorLeafBg();
       window.addEventListener('resize', setDoorLeafBg);
 
+      // Codec-aware hero video source selection and fallback management
+      function markHeroWebmUnsupported() {
+        window.__heroWebmUnsupported = true;
+        try { sessionStorage.setItem('hero_webm_unsupported', '1'); } catch(e) {}
+      }
+
+      function getHeroVideoSource(forMobile) {
+        let webmUnsupported = false;
+        try {
+          if (window.__heroWebmUnsupported || sessionStorage.getItem('hero_webm_unsupported') === '1') {
+            webmUnsupported = true;
+          }
+        } catch(e) {
+          if (window.__heroWebmUnsupported) webmUnsupported = true;
+        }
+
+        if (!webmUnsupported) {
+          const testEl = activeVideo || videoDesktop || videoMobile || document.createElement('video');
+          if (testEl && typeof testEl.canPlayType === 'function') {
+            if (forMobile) {
+              // Mobile primary: VP9 WebM
+              const canPlayVP9 = testEl.canPlayType('video/webm; codecs="vp09.00.31.08"') ||
+                                 testEl.canPlayType('video/webm; codecs="vp9"');
+              if (canPlayVP9 === 'probably' || canPlayVP9 === 'maybe') {
+                return 'assets/videos/hero-couple-mobile-loop.webm';
+              }
+            } else {
+              // Desktop primary: AV1 WebM
+              const canPlayAV1 = testEl.canPlayType('video/webm; codecs="av01.0.08M.08"') ||
+                                 testEl.canPlayType('video/webm; codecs="av01"');
+              if (canPlayAV1 === 'probably' || canPlayAV1 === 'maybe') {
+                return 'assets/videos/hero-couple-desktop-loop.webm';
+              }
+            }
+          }
+        }
+
+        // Matching H.264 MP4 fallbacks
+        return forMobile
+          ? 'assets/videos/hero-couple-mobile-loop-fallback.mp4'
+          : 'assets/videos/hero-couple-desktop-loop-fallback.mp4';
+      }
+
+      window.getHeroVideoSource = getHeroVideoSource;
+      window.markHeroWebmUnsupported = markHeroWebmUnsupported;
+
       // Responsive video selection (no load yet — preload:none preserved)
       let isMobile = window.innerWidth < 768;
-      const videoSrc = isMobile
-        ? 'assets/videos/hero-couple-mobile-loop-final.mp4'
-        : 'assets/videos/hero-couple-desktop-loop-final.mp4';
+      const videoSrc = getHeroVideoSource(isMobile);
 
       activeVideo = isMobile ? videoMobile : videoDesktop;
       const inactiveVideo = isMobile ? videoDesktop : videoMobile;
@@ -2378,9 +2422,7 @@
 
         const newActiveVideo = isMobile ? videoMobile : videoDesktop;
         const oldActiveVideo = isMobile ? videoDesktop : videoMobile;
-        const newSrc = isMobile
-          ? 'assets/videos/hero-couple-mobile-loop-final.mp4'
-          : 'assets/videos/hero-couple-desktop-loop-final.mp4';
+        const newSrc = getHeroVideoSource(isMobile);
 
         // Pre-launch state: door has not opened yet, preserve preload:none and do not initiate download
         if (introState !== 'video' && introState !== 'complete') {
@@ -2406,9 +2448,9 @@
         }
 
         // Normalized relative phase mapping: maps loop progress proportionally (0% to 100%)
-        // across differing durations (6.25s desktop vs 7.50s mobile) avoiding modulo seam wrap jumps
-        const knownOldDuration = oldDuration > 0 ? oldDuration : (isMobile ? 6.25 : 7.5);
-        const knownNewDuration = isMobile ? 7.5 : 6.25;
+        // across differing durations (7.875s desktop vs 7.967s mobile) avoiding modulo seam wrap jumps
+        const knownOldDuration = oldDuration > 0 ? oldDuration : (isMobile ? 7.875 : 7.967);
+        const knownNewDuration = isMobile ? 7.967 : 7.875;
         const progressRatio = knownOldDuration > 0
           ? Math.min(Math.max(progressTime / knownOldDuration, 0), 0.999)
           : 0;
@@ -2421,6 +2463,23 @@
         activeVideo.loop = true;
         activeVideo.style.opacity = '1';
         gsap.set(activeVideo, { opacity: 1 });
+
+        // Error fallback listener on responsive switch
+        const onSwitchError = function() {
+          const cSrc = activeVideo.currentSrc || activeVideo.src || '';
+          if (cSrc.includes('.webm') || (activeVideo.src && activeVideo.src.includes('.webm'))) {
+            console.warn('[HeroVideo] Switch WebM error; retrying with MP4 fallback.');
+            markHeroWebmUnsupported();
+            const fallbackSrc = isMobile
+              ? 'assets/videos/hero-couple-mobile-loop-fallback.mp4'
+              : 'assets/videos/hero-couple-desktop-loop-fallback.mp4';
+            activeVideo.src = fallbackSrc;
+            activeVideo.load();
+            const p = activeVideo.play();
+            if (p) p.catch(() => {});
+          }
+        };
+        activeVideo.addEventListener('error', onSwitchError, { once: true });
 
         // If inside door aperture (during opening animation before returnVideoToHero)
         if (doorVideoAperture && introState === 'video' && !homepageEntranceTriggered) {
@@ -2716,9 +2775,7 @@
         }
 
         // Assign source to active video only
-        const activeSrc = isMobileNow
-          ? 'assets/videos/hero-couple-mobile-loop-final.mp4'
-          : 'assets/videos/hero-couple-desktop-loop-final.mp4';
+        const activeSrc = getHeroVideoSource(isMobileNow);
 
         activeVideo.src     = activeSrc;
         activeVideo.preload = 'auto';
@@ -2756,6 +2813,26 @@
             startVideoPlayback();
           }
         }
+
+        // Single-retry error fallback for WebM decode/load issues
+        const onPrepareError = function(e) {
+          const currentSrc = activeVideo.currentSrc || activeVideo.src || '';
+          if (currentSrc.includes('.webm') || (activeVideo.src && activeVideo.src.includes('.webm'))) {
+            console.warn('[HeroVideo] WebM load/decode error detected during prepareVideo. Retrying with MP4 fallback.');
+            markHeroWebmUnsupported();
+            const fallbackSrc = isMobileNow
+              ? 'assets/videos/hero-couple-mobile-loop-fallback.mp4'
+              : 'assets/videos/hero-couple-desktop-loop-fallback.mp4';
+            activeVideo.src = fallbackSrc;
+            if (!frameConfirmed) {
+              activeVideo.addEventListener('canplay', onFrameReady, { once: true });
+            }
+            activeVideo.load();
+          } else {
+            console.error('[HeroVideo] Video error with fallback source:', e);
+          }
+        };
+        activeVideo.addEventListener('error', onPrepareError, { once: true });
 
         // canplay: browser has enough data to render first frame
         activeVideo.addEventListener('canplay', onFrameReady, { once: true });
