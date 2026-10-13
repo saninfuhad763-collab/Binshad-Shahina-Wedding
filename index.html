@@ -68,6 +68,135 @@
       will-change: opacity, transform;
     }
 
+    /* Chapter Media Flexible Open-Corner Antique-Gold Frame (All Chapters) */
+    .chapter-floral-frame {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 20;
+      overflow: visible;
+    }
+
+    .chapter-frame-line {
+      position: absolute;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .chapter-frame-top {
+      top: 0;
+      left: 0;
+      right: 28px;
+      height: 1px;
+      background: linear-gradient(to right, rgba(226,193,151,0.55) 0%, rgba(226,193,151,0.40) calc(100% - 20px), rgba(226,193,151,0) 100%);
+    }
+
+    .chapter-frame-left {
+      top: 0;
+      left: 0;
+      bottom: 28px;
+      width: 1px;
+      background: linear-gradient(to bottom, rgba(226,193,151,0.55) 0%, rgba(226,193,151,0.40) calc(100% - 20px), rgba(226,193,151,0) 100%);
+    }
+
+    .chapter-frame-bottom {
+      bottom: 0;
+      right: 0;
+      left: 28px;
+      height: 1px;
+      background: linear-gradient(to left, rgba(226,193,151,0.55) 0%, rgba(226,193,151,0.40) calc(100% - 20px), rgba(226,193,151,0) 100%);
+    }
+
+    .chapter-frame-right {
+      bottom: 0;
+      right: 0;
+      top: 28px;
+      width: 1px;
+      background: linear-gradient(to top, rgba(226,193,151,0.55) 0%, rgba(226,193,151,0.40) calc(100% - 20px), rgba(226,193,151,0) 100%);
+    }
+
+    .chapter-corner-tl {
+      position: absolute;
+      top: -11px;
+      left: -13px;
+      width: clamp(72px, 24%, 80px);
+      height: auto;
+      pointer-events: none;
+      user-select: none;
+      z-index: 20;
+    }
+
+    .chapter-corner-br {
+      position: absolute;
+      bottom: -12px;
+      right: -16px;
+      width: clamp(72px, 24%, 80px);
+      height: auto;
+      pointer-events: none;
+      user-select: none;
+      z-index: 20;
+    }
+
+    @media (min-width: 390px) {
+      .chapter-corner-tl {
+        top: -13px;
+        left: -15px;
+        width: clamp(80px, 24%, 88px);
+      }
+      .chapter-corner-br {
+        bottom: -14px;
+        right: -18px;
+        width: clamp(80px, 24%, 88px);
+      }
+    }
+
+    @media (min-width: 768px) {
+      .chapter-frame-top { right: 36px; }
+      .chapter-frame-left { bottom: 36px; }
+      .chapter-frame-bottom { left: 36px; }
+      .chapter-frame-right { top: 36px; }
+      .chapter-corner-tl {
+        top: -12px;
+        left: -14px;
+        width: clamp(76px, 24%, 86px);
+      }
+      .chapter-corner-br {
+        bottom: -13px;
+        right: -17px;
+        width: clamp(76px, 24%, 86px);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .chapter-frame-top { right: 48px; }
+      .chapter-frame-left { bottom: 48px; }
+      .chapter-frame-bottom { left: 48px; }
+      .chapter-frame-right { top: 48px; }
+      .chapter-corner-tl {
+        top: -16px;
+        left: -18px;
+        width: clamp(96px, 24%, 112px);
+      }
+      .chapter-corner-br {
+        bottom: -16px;
+        right: -22px;
+        width: clamp(96px, 24%, 112px);
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .chapter-corner-tl {
+        top: -23px;
+        left: -26px;
+        width: clamp(136px, 24%, 156px);
+      }
+      .chapter-corner-br {
+        bottom: -24px;
+        right: -32px;
+        width: clamp(136px, 24%, 156px);
+      }
+    }
+
     /* Pinned Story Visual Frame: 768px Portrait Usable-Aperture Centering */
     @media (width: 768px) and (orientation: portrait) {
       #storyVisualFrame {
@@ -1568,42 +1697,60 @@
           
           <!-- Left Pinned Visual Frame -->
           <div class="w-1/2 h-full p-4 md:p-6 lg:p-10 xl:p-12 flex items-center justify-center relative" id="storyVisualFrame">
-            <div class="w-full h-[84%] relative overflow-hidden rounded-sm shadow-2xl border border-secondary/20 bg-[#110d0e]">
+            <!-- Dedicated Outer Media-Decoration Wrapper (matches footprint: w-full h-[84%] relative) -->
+            <div class="w-full h-[84%] relative" id="storyMediaWrapper">
               
-              <!-- Slide 1: Shahina Veil Portrait -->
-              <div class="story-slide-layer opacity-100" id="storySlide1">
-                <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg1"
-                       src="assets/videos/bride-veil-manor-scrub.mp4"
-                       poster="assets/images/story-bride-frame0.webp"
-                       muted playsinline preload="auto"></video>
-                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
-                <div class="absolute bottom-6 left-6 flex items-center gap-3">
-                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate I ΓÇó Shahina</span>
+              <!-- Inner Video Card: preserves all dimensions, background, rounded-sm, shadow-2xl, and internal clipping -->
+              <div class="w-full h-full relative overflow-hidden rounded-sm shadow-2xl border border-transparent bg-[#110d0e]" id="storyMediaCard">
+
+                <!-- Slide 1: Shahina Veil Portrait -->
+                <div class="story-slide-layer opacity-100" id="storySlide1">
+                  <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg1"
+                         src="assets/videos/bride-veil-manor-scrub.mp4"
+                         poster="assets/images/story-bride-frame0.webp"
+                         muted playsinline preload="auto"></video>
+                  <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
+                  <div class="absolute bottom-6 left-6 flex items-center gap-3 z-20">
+                    <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate I • Shahina</span>
+                  </div>
                 </div>
+
+                <!-- Slide 2: Binshad Black Tie Portrait -->
+                <div class="story-slide-layer opacity-0" id="storySlide2">
+                  <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg2"
+                         src="assets/videos/groom-luxury-interior-scrub.mp4"
+                         poster="assets/images/story-groom-frame0.webp"
+                         muted playsinline preload="auto"></video>
+                  <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
+                  <div class="absolute bottom-6 left-6 flex items-center gap-3">
+                    <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate II • Binshad</span>
+                  </div>
+                </div>
+
+                <!-- Slide 3: Couple Archway Candlelight -->
+                <div class="story-slide-layer opacity-0" id="storySlide3">
+                  <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg3"
+                         src="assets/videos/couple-staircase-scrub.mp4"
+                         poster="assets/images/story-couple-frame0.webp"
+                         muted playsinline preload="auto"></video>
+                  <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
+                  <div class="absolute bottom-6 left-6 flex items-center gap-3">
+                    <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate III • The Vow</span>
+                  </div>
+                </div>
+
               </div>
 
-              <!-- Slide 2: Binshad Black Tie Portrait -->
-              <div class="story-slide-layer opacity-0" id="storySlide2">
-                <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg2"
-                       src="assets/videos/groom-luxury-interior-scrub.mp4"
-                       poster="assets/images/story-groom-frame0.webp"
-                       muted playsinline preload="auto"></video>
-                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
-                <div class="absolute bottom-6 left-6 flex items-center gap-3">
-                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate II ΓÇó Binshad</span>
-                </div>
-              </div>
-
-              <!-- Slide 3: Couple Archway Candlelight -->
-              <div class="story-slide-layer opacity-0" id="storySlide3">
-                <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg3"
-                       src="assets/videos/couple-staircase-scrub.mp4"
-                       poster="assets/images/story-couple-frame0.webp"
-                       muted playsinline preload="auto"></video>
-                <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
-                <div class="absolute bottom-6 left-6 flex items-center gap-3">
-                  <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate III ΓÇó The Vow</span>
-                </div>
+              <!-- Chapter Outer Floral Open-Corner Frame: outside clipped card, pointer-events-none, persistent across all chapters -->
+              <div class="chapter-floral-frame pointer-events-none absolute inset-0 z-20 overflow-visible" id="storyFloralFrame" aria-hidden="true">
+                <div class="chapter-frame-line chapter-frame-top"></div>
+                <div class="chapter-frame-line chapter-frame-left"></div>
+                <div class="chapter-frame-line chapter-frame-bottom"></div>
+                <div class="chapter-frame-line chapter-frame-right"></div>
+                <img src="assets/images/chapter-frame-corner-tl-tight.png" alt="" aria-hidden="true"
+                     class="chapter-corner-tl pointer-events-none select-none absolute" />
+                <img src="assets/images/chapter-frame-corner-br-tight.png" alt="" aria-hidden="true"
+                     class="chapter-corner-br pointer-events-none select-none absolute" />
               </div>
 
             </div>
@@ -1688,14 +1835,32 @@
       <div class="block md:hidden py-16 px-gutter-mobile space-y-24" id="storyMobileContainer">
         <!-- Item 1 -->
         <div class="space-y-6">
-          <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
-            <video class="w-full h-full object-cover" id="storyMobileVideo1"
-                   src="assets/videos/bride-veil-manor-scrub.mp4"
-                   poster="assets/images/story-bride-frame0.webp"
-                   muted playsinline preload="auto"
-                   aria-label="Shahina Veil Portrait"></video>
+          <!-- Outer Media Wrapper: holds clipped card and unclipped decorative corners -->
+          <div class="w-full h-[360px] sm:h-[450px] relative" id="storyMobileMediaWrapper1">
+
+            <!-- Clipped Video Card: preserves all dimensions, rounded, border, shadow, and clipping -->
+            <div class="w-full h-full relative overflow-hidden rounded border border-transparent shadow-xl">
+              <video class="w-full h-full object-cover" id="storyMobileVideo1"
+                     src="assets/videos/bride-veil-manor-scrub.mp4"
+                     poster="assets/images/story-bride-frame0.webp"
+                     muted playsinline preload="auto"
+                     aria-label="Shahina Veil Portrait"></video>
+            </div>
+
+            <!-- Chapter I Outer Floral Open-Corner Frame: outside clipped card, pointer-events-none -->
+            <div class="chapter-floral-frame pointer-events-none absolute inset-0 z-20 overflow-visible" aria-hidden="true">
+              <div class="chapter-frame-line chapter-frame-top"></div>
+              <div class="chapter-frame-line chapter-frame-left"></div>
+              <div class="chapter-frame-line chapter-frame-bottom"></div>
+              <div class="chapter-frame-line chapter-frame-right"></div>
+              <img src="assets/images/chapter-frame-corner-tl-tight.png" alt="" aria-hidden="true"
+                   class="chapter-corner-tl pointer-events-none select-none absolute" />
+              <img src="assets/images/chapter-frame-corner-br-tight.png" alt="" aria-hidden="true"
+                   class="chapter-corner-br pointer-events-none select-none absolute" />
+            </div>
+
           </div>
-          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter I ΓÇó Autumn 2021</span>
+          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter I • Autumn 2021</span>
           <h3 class="font-headline-lg text-3xl text-on-surface font-light">The Meeting in <span class="italic text-secondary">Florence</span></h3>
           <p class="text-on-surface-variant font-light text-base leading-relaxed">
             It began in the quiet cloister of an antiquarian library overlooking the Arno. Amidst weathered vellum and early morning fog, an accidental exchange of notes sparked a conversation that outlasted the rain, the afternoon, and eventually, the season itself.
@@ -1703,14 +1868,32 @@
         </div>
         <!-- Item 2 -->
         <div class="space-y-6">
-          <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
-            <video class="w-full h-full object-cover" id="storyMobileVideo2"
-                   src="assets/videos/groom-luxury-interior-scrub.mp4"
-                   poster="assets/images/story-groom-frame0.webp"
-                   muted playsinline preload="auto"
-                   aria-label="Binshad Black Tie Portrait"></video>
+          <!-- Outer Media Wrapper: holds clipped card and unclipped decorative corners -->
+          <div class="w-full h-[360px] sm:h-[450px] relative" id="storyMobileMediaWrapper2">
+
+            <!-- Clipped Video Card: preserves all dimensions, rounded, border, shadow, and clipping -->
+            <div class="w-full h-full relative overflow-hidden rounded border border-transparent shadow-xl">
+              <video class="w-full h-full object-cover" id="storyMobileVideo2"
+                     src="assets/videos/groom-luxury-interior-scrub.mp4"
+                     poster="assets/images/story-groom-frame0.webp"
+                     muted playsinline preload="auto"
+                     aria-label="Binshad Black Tie Portrait"></video>
+            </div>
+
+            <!-- Chapter II Outer Floral Open-Corner Frame: outside clipped card, pointer-events-none -->
+            <div class="chapter-floral-frame pointer-events-none absolute inset-0 z-20 overflow-visible" aria-hidden="true">
+              <div class="chapter-frame-line chapter-frame-top"></div>
+              <div class="chapter-frame-line chapter-frame-left"></div>
+              <div class="chapter-frame-line chapter-frame-bottom"></div>
+              <div class="chapter-frame-line chapter-frame-right"></div>
+              <img src="assets/images/chapter-frame-corner-tl-tight.png" alt="" aria-hidden="true"
+                   class="chapter-corner-tl pointer-events-none select-none absolute" />
+              <img src="assets/images/chapter-frame-corner-br-tight.png" alt="" aria-hidden="true"
+                   class="chapter-corner-br pointer-events-none select-none absolute" />
+            </div>
+
           </div>
-          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter II ΓÇó 2022ΓÇô2024</span>
+          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter II • 2022–2024</span>
           <h3 class="font-headline-lg text-3xl text-on-surface font-light">Across Continents, <span class="italic text-secondary">One Horizon</span></h3>
           <p class="text-on-surface-variant font-light text-base leading-relaxed">
             Flights across twilight zones, handwritten dispatches sealed in red wax, and midnight calls across six timezones became the architecture of our devotion. Every city we walked alone was only ever half-seen until we walked it together.
@@ -1718,14 +1901,32 @@
         </div>
         <!-- Item 3 -->
         <div class="space-y-6">
-          <div class="w-full h-[360px] sm:h-[450px] overflow-hidden rounded border border-secondary/20 shadow-xl">
-            <video class="w-full h-full object-cover" id="storyMobileVideo3"
-                   src="assets/videos/couple-staircase-scrub.mp4"
-                   poster="assets/images/story-couple-frame0.webp"
-                   muted playsinline preload="auto"
-                   aria-label="Couple Archway Candlelight Portrait"></video>
+          <!-- Outer Media Wrapper: holds clipped card and unclipped decorative corners -->
+          <div class="w-full h-[360px] sm:h-[450px] relative" id="storyMobileMediaWrapper3">
+
+            <!-- Clipped Video Card: preserves all dimensions, rounded, border, shadow, and clipping -->
+            <div class="w-full h-full relative overflow-hidden rounded border border-transparent shadow-xl">
+              <video class="w-full h-full object-cover" id="storyMobileVideo3"
+                     src="assets/videos/couple-staircase-scrub.mp4"
+                     poster="assets/images/story-couple-frame0.webp"
+                     muted playsinline preload="auto"
+                     aria-label="Couple Archway Candlelight Portrait"></video>
+            </div>
+
+            <!-- Chapter III Outer Floral Open-Corner Frame: outside clipped card, pointer-events-none -->
+            <div class="chapter-floral-frame pointer-events-none absolute inset-0 z-20 overflow-visible" aria-hidden="true">
+              <div class="chapter-frame-line chapter-frame-top"></div>
+              <div class="chapter-frame-line chapter-frame-left"></div>
+              <div class="chapter-frame-line chapter-frame-bottom"></div>
+              <div class="chapter-frame-line chapter-frame-right"></div>
+              <img src="assets/images/chapter-frame-corner-tl-tight.png" alt="" aria-hidden="true"
+                   class="chapter-corner-tl pointer-events-none select-none absolute" />
+              <img src="assets/images/chapter-frame-corner-br-tight.png" alt="" aria-hidden="true"
+                   class="chapter-corner-br pointer-events-none select-none absolute" />
+            </div>
+
           </div>
-          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter III ΓÇó The Vow</span>
+          <span class="text-[10px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chapter III • The Vow</span>
           <h3 class="font-headline-lg text-3xl text-on-surface font-light">Under the <span class="italic text-secondary">Tuscan Stars</span></h3>
           <p class="text-on-surface-variant font-light text-base leading-relaxed">
             On Christmas Eve, surrounded by ancient stone arches and the fragrance of olive wood embers, we seal our bond. A celebration crafted not for spectacle, but for intimacy, truth, and devotion.
@@ -2978,7 +3179,7 @@
       if (!storyPinSection || !storyPinViewport) return;
 
       if (prefersReducedMotion) {
-        gsap.set(['#storySlide1', '#storyChapter1'], { autoAlpha: 1 });
+        gsap.set(['#storySlide1', '#storyFloralFrame', '#storyChapter1'], { autoAlpha: 1 });
         gsap.set(['#storySlide2', '#storySlide3', '#storyChapter2', '#storyChapter3'], { autoAlpha: 0 });
         return;
       }
@@ -2990,6 +3191,7 @@
       const slide1 = document.getElementById('storySlide1');
       const slide2 = document.getElementById('storySlide2');
       const slide3 = document.getElementById('storySlide3');
+      const floralFrame = document.getElementById('storyFloralFrame');
       const img1 = document.getElementById('storyImg1');
       const img2 = document.getElementById('storyImg2');
       const img3 = document.getElementById('storyImg3');
@@ -3073,7 +3275,7 @@
 
       // TIER 1: DESKTOP — 1200px AND ABOVE (Full Cinematic Master Pinning)
       storyMm.add("(min-width: 1200px)", () => {
-        gsap.set(slide1, { autoAlpha: 1 });
+        gsap.set([slide1, floralFrame], { autoAlpha: 1 });
         gsap.set([slide2, slide3], { autoAlpha: 0 });
         gsap.set(img1, { scale: 1.00 });
         gsap.set([img2, img3], { scale: 1.00 });
@@ -3191,7 +3393,7 @@
 
       // TIER 2: TABLET / SMALL LAPTOP — 768px TO 1199px (Simplified Cinematic Pinning)
       storyMm.add("(min-width: 768px) and (max-width: 1199px)", () => {
-        gsap.set(slide1, { autoAlpha: 1 });
+        gsap.set([slide1, floralFrame], { autoAlpha: 1 });
         gsap.set([slide2, slide3], { autoAlpha: 0 });
         gsap.set(img1, { scale: 1.00 });
         gsap.set([img2, img3], { scale: 1.00 });
