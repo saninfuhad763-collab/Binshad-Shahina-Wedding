@@ -197,10 +197,166 @@
       }
     }
 
-    /* Pinned Story Visual Frame: 768px Portrait Usable-Aperture Centering */
-    @media (width: 768px) and (orientation: portrait) {
+    /* ==========================================================================
+       TABLET STACKED CHAPTER ARCHITECTURE (768px – 1366px, Touch/Tablet Only)
+       Strictly applied to actual touch-screen tablets in portrait & landscape.
+       Standard desktop and laptop browsers retain the original 2-column layout.
+       ========================================================================== */
+    @media (min-width: 768px) and (max-width: 1366px) and (hover: none),
+           (min-width: 768px) and (max-width: 1366px) and (pointer: coarse) {
+      /* Dynamic Stage Dimensions for Landscape Tablets */
+      #storyPinSection {
+        --tablet-media-h: clamp(230px, min(36vh, calc(100vh - 440px)), 320px);
+        --tablet-media-w: min(80vw, calc(var(--tablet-media-h) * 1.8), 720px);
+      }
+
+      /* Orientation-specific tuning: Portrait Tablets wider & shorter balanced frame */
+      @media (orientation: portrait) {
+        #storyPinSection {
+          --tablet-media-h: clamp(380px, min(39vh, calc(100vh - 580px)), 520px);
+          --tablet-media-w: min(76vw, 760px);
+        }
+      }
+
+      /* Pinned viewport becomes a single vertical stacked column */
+      #storyPinViewport {
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding-top: clamp(56px, 6.5vh, 84px) !important;
+        padding-bottom: clamp(16px, 2.5vh, 32px) !important;
+        padding-left: clamp(20px, 4vw, 56px) !important;
+        padding-right: clamp(20px, 4vw, 56px) !important;
+        gap: clamp(14px, 2.0vh, 26px) !important;
+        box-sizing: border-box !important;
+      }
+
+      /* 1. Media Frame (Top, Centered) */
       #storyVisualFrame {
-        top: 64px;
+        width: var(--tablet-media-w) !important;
+        height: var(--tablet-media-h) !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        top: 0 !important;
+        flex: 0 0 auto !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        overflow: visible !important;
+      }
+
+      #storyMediaWrapper {
+        width: 100% !important;
+        height: 100% !important;
+        position: relative !important;
+        overflow: visible !important;
+      }
+
+      #storyMediaCard {
+        width: 100% !important;
+        height: 100% !important;
+        position: relative !important;
+        overflow: hidden !important;
+        border-radius: 4px !important;
+      }
+
+      /* Corner Floral Ornament Tuning on Tablet */
+      .chapter-corner-tl {
+        top: -20px !important;
+        left: -22px !important;
+        width: clamp(100px, 15vw, 140px) !important;
+      }
+      .chapter-corner-br {
+        bottom: -20px !important;
+        right: -26px !important;
+        width: clamp(100px, 15vw, 140px) !important;
+      }
+
+      /* 2. Text Column (Beneath Media, Aligned Width) */
+      #storyContentColumn {
+        width: var(--tablet-media-w) !important;
+        height: auto !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        flex: 0 0 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+      }
+
+      /* Overlapping Card Container: Automatic Height from Grid Stacking */
+      #storyContentColumn > div {
+        display: grid !important;
+        grid-template-columns: 100% !important;
+        min-height: 0 !important;
+        height: auto !important;
+        position: relative !important;
+        width: 100% !important;
+      }
+
+      #storyContentColumn .story-chapter-card {
+        grid-area: 1 / 1 / 2 / 2 !important;
+        position: relative !important;
+        width: 100% !important;
+        text-align: left !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+
+      /* Spacing between vertical text elements */
+      #storyContentColumn .story-chapter-card > * + * {
+        margin-top: clamp(8px, 1.25vh, 16px) !important;
+      }
+
+      /* Chapter Label */
+      #storyContentColumn .story-chapter-card > span:first-child {
+        font-size: clamp(11.5px, min(1.3vw, 1.35vh), 13.5px) !important;
+        letter-spacing: 0.35em !important;
+        line-height: 1.2 !important;
+        display: block !important;
+      }
+
+      /* Chapter Headline (Substantially larger and commanding) */
+      #storyContentColumn .story-chapter-card h3 {
+        font-size: clamp(30px, min(4.5vw, 4.3vh), 48px) !important;
+        line-height: 1.12 !important;
+        letter-spacing: -0.01em !important;
+        font-weight: 300 !important;
+      }
+
+      /* Chapter Description */
+      #storyContentColumn .story-chapter-card > p {
+        font-size: clamp(14.5px, min(1.8vw, 1.75vh), 18.5px) !important;
+        line-height: clamp(1.5, 1.56, 1.65) !important;
+        max-width: 72ch !important;
+      }
+
+      /* Chapter I Quotation */
+      #storyContentColumn .story-chapter-card div.border-l {
+        padding-left: clamp(14px, 2vw, 22px) !important;
+        padding-top: 0 !important;
+        border-left: 1px solid rgba(226, 193, 151, 0.45) !important;
+      }
+      #storyContentColumn .story-chapter-card div.border-l p {
+        font-size: clamp(16px, min(2.1vw, 2.0vh), 21px) !important;
+        line-height: 1.38 !important;
+      }
+
+      /* Chapter II Tags */
+      #storyContentColumn .story-chapter-card div.flex.flex-wrap {
+        font-size: clamp(11.5px, min(1.3vw, 1.3vh), 13.5px) !important;
+        letter-spacing: 0.28em !important;
+        gap: clamp(8px, 1.6vw, 16px) !important;
+        padding-top: clamp(2px, 0.5vh, 6px) !important;
+      }
+
+      /* Chapter III CTA */
+      #storyContentColumn .story-chapter-card a[href="#rsvp"] {
+        font-size: clamp(12px, min(1.35vw, 1.35vh), 14px) !important;
+        letter-spacing: 0.25em !important;
+        gap: 8px !important;
       }
     }
 
@@ -1722,7 +1878,7 @@
                          poster="assets/images/story-groom-frame0.webp"
                          muted playsinline preload="auto"></video>
                   <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
-                  <div class="absolute bottom-6 left-6 flex items-center gap-3">
+                  <div class="absolute bottom-6 left-6 flex items-center gap-3 z-20">
                     <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate II • Binshad</span>
                   </div>
                 </div>
@@ -1734,7 +1890,7 @@
                          poster="assets/images/story-couple-frame0.webp"
                          muted playsinline preload="auto"></video>
                   <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
-                  <div class="absolute bottom-6 left-6 flex items-center gap-3">
+                  <div class="absolute bottom-6 left-6 flex items-center gap-3 z-20">
                     <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate III • The Vow</span>
                   </div>
                 </div>
@@ -1763,7 +1919,7 @@
               <!-- Chapter I Text -->
               <div class="story-chapter-card top-0 space-y-4 md:space-y-6 opacity-100" id="storyChapter1">
                 <span class="text-[10px] md:text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
-                  Chapter I ΓÇó Autumn 2021
+                  Chapter I • Autumn 2021
                 </span>
                 <div class="reveal-mask">
                   <h3 class="font-headline-lg text-2xl md:text-3xl xl:text-5xl text-on-surface font-light leading-tight">
@@ -1775,7 +1931,7 @@
                 </p>
                 <div class="pt-2 md:pt-4 border-l border-secondary/40 pl-4 md:pl-6">
                   <p class="font-title-editorial italic text-base md:text-lg text-secondary-fixed">
-                    ΓÇ£Words came easily, as if rehearsed in another lifetime.ΓÇ¥
+                    “Words came easily, as if rehearsed in another lifetime.”
                   </p>
                 </div>
               </div>
@@ -1783,7 +1939,7 @@
               <!-- Chapter II Text -->
               <div class="story-chapter-card top-0 space-y-4 md:space-y-6 opacity-0" id="storyChapter2">
                 <span class="text-[10px] md:text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
-                  Chapter II ΓÇó 2022ΓÇô2024
+                  Chapter II • 2022–2024
                 </span>
                 <div class="reveal-mask">
                   <h3 class="font-headline-lg text-2xl md:text-3xl xl:text-5xl text-on-surface font-light leading-tight">
@@ -1795,11 +1951,11 @@
                 </p>
                 <div class="flex flex-wrap items-center gap-x-4 md:gap-x-6 gap-y-2 pt-2 text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-outline">
                   <span>London</span>
-                  <span>ΓÇó</span>
+                  <span>•</span>
                   <span>New York</span>
-                  <span>ΓÇó</span>
+                  <span>•</span>
                   <span>Mumbai</span>
-                  <span>ΓÇó</span>
+                  <span>•</span>
                   <span>Lake Como</span>
                 </div>
               </div>
@@ -1807,7 +1963,7 @@
               <!-- Chapter III Text -->
               <div class="story-chapter-card top-0 space-y-4 md:space-y-6 opacity-0" id="storyChapter3">
                 <span class="text-[10px] md:text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">
-                  Chapter III ΓÇó The Vow
+                  Chapter III • The Vow
                 </span>
                 <div class="reveal-mask">
                   <h3 class="font-headline-lg text-2xl md:text-3xl xl:text-5xl text-on-surface font-light leading-tight">
