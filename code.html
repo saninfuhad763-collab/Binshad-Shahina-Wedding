@@ -470,7 +470,12 @@
       z-index: 3;
       overflow: hidden;
       pointer-events: none;
-      background: radial-gradient(ellipse at 50% 50%, #1a0810 0%, #0e0507 45%, #090607 100%);
+      background: transparent;
+    }
+    #doorVideoAperture .video-scrim-vertical,
+    #doorVideoAperture .video-scrim-vignette,
+    #doorVideoAperture .video-scrim-grade {
+      display: none !important;
     }
     #doorVideoAperture > video {
       /* Override hero Tailwind classes when inside aperture */
@@ -1867,7 +1872,7 @@
               <div class="w-full h-full relative overflow-hidden rounded-sm shadow-2xl border border-transparent bg-[#110d0e]" id="storyMediaCard">
 
                 <!-- Slide 1: Shahina Veil Portrait -->
-                <div class="story-slide-layer opacity-100" id="storySlide1">
+                <div class="story-slide-layer opacity-100 bg-cover bg-center" id="storySlide1" style="background-image: url('assets/images/story-bride-frame0.webp');">
                   <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg1"
                          src="assets/videos/bride-veil-manor-scrub.mp4"
                          poster="assets/images/story-bride-frame0.webp"
@@ -1879,7 +1884,7 @@
                 </div>
 
                 <!-- Slide 2: Binshad Black Tie Portrait -->
-                <div class="story-slide-layer opacity-0" id="storySlide2">
+                <div class="story-slide-layer opacity-0 bg-cover bg-center" id="storySlide2" style="background-image: url('assets/images/story-groom-frame0.webp');">
                   <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg2"
                          src="assets/videos/groom-luxury-interior-scrub.mp4"
                          poster="assets/images/story-groom-frame0.webp"
@@ -1891,7 +1896,7 @@
                 </div>
 
                 <!-- Slide 3: Couple Archway Candlelight -->
-                <div class="story-slide-layer opacity-0" id="storySlide3">
+                <div class="story-slide-layer opacity-0 bg-cover bg-center" id="storySlide3" style="background-image: url('assets/images/story-couple-frame0.webp');">
                   <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg3"
                          src="assets/videos/couple-staircase-scrub.mp4"
                          poster="assets/images/story-couple-frame0.webp"
@@ -2002,7 +2007,7 @@
           <div class="w-full h-[360px] sm:h-[450px] relative" id="storyMobileMediaWrapper1">
 
             <!-- Clipped Video Card: preserves all dimensions, rounded, border, shadow, and clipping -->
-            <div class="w-full h-full relative overflow-hidden rounded border border-transparent shadow-xl">
+            <div class="w-full h-full relative overflow-hidden rounded border border-transparent shadow-xl bg-cover bg-center" style="background-image: url('assets/images/story-bride-frame0.webp');">
               <video class="w-full h-full object-cover" id="storyMobileVideo1"
                      src="assets/videos/bride-veil-manor-scrub.mp4"
                      poster="assets/images/story-bride-frame0.webp"
@@ -2035,7 +2040,7 @@
           <div class="w-full h-[360px] sm:h-[450px] relative" id="storyMobileMediaWrapper2">
 
             <!-- Clipped Video Card: preserves all dimensions, rounded, border, shadow, and clipping -->
-            <div class="w-full h-full relative overflow-hidden rounded border border-transparent shadow-xl">
+            <div class="w-full h-full relative overflow-hidden rounded border border-transparent shadow-xl bg-cover bg-center" style="background-image: url('assets/images/story-groom-frame0.webp');">
               <video class="w-full h-full object-cover" id="storyMobileVideo2"
                      src="assets/videos/groom-luxury-interior-scrub.mp4"
                      poster="assets/images/story-groom-frame0.webp"
@@ -2068,7 +2073,7 @@
           <div class="w-full h-[360px] sm:h-[450px] relative" id="storyMobileMediaWrapper3">
 
             <!-- Clipped Video Card: preserves all dimensions, rounded, border, shadow, and clipping -->
-            <div class="w-full h-full relative overflow-hidden rounded border border-transparent shadow-xl">
+            <div class="w-full h-full relative overflow-hidden rounded border border-transparent shadow-xl bg-cover bg-center" style="background-image: url('assets/images/story-couple-frame0.webp');">
               <video class="w-full h-full object-cover" id="storyMobileVideo3"
                      src="assets/videos/couple-staircase-scrub.mp4"
                      poster="assets/images/story-couple-frame0.webp"
@@ -2779,10 +2784,6 @@
       window.getHeroVideoSource = getHeroVideoSource;
       window.markHeroWebmUnsupported = markHeroWebmUnsupported;
 
-      // Track original DOM position for reparenting back to hero after intro
-      let origParent = null;
-      let origNextSibling = null;
-
       // Responsive video selection
       let isMobile = window.innerWidth < 768;
       const videoSrc = getHeroVideoSource(isMobile);
@@ -2792,17 +2793,6 @@
       if (inactiveVideo) {
         inactiveVideo.removeAttribute('src');
         inactiveVideo.preload = 'none';
-      }
-
-      // Pre-mount active video into aperture on landing so click-time reparenting is eliminated
-      if (doorVideoAperture && activeVideo && !doorVideoAperture.contains(activeVideo)) {
-        origParent = activeVideo.parentElement;
-        origNextSibling = activeVideo.nextSibling;
-        if (doorVideoAperture.firstChild) {
-          doorVideoAperture.insertBefore(activeVideo, doorVideoAperture.firstChild);
-        } else {
-          doorVideoAperture.appendChild(activeVideo);
-        }
       }
 
       // Pre-prime the single active hero video immediately so metadata and frame 0 buffer during landing
@@ -2907,15 +2897,7 @@
         };
         activeVideo.addEventListener('error', onSwitchError, { once: true });
 
-        // If inside door aperture (during opening animation before returnVideoToHero)
-        if (doorVideoAperture && introState === 'video' && !homepageEntranceTriggered) {
-          activeVideo.style.display = 'block';
-          if (!doorVideoAperture.contains(activeVideo)) {
-            doorVideoAperture.insertBefore(activeVideo, doorVideoAperture.firstChild);
-          }
-        } else {
-          activeVideo.style.removeProperty('display');
-        }
+        activeVideo.style.removeProperty('display');
 
         // Align playback to matching visual camera phase
         const syncProgress = () => {
@@ -3194,12 +3176,6 @@
         frameConfirmed = false;
         videoPlaybackStarted = false;
 
-        // Record hero position for later restoration if not already mounted
-        if (!origParent && activeVideo && activeVideo.parentElement !== doorVideoAperture) {
-          origParent       = activeVideo.parentElement;
-          origNextSibling  = activeVideo.nextSibling;
-        }
-
         // Clear any GSAP tweens + hero opacity class
         gsap.killTweensOf(activeVideo);
         activeVideo.style.opacity = '0';
@@ -3224,18 +3200,6 @@
         activeVideo.loop    = true;
         activeVideo.playsInline = true;
 
-        // Force display:block (Tailwind hidden/md:block must not hide it in aperture)
-        activeVideo.style.display = 'block';
-
-        // Move into the aperture beneath .video-scrim-* layers only if not already inside
-        if (doorVideoAperture && !doorVideoAperture.contains(activeVideo)) {
-          if (doorVideoAperture.firstChild) {
-            doorVideoAperture.insertBefore(activeVideo, doorVideoAperture.firstChild);
-          } else {
-            doorVideoAperture.appendChild(activeVideo);
-          }
-        }
-
         function onFrameReady() {
           if (frameConfirmed) return;
           frameConfirmed = true;
@@ -3246,7 +3210,7 @@
           // Ensure video is PAUSED — DO NOT PLAY YET while covered
           try { activeVideo.pause(); } catch(e) {}
 
-          // Set opacity:1 — frame 0 is decoded & ready behind the mask under .video-scrim-* layers
+          // Set opacity:1 — frame 0 is decoded & ready in #heroSection beneath #doorInteriorReveal
           activeVideo.style.opacity = '1';
           gsap.set(activeVideo, { opacity: 1 });
 
@@ -3301,51 +3265,17 @@
       }
 
       // ── returnVideoToHero ─────────────────────────────────────────────────
-      // Moves the active video back to its original hero DOM position.
-      // currentTime and paused state are preserved. Opacity stays at 1.
+      // Video is maintained in #heroSection throughout the intro sequence,
+      // eliminating hardware compositor teardown and black blinks.
       function doReturnVideoToHero() {
-        if (!activeVideo || !origParent) return;
-
-        // Remove aperture-specific inline overrides
-        activeVideo.style.removeProperty('display');
-        activeVideo.style.removeProperty('position');
-        activeVideo.style.removeProperty('top');
-        activeVideo.style.removeProperty('right');
-        activeVideo.style.removeProperty('bottom');
-        activeVideo.style.removeProperty('left');
-        activeVideo.style.removeProperty('width');
-        activeVideo.style.removeProperty('height');
-        activeVideo.style.removeProperty('object-fit');
-        activeVideo.style.removeProperty('transform');
-
-        // Keep opacity:1 — seamless loop playback continues in hero
+        if (!activeVideo) return;
         activeVideo.style.opacity = '1';
-        gsap.set(activeVideo, { opacity: 1, clearProps: 'transform' });
+        gsap.set(activeVideo, { opacity: 1 });
 
-        // Restore to hero
-        try {
-          if (origNextSibling && origNextSibling.parentNode === origParent) {
-            origParent.insertBefore(activeVideo, origNextSibling);
-          } else {
-            origParent.appendChild(activeVideo);
-          }
-          console.log('[HeroVideo] Video returned to hero. currentTime:', activeVideo.currentTime.toFixed(3));
-        } catch(e) {
-          console.warn('[HeroVideo] returnVideoToHero error:', e);
-        }
-
-        // Defensively ensure playback continues across DOM reparenting
-        if (activeVideo && activeVideo.paused) {
+        // Defensively ensure playback continues
+        if (activeVideo.paused) {
           const p = activeVideo.play();
           if (p) p.catch(e => { if (e.name !== 'AbortError') console.warn('[returnVideoToHero] play():', e.message); });
-        }
-
-        // Step 19 Bug B: Immediately disable aperture scrim stack once video is safely restored to hero.
-        if (doorVideoAperture) {
-          const apertureScrims = doorVideoAperture.querySelectorAll('.video-scrim-vertical, .video-scrim-vignette, .video-scrim-grade');
-          apertureScrims.forEach(scrim => {
-            scrim.style.display = 'none';
-          });
         }
       }
       returnVideoToHero = doReturnVideoToHero;
@@ -3477,7 +3407,7 @@
         });
 
         function setProgress(progress) {
-          if (!video.duration || isNaN(video.duration)) return;
+          if (!video.duration || isNaN(video.duration) || video.readyState < 2) return;
           const p = Math.max(0, Math.min(1, progress));
           const continuousTarget = p * video.duration;
 
@@ -3512,16 +3442,26 @@
       const scrubber2 = createVideoScrubber(img2);
       const scrubber3 = createVideoScrubber(img3);
 
-      // Initialize desktop videos to paused and warm first frame on metadata
+      // Initialize desktop videos to paused and refresh ScrollTrigger on metadata
       [img1, img2, img3].forEach(v => {
         if (v && v.tagName === 'VIDEO') {
           v.pause();
           v.addEventListener('loadedmetadata', () => {
-            if (v.currentTime === 0) v.currentTime = 0.001;
             ScrollTrigger.refresh();
           }, { once: true });
         }
       });
+
+      // Idempotent mobile story video preparation (never resets playing video)
+      function prepareMobileVideo(v) {
+        if (!v) return;
+        if (v.dataset.primed === 'true') return;
+        if (v.readyState === 0 && v.paused) {
+          v.dataset.primed = 'true';
+          v.preload = 'auto';
+          v.load();
+        }
+      }
 
       // Proximity priming: load Chapter 1 when user scrolls out of hero section
       let chapter1Primed = false;
@@ -3535,16 +3475,15 @@
           }
         } else {
           const mobileVideo1 = document.getElementById('storyMobileVideo1');
-          if (mobileVideo1 && mobileVideo1.preload !== 'auto') {
-            mobileVideo1.preload = 'auto';
-            mobileVideo1.load();
+          if (mobileVideo1) {
+            prepareMobileVideo(mobileVideo1);
           }
         }
       }
 
       ScrollTrigger.create({
         trigger: '#heroSection',
-        start: 'center top',
+        start: 'top -50px',
         once: true,
         onEnter: primeChapter1
       });
@@ -3582,11 +3521,11 @@
             }
             if (activePlate === 1) {
               if (img1 && img1.preload !== 'auto') { img1.preload = 'auto'; img1.load(); }
-              if (img2 && img2.preload !== 'auto' && t >= 0.5) { img2.preload = 'auto'; img2.load(); }
+              if (img2 && img2.preload !== 'auto' && t >= 0.2) { img2.preload = 'auto'; img2.load(); }
               scrubber1.setProgress(scrubProgress.v1);
             } else if (activePlate === 2) {
               if (img2 && img2.preload !== 'auto') { img2.preload = 'auto'; img2.load(); }
-              if (img3 && img3.preload !== 'auto' && t >= 2.0) { img3.preload = 'auto'; img3.load(); }
+              if (img3 && img3.preload !== 'auto' && t >= 1.8) { img3.preload = 'auto'; img3.load(); }
               scrubber2.setProgress(scrubProgress.v2);
             } else if (activePlate === 3) {
               if (img3 && img3.preload !== 'auto') { img3.preload = 'auto'; img3.load(); }
@@ -3706,11 +3645,11 @@
             }
             if (activePlate === 1) {
               if (img1 && img1.preload !== 'auto') { img1.preload = 'auto'; img1.load(); }
-              if (img2 && img2.preload !== 'auto' && t >= 0.4) { img2.preload = 'auto'; img2.load(); }
+              if (img2 && img2.preload !== 'auto' && t >= 0.2) { img2.preload = 'auto'; img2.load(); }
               scrubber1.setProgress(scrubProgress.v1);
             } else if (activePlate === 2) {
               if (img2 && img2.preload !== 'auto') { img2.preload = 'auto'; img2.load(); }
-              if (img3 && img3.preload !== 'auto' && t >= 1.6) { img3.preload = 'auto'; img3.load(); }
+              if (img3 && img3.preload !== 'auto' && t >= 1.4) { img3.preload = 'auto'; img3.load(); }
               scrubber2.setProgress(scrubProgress.v2);
             } else if (activePlate === 3) {
               if (img3 && img3.preload !== 'auto') { img3.preload = 'auto'; img3.load(); }
@@ -3829,36 +3768,37 @@
             // Proximity priming: buffer video ahead of scroll as user scrolls down through the story
             ScrollTrigger.create({
               trigger: item,
-              start: 'top bottom+=150px',
+              start: 'top bottom',
               once: true,
               onEnter: () => {
-                if (window.scrollY > 50 && video.preload !== 'auto') {
-                  video.preload = 'auto';
-                  video.load();
-                }
+                prepareMobileVideo(video);
               }
             });
 
-            let hasPlayed = false;
+            let isPlayingOrPlayed = false;
+            const attemptPlay = () => {
+              if (isPlayingOrPlayed || !video.paused) return;
+              video.muted = true;
+              video.playsInline = true;
+              const playPromise = video.play();
+              if (playPromise !== undefined) {
+                playPromise.then(() => {
+                  isPlayingOrPlayed = true;
+                }).catch(e => {
+                  console.log('[StoryVideo] Mobile video autoplay waiting/blocked:', e.message);
+                });
+              }
+            };
+
             ScrollTrigger.create({
               trigger: item,
               start: 'top 75%',
-              onEnter: () => {
-                if (!hasPlayed) {
-                  hasPlayed = true;
-                  video.muted = true;
-                  video.playsInline = true;
-                  video.currentTime = 0;
-                  const playPromise = video.play();
-                  if (playPromise !== undefined) {
-                    playPromise.catch(e => {
-                      // Autoplay blocked: fallback to poster
-                      console.log('Mobile video autoplay blocked:', e);
-                    });
-                  }
-                }
-              }
+              onEnter: attemptPlay
             });
+
+            // User interaction tap/click fallback for low-power mode or strict policies
+            item.addEventListener('click', attemptPlay, { passive: true });
+            item.addEventListener('touchend', attemptPlay, { passive: true });
           }
         });
       });
