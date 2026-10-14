@@ -6,6 +6,14 @@
   <meta content="web_standard" name="shell-type"/>
   <title>Binshad &amp; Shahina</title>
   
+  <!-- Establish deterministic top-of-page entry on initial load and refresh -->
+  <script>
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+  </script>
+
   <!-- Preconnect and Typography Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -2544,6 +2552,11 @@
 
       beginHomepageReveal();
 
+      // Ensure viewport is cleanly aligned at top before unlocking scroll
+      if (window.scrollY !== 0) {
+        window.scrollTo(0, 0);
+      }
+
       // Restore native scrolling simultaneously at 0.5s mark
       document.body.classList.remove('overflow-hidden');
       document.body.style.overflow = '';
@@ -2593,6 +2606,12 @@
 
       const videoDesktop = document.getElementById('heroVideoDesktop');
       const videoMobile  = document.getElementById('heroVideoMobile');
+
+      // Establish deterministic top-of-page state for ceremonial intro
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
 
       if (!weddingIntro) { beginHomepageReveal(); completeIntro(); return; }
 
@@ -2876,6 +2895,7 @@
       function handleEnterClick() {
         if (introState !== 'locked') return;
         introState = 'opening';
+        window.scrollTo(0, 0);
         doorRoundBtn.disabled = true;
 
         // Start background music from user click gesture (silent start -> 3.0s fade to 0.35)
@@ -4210,6 +4230,11 @@
 
     // --- INITIALIZE ALL MOTION SYSTEMS ON DOM READY ---
     window.addEventListener('DOMContentLoaded', () => {
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+
       initDoorIntro();
       initHeroMotion();
       initStoryMotion();
@@ -4228,6 +4253,16 @@
         ScrollTrigger.sort();
         ScrollTrigger.refresh();
       });
+    });
+
+    // Guard bfcache / persisted page restores
+    window.addEventListener('pageshow', (event) => {
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      if (typeof introState !== 'undefined' && introState !== 'complete') {
+        window.scrollTo(0, 0);
+      }
     });
   </script>
 </body>
