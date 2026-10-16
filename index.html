@@ -2697,54 +2697,66 @@
         const h = window.innerHeight;
         const isLandscape = w > h;
 
-        let peakScale = 1.21;
-        let pushDuration = 3.6;
-        let pullDuration = 7.0;
-        let breathingScale = 1.028;
+        let startScale = 1.03;
+        let peakScale = 1.32;
+        let finalScale = 1.23;
+        let pushDuration = 5.8;
+        let pullDuration = 3.0;
+        let ambientPeakScale = 1.255;
         let origin = '50% 45%';
 
         if (w >= 1200) {
-          // Desktop / wide landscape (1.20–1.22 suggested)
-          peakScale = 1.21;
-          pushDuration = 3.6;
-          pullDuration = 7.0;
-          breathingScale = 1.028;
+          // Desktop and large desktop (1.03 -> 1.32 push over 5.8s; partial pull-back to 1.23 over 3.0s)
+          startScale = 1.03;
+          peakScale = 1.32;
+          finalScale = 1.23;
+          pushDuration = 5.8; // 3.6 * (1.32 - 1.03) / (1.21 - 1.03) = 3.6 * 0.29 / 0.18 = 5.80s
+          pullDuration = 3.0; // Proportional: 7.0 * (0.09 / 0.21) = 3.00s
+          ambientPeakScale = 1.255; // Subtle oscillation: 1.230 <-> 1.255 (+0.025 amplitude)
           origin = '50% 45%';
         } else if (w >= 768) {
           if (isLandscape) {
-            // Landscape tablet (1.21–1.24 suggested, 3.0–3.3s push)
-            peakScale = 1.22;
-            pushDuration = 3.2;
-            pullDuration = 7.0;
-            breathingScale = 1.025;
+            // Tablet landscape (1.03 -> 1.32 push over 4.9s; partial pull-back to 1.23 over 3.0s)
+            startScale = 1.03;
+            peakScale = 1.32;
+            finalScale = 1.23;
+            pushDuration = 4.9; // 3.2 * (1.32 - 1.03) / (1.22 - 1.03) = 3.2 * 0.29 / 0.19 = 4.88s ~= 4.9s
+            pullDuration = 3.0; // Proportional: 7.0 * (0.09 / 0.22) = 2.86s ~= 3.0s
+            ambientPeakScale = 1.252; // Subtle oscillation: 1.230 <-> 1.252 (+0.022 amplitude)
             origin = '50% 45%';
           } else {
-            // Portrait tablet (1.20–1.23 suggested, 3.0–3.3s push)
-            peakScale = 1.21;
-            pushDuration = 3.2;
-            pullDuration = 7.0;
-            breathingScale = 1.020;
+            // Tablet portrait (1.03 -> 1.31 push over 5.0s; partial pull-back to 1.22 over 3.0s)
+            startScale = 1.03;
+            peakScale = 1.31;
+            finalScale = 1.22;
+            pushDuration = 5.0; // 3.2 * (1.31 - 1.03) / (1.21 - 1.03) = 3.2 * 0.28 / 0.18 = 4.98s ~= 5.0s
+            pullDuration = 3.0; // Proportional: 7.0 * (0.09 / 0.21) = 3.00s
+            ambientPeakScale = 1.240; // Subtle oscillation: 1.220 <-> 1.240 (+0.020 amplitude)
             origin = '50% 42%';
           }
         } else {
           if (isLandscape) {
-            // Landscape phone (1.20–1.23 suggested, 3.0–3.3s push)
-            peakScale = 1.21;
-            pushDuration = 3.2;
-            pullDuration = 7.0;
-            breathingScale = 1.022;
+            // Mobile landscape (1.03 -> 1.31 push over 5.0s; partial pull-back to 1.22 over 3.0s)
+            startScale = 1.03;
+            peakScale = 1.31;
+            finalScale = 1.22;
+            pushDuration = 5.0; // 3.2 * (1.31 - 1.03) / (1.21 - 1.03) = 3.2 * 0.28 / 0.18 = 4.98s ~= 5.0s
+            pullDuration = 3.0; // Proportional: 7.0 * (0.09 / 0.21) = 3.00s
+            ambientPeakScale = 1.240; // Subtle oscillation: 1.220 <-> 1.240 (+0.020 amplitude)
             origin = '50% 45%';
           } else {
-            // Portrait mobile (1.18–1.21 suggested, 3.0–3.3s push)
-            peakScale = 1.20;
-            pushDuration = 3.2;
-            pullDuration = 7.0;
-            breathingScale = 1.018;
+            // Mobile portrait (1.03 -> 1.29 push over 4.9s; partial pull-back to 1.21 over 2.8s)
+            startScale = 1.03;
+            peakScale = 1.29;
+            finalScale = 1.21;
+            pushDuration = 4.9; // 3.2 * (1.29 - 1.03) / (1.20 - 1.03) = 3.2 * 0.26 / 0.17 = 4.89s ~= 4.9s
+            pullDuration = 2.8; // Proportional: 7.0 * (0.08 / 0.20) = 2.80s
+            ambientPeakScale = 1.228; // Subtle oscillation: 1.210 <-> 1.228 (+0.018 amplitude)
             origin = '50% 40%';
           }
         }
 
-        return { peakScale, pushDuration, pullDuration, breathingScale, origin };
+        return { startScale, peakScale, finalScale, pushDuration, pullDuration, ambientPeakScale, origin };
       }
 
       let heroTimeline = null;
@@ -2755,10 +2767,10 @@
         if (!img) return;
         heroZoomStarted = true;
 
-        const { peakScale, pushDuration, pullDuration, breathingScale, origin } = getHeroScaleTargets();
+        const { startScale, peakScale, finalScale, pushDuration, pullDuration, ambientPeakScale, origin } = getHeroScaleTargets();
 
         // Establish deterministic baseline and couple focal origin
-        gsap.set(img, { scale: 1.00, transformOrigin: origin });
+        gsap.set(img, { scale: startScale, transformOrigin: origin });
 
         // Master timeline controlling the single-image continuous camera sequence
         heroTimeline = gsap.timeline();
@@ -2771,17 +2783,17 @@
           ease: 'power1.inOut'
         }, 0);
 
-        // Phase 2: Seamless reversal into slow, consistent pull-back (7.0s duration on all devices)
-        // Decelerates smoothly at peak and immediately glides backward to wide baseline (scale 1.00)
+        // Phase 2: Seamless reversal into gentle partial pull-back to close resting framing
+        // Decelerates smoothly at peak and glides backward to final closer framing (not back to wide 1.00)
         heroTimeline.to(img, {
-          scale: 1.00,
+          scale: finalScale,
           duration: pullDuration,
           ease: 'power2.inOut',
           onComplete: () => {
-            // Phase 3: Ambient cinematic breathing loop (14s per direction, sine.inOut)
-            // Starts seamlessly from scale 1.00 without any scale jump or visual pop
+            // Phase 3: Ambient cinematic breathing loop oscillating subtly around close framing
+            // Starts seamlessly from finalScale without any scale jump or visual pop
             gsap.to(img, {
-              scale: breathingScale,
+              scale: ambientPeakScale,
               duration: 14.0,
               ease: 'sine.inOut',
               yoyo: true,
