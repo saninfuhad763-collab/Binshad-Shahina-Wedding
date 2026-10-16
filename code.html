@@ -24,9 +24,8 @@
   <!-- Local Compiled Tailwind CSS -->
   <link rel="stylesheet" href="style.css"/>
 
-  <!-- Preload Responsive Static Hero End-Frame -->
-  <link rel="preload" as="image" href="assets/images/binshad-shahina-wedding-desktop-final.webp" type="image/webp" media="(min-width: 768px)"/>
-  <link rel="preload" as="image" href="assets/images/binshad-shahina-wedding-mobile-final.webp" type="image/webp" media="(max-width: 767px)"/>
+  <!-- Preload Cinematic Hero Couple Photograph -->
+  <link rel="preload" as="image" href="assets/images/Couple-intro-optimized-image.webp" type="image/webp" fetchpriority="high"/>
 
   <!-- Local GSAP & ScrollTrigger Libraries -->
   <script src="vendor/gsap.min.js"></script>
@@ -1802,15 +1801,11 @@
     <section class="relative w-full min-h-screen flex flex-col justify-between overflow-hidden px-gutter-mobile lg:px-margin pt-28 pb-12" id="heroSection">
       <!-- Background Parallax Image & Video Container -->
       <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <!-- Desktop / Tablet 16:9 Video -->
-        <video id="heroVideoDesktop" class="hidden md:block absolute inset-0 w-full h-full object-cover object-center will-change-transform opacity-0 z-10" muted playsinline loop preload="none"></video>
-        <!-- Mobile 9:16 Portrait Video -->
-        <video id="heroVideoMobile" class="block md:hidden absolute inset-0 w-full h-full object-cover object-center will-change-transform opacity-0 z-10" muted playsinline loop preload="none"></video>
-        <!-- Fallback Background Image (Underneath Video at z-0) -->
-        <div class="absolute inset-0 w-full h-full will-change-transform z-0" id="heroBg">
+        <!-- Hero Background Image Stage (Underneath Scrims at z-0) -->
+        <div class="absolute inset-0 w-full h-full will-change-transform z-0 bg-[#090607] overflow-hidden" id="heroBg">
           <picture class="block w-full h-full">
-            <source media="(min-width: 768px)" srcset="assets/images/binshad-shahina-wedding-desktop-final.webp" type="image/webp"/>
-            <img src="assets/images/binshad-shahina-wedding-mobile-final.webp" alt="Binshad and Shahina" class="w-full h-full object-cover object-center" fetchpriority="high"/>
+            <source srcset="assets/images/Couple-intro-optimized-image.webp" type="image/webp"/>
+            <img id="heroCoupleImage" src="assets/images/Couple-intro-optimized-image.webp" alt="Binshad and Shahina" class="w-full h-full object-cover object-center will-change-transform" fetchpriority="high" decoding="async"/>
           </picture>
         </div>
         <!-- Restored 3-Part Cinematic Video Scrims (Identical to #doorVideoAperture) -->
@@ -2466,10 +2461,8 @@
 
     // --- 0. CEREMONIAL WEDDING DOOR INTRO ENGINE ---
     let introState = 'locked';
-    let activeVideo = null;
     let homepageRevealStarted = false;
     let failsafeTimer = null;
-    let returnVideoToHero = null;
 
     // --- BACKGROUND MUSIC ENGINE ---
     const backgroundMusic = new Audio('assets/music/Love Story - Indila (Orchestra Version + Layered ~ Slowed + Reverb).mp3');
@@ -2498,18 +2491,18 @@
         const isTablet  = w >= 768 && w < 1200;
 
         const cfg = isDesktop ? {
-          nav: { from: { opacity: 0, y: -6, filter: 'blur(6px)' }, to: { opacity: 1, y: 0, filter: 'blur(0px)', duration: 2.8, delay: 0, ease: 'power1.out' } },
-          hero: { from: { opacity: 0, y: 10, scale: 0.996, filter: 'blur(10px)' }, to: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 3.2, delay: 0.12, ease: 'power1.out' } },
+          nav: { from: { opacity: 0, y: -6 }, to: { opacity: 1, y: 0, duration: 2.4, delay: 0, ease: 'power1.out' } },
+          hero: { from: { opacity: 0, y: 12, scale: 0.996 }, to: { opacity: 1, y: 0, scale: 1, duration: 2.8, delay: 0.12, ease: 'power1.out' } },
           items: { from: { opacity: 0, y: 8 }, to: { opacity: 1, y: 0, duration: 2.6, delay: 0.25, stagger: 0.20, ease: 'power1.out' } },
           bar: { from: { opacity: 0, y: 6 }, to: { opacity: 1, y: 0, duration: 2.2, delay: 0.85, ease: 'power1.out' } }
         } : isTablet ? {
-          nav: { from: { opacity: 0, y: -5, filter: 'blur(5px)' }, to: { opacity: 1, y: 0, filter: 'blur(0px)', duration: 2.6, delay: 0, ease: 'power1.out' } },
-          hero: { from: { opacity: 0, y: 9, scale: 0.997, filter: 'blur(9px)' }, to: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 3.0, delay: 0.12, ease: 'power1.out' } },
+          nav: { from: { opacity: 0, y: -5 }, to: { opacity: 1, y: 0, duration: 2.2, delay: 0, ease: 'power1.out' } },
+          hero: { from: { opacity: 0, y: 10, scale: 0.997 }, to: { opacity: 1, y: 0, scale: 1, duration: 2.6, delay: 0.12, ease: 'power1.out' } },
           items: { from: { opacity: 0, y: 7 }, to: { opacity: 1, y: 0, duration: 2.4, delay: 0.22, stagger: 0.17, ease: 'power1.out' } },
           bar: { from: { opacity: 0, y: 5 }, to: { opacity: 1, y: 0, duration: 2.0, delay: 0.80, ease: 'power1.out' } }
         } : {
-          nav: { from: { opacity: 0, y: -4, filter: 'blur(4px)' }, to: { opacity: 1, y: 0, filter: 'blur(0px)', duration: 2.2, delay: 0, ease: 'power1.out' } },
-          hero: { from: { opacity: 0, y: 6, scale: 0.998, filter: 'blur(7px)' }, to: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 2.6, delay: 0.10, ease: 'power1.out' } },
+          nav: { from: { opacity: 0, y: -4 }, to: { opacity: 1, y: 0, duration: 2.0, delay: 0, ease: 'power1.out' } },
+          hero: { from: { opacity: 0, y: 8, scale: 0.998 }, to: { opacity: 1, y: 0, scale: 1, duration: 2.4, delay: 0.10, ease: 'power1.out' } },
           items: { from: { opacity: 0, y: 6 }, to: { opacity: 1, y: 0, duration: 2.1, delay: 0.18, stagger: 0.14, ease: 'power1.out' } },
           bar: { from: { opacity: 0, y: 4 }, to: { opacity: 1, y: 0, duration: 1.8, delay: 0.70, ease: 'power1.out' } }
         };
@@ -2530,15 +2523,15 @@
           gsap.fromTo(heroBottomBar, cfg.bar.from, cfg.bar.to);
         }
       } else {
-        if (mainNav)        { mainNav.classList.remove('opacity-0','pointer-events-none');        gsap.set(mainNav,        { opacity: 1, y: 0, filter: 'none' }); }
-        if (heroTypography) { heroTypography.classList.remove('opacity-0','pointer-events-none'); gsap.set(heroTypography, { opacity: 1, y: 0, scale: 1, filter: 'none' }); }
+        if (mainNav)        { mainNav.classList.remove('opacity-0','pointer-events-none');        gsap.set(mainNav,        { opacity: 1, y: 0 }); }
+        if (heroTypography) { heroTypography.classList.remove('opacity-0','pointer-events-none'); gsap.set(heroTypography, { opacity: 1, y: 0, scale: 1 }); }
         if (heroAnimItems.length > 0) gsap.set(heroAnimItems, { y: 0, opacity: 1 });
         if (heroBottomBar)  { heroBottomBar.classList.remove('opacity-0','pointer-events-none');  gsap.set(heroBottomBar,  { y: 0, opacity: 1 }); }
       }
     }
 
-    // triggerHomepageEntrance: called exactly 0.5s after video playback starts.
-    // Reveals homepage UI, unlocks scrolling, and keeps film playing to final frame.
+    // triggerHomepageEntrance: called when door rotation reaches completion.
+    // Reveals homepage UI, unlocks scrolling, and transitions cleanly.
     let homepageEntranceTriggered = false;
     function triggerHomepageEntrance() {
       if (homepageEntranceTriggered) return;
@@ -2546,20 +2539,6 @@
       introState = 'complete';
 
       if (failsafeTimer) { clearTimeout(failsafeTimer); failsafeTimer = null; }
-
-      // Return active video from aperture back to hero DOM hierarchy
-      if (typeof returnVideoToHero === 'function') {
-        returnVideoToHero();
-      }
-
-      // Keep active video playing and visible at opacity:1 as permanent seamless loop background
-      if (activeVideo) {
-        activeVideo.style.opacity = '1';
-        gsap.set(activeVideo, { opacity: 1 });
-        if (activeVideo.paused) {
-          activeVideo.play().catch(() => {});
-        }
-      }
 
       beginHomepageReveal();
 
@@ -2622,9 +2601,7 @@
       const doorProgressRail   = document.getElementById('doorProgressRail');
       const doorProgressFill   = document.getElementById('doorProgressFill');
       const doorProgressDot    = document.getElementById('doorProgressDot');
-
-      const videoDesktop = document.getElementById('heroVideoDesktop');
-      const videoMobile  = document.getElementById('heroVideoMobile');
+      const heroCoupleImage    = document.getElementById('heroCoupleImage');
 
       // Establish deterministic top-of-page state for ceremonial intro
       if ('scrollRestoration' in history) {
@@ -2711,216 +2688,193 @@
       setDoorLeafBg();
       window.addEventListener('resize', setDoorLeafBg);
 
-      // Decoded frame watcher utility: uses requestVideoFrameCallback when supported, with loadeddata/canplay fallback
-      function watchForDecodedFrame(videoEl, callback) {
-        if (!videoEl) return;
-        let delivered = false;
-        function notify() {
-          if (delivered) return;
-          delivered = true;
-          if (typeof callback === 'function') callback();
+      // ── HERO IMAGE READINESS & CINEMATIC CAMERA CONTROLLER ───────────────────
+      let heroImageReady = false;
+      let heroZoomStarted = false;
+
+      function getHeroScaleTargets() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const isLandscape = w > h;
+
+        let startScale = 1.03;
+        let peakScale = 1.38;
+        let finalScale = 1.27;
+        let pushDuration = 7.0;
+        let pullDuration = 3.7;
+        let ambientPeakScale = 1.295;
+        let origin = '50% 45%';
+        let offsetY = 0;
+
+        if (w >= 1200) {
+          // Desktop and large desktop: stronger zoom-in (1.03 -> 1.38 over 7.0s; partial pull-back to 1.27 over 3.7s; exact groom nose-tip centering)
+          startScale = 1.03;
+          peakScale = 1.38;
+          finalScale = 1.27;
+          pushDuration = 7.0; // 5.8 * (1.38 - 1.03) / (1.32 - 1.03) = 5.8 * 0.35 / 0.29 = 7.00s (velocity 0.0500 scale/s preserved)
+          pullDuration = 3.7; // Proportional travel: 3.0 * (0.11 / 0.09) = 3.67s ~= 3.7s
+          ambientPeakScale = 1.295; // Subtle oscillation: 1.270 <-> 1.295 (+0.025 amplitude)
+          origin = '50% 45%';
+          offsetY = 0;
+        } else if (w >= 768) {
+          if (isLandscape) {
+            // Tablet landscape: scales preserved (1.03 -> 1.34 push over 5.24s; partial pull-back to 1.25 over 3.0s; exact groom nose-tip centering)
+            startScale = 1.03;
+            peakScale = 1.34;
+            finalScale = 1.25;
+            pushDuration = 5.24; // Preserved
+            pullDuration = 3.0; // Preserved
+            ambientPeakScale = 1.272; // Subtle oscillation: 1.250 <-> 1.272 (+0.022 amplitude)
+            origin = '50% 45%';
+            offsetY = Math.round(h * -0.020); // -2.0% vh upward centering (preserved)
+          } else {
+            // Tablet portrait: scales preserved (1.03 -> 1.34 push over 5.54s; partial pull-back to 1.25 over 3.0s; exact groom nose-tip centering)
+            startScale = 1.03;
+            peakScale = 1.34;
+            finalScale = 1.25;
+            pushDuration = 5.54; // Preserved
+            pullDuration = 3.0; // Preserved
+            ambientPeakScale = 1.270; // Subtle oscillation: 1.250 <-> 1.270 (+0.020 amplitude)
+            origin = '50% 42%';
+            offsetY = Math.round(h * -0.045); // -4.5% vh upward centering (preserved)
+          }
+        } else {
+          if (isLandscape) {
+            // Mobile landscape: scales preserved (1.03 -> 1.33 push over 5.36s; partial pull-back to 1.24 over 3.0s; exact groom nose-tip centering)
+            startScale = 1.03;
+            peakScale = 1.33;
+            finalScale = 1.24;
+            pushDuration = 5.36; // Preserved
+            pullDuration = 3.0; // Preserved
+            ambientPeakScale = 1.260; // Subtle oscillation: 1.240 <-> 1.260 (+0.020 amplitude)
+            origin = '50% 45%';
+            offsetY = Math.round(h * -0.020); // -2.0% vh upward centering (preserved)
+          } else {
+            // Mobile portrait: scales preserved (1.03 -> 1.32 push over 5.47s; partial pull-back to 1.24 over 2.8s; exact groom nose-tip centering)
+            startScale = 1.03;
+            peakScale = 1.32;
+            finalScale = 1.24;
+            pushDuration = 5.47; // Preserved
+            pullDuration = 2.8; // Preserved
+            ambientPeakScale = 1.258; // Subtle oscillation: 1.240 <-> 1.258 (+0.018 amplitude)
+            origin = '50% 40%';
+            offsetY = Math.round(h * -0.040); // -4.0% vh upward centering (preserved)
+          }
         }
 
-        if (typeof videoEl.requestVideoFrameCallback === 'function') {
-          videoEl.requestVideoFrameCallback(() => {
-            notify();
-          });
-        }
-        videoEl.addEventListener('canplay', () => {
-          if (!delivered && typeof videoEl.requestVideoFrameCallback !== 'function') {
-            notify();
-          }
-        }, { once: true });
-        videoEl.addEventListener('loadeddata', () => {
-          if (!delivered && typeof videoEl.requestVideoFrameCallback !== 'function' && videoEl.readyState >= 2) {
-            notify();
-          }
-        }, { once: true });
-      }
+        // Exact groom nose-tip horizontal centering (Task 27K):
+        // Source image dimensions: IW = 2048, IH = 1152.
+        // Groom's nose tip in source image: noseX = 1013.0, noseY = 354.0.
+        // Under object-fit: cover, fitScale = Math.max(w / IW, h / IH).
+        // On desktop/tablet (w >= 768), scrollbar-compensated landmark geometry uses noseX = 1006.0 (+7px offset shift),
+        // placing the rendered groom's nose tip within sub-pixel accuracy of the visible hero viewport centerline.
+        const IW = 2048;
+        const IH = 1152;
+        const noseX = (w >= 768) ? 1006.0 : 1013.0;
+        const fitScale = Math.max(w / IW, h / IH);
+        const renderedWidth = IW * fitScale;
+        const imageLeft = (w - renderedWidth) / 2;
+        const noseXBeforeTransform = imageLeft + noseX * fitScale;
+        const originX = w / 2;
+        let offsetX = Math.round(w / 2 - (originX + (noseXBeforeTransform - originX) * finalScale));
 
-      // Codec-aware hero video source selection and fallback management
-      function markHeroWebmUnsupported() {
-        window.__heroWebmUnsupported = true;
-        try { sessionStorage.setItem('hero_webm_unsupported', '1'); } catch(e) {}
-      }
-
-      function getHeroVideoSource(forMobile) {
-        let webmUnsupported = false;
-        try {
-          if (window.__heroWebmUnsupported || sessionStorage.getItem('hero_webm_unsupported') === '1') {
-            webmUnsupported = true;
-          }
-        } catch(e) {
-          if (window.__heroWebmUnsupported) webmUnsupported = true;
+        // Task 27L, 27M & 27N: Tiny rightward refinement on phone and tablet layouts only (w < 1200)
+        // Task 27L (+1.5px) + Task 27M (+0.5px) + Task 27N (+0.5px) = +2.5px total micro-nudge
+        if (w < 1200) {
+          offsetX += 2.5;
         }
 
-        if (!webmUnsupported) {
-          const testEl = activeVideo || videoDesktop || videoMobile || document.createElement('video');
-          if (testEl && typeof testEl.canPlayType === 'function') {
-            if (forMobile) {
-              // Mobile primary: VP9 WebM — only use if canPlayType returns 'probably'
-              const canPlayVP9 = testEl.canPlayType('video/webm; codecs="vp09.00.31.08"') ||
-                                 testEl.canPlayType('video/webm; codecs="vp9"');
-              if (canPlayVP9 === 'probably') {
-                return 'assets/videos/hero-couple-mobile-loop.webm';
-              }
-            } else {
-              // Desktop primary: AV1 WebM — only use if canPlayType returns 'probably'
-              const canPlayAV1 = testEl.canPlayType('video/webm; codecs="av01.0.08M.08"') ||
-                                 testEl.canPlayType('video/webm; codecs="av01"');
-              if (canPlayAV1 === 'probably') {
-                return 'assets/videos/hero-couple-desktop-loop.webm';
-              }
-            }
-          }
-        }
-
-        // Matching H.264 MP4 fallbacks (committed, faststart moov@32)
-        return forMobile
-          ? 'assets/videos/hero-couple-mobile-loop-fallback.mp4'
-          : 'assets/videos/hero-couple-desktop-loop-fallback.mp4';
+        return { startScale, peakScale, finalScale, pushDuration, pullDuration, ambientPeakScale, origin, offsetX, offsetY };
       }
 
-      window.getHeroVideoSource = getHeroVideoSource;
-      window.markHeroWebmUnsupported = markHeroWebmUnsupported;
+      let heroTimeline = null;
 
-      // Responsive video selection
-      let isMobile = window.innerWidth < 768;
-      const videoSrc = getHeroVideoSource(isMobile);
+      function startHeroZoom() {
+        if (heroZoomStarted || prefersReducedMotion) return;
+        const img = document.getElementById('heroCoupleImage');
+        if (!img) return;
+        heroZoomStarted = true;
 
-      activeVideo = isMobile ? videoMobile : videoDesktop;
-      const inactiveVideo = isMobile ? videoDesktop : videoMobile;
-      if (inactiveVideo) {
-        inactiveVideo.removeAttribute('src');
-        inactiveVideo.preload = 'none';
-      }
+        const {
+          startScale,
+          peakScale,
+          finalScale,
+          pushDuration,
+          pullDuration,
+          ambientPeakScale,
+          origin,
+          offsetX,
+          offsetY
+        } = getHeroScaleTargets();
 
-      // Pre-prime the single active hero video immediately so metadata and frame 0 buffer during landing
-      if (activeVideo) {
-        activeVideo.src = videoSrc;
-        activeVideo.preload = 'auto';
-        activeVideo.muted = true;
-        activeVideo.loop = true;
-        activeVideo.playsInline = true;
-
-        watchForDecodedFrame(activeVideo, () => {
-          console.log('[HeroVideo] Active video pre-primed at frame 0 during landing screen');
+        // Establish deterministic baseline and couple focal origin
+        gsap.set(img, {
+          scale: startScale,
+          x: offsetX,
+          y: offsetY,
+          transformOrigin: origin
         });
 
-        // Error listener on pre-priming to catch WebM rejection early
-        activeVideo.addEventListener('error', function onPreloadError() {
-          const cSrc = activeVideo.currentSrc || activeVideo.src || '';
-          if (cSrc.includes('.webm')) {
-            console.warn('[HeroVideo] WebM unsupported during landing pre-priming. Falling back to MP4.');
-            markHeroWebmUnsupported();
-            activeVideo.src = isMobile
-              ? 'assets/videos/hero-couple-mobile-loop-fallback.mp4'
-              : 'assets/videos/hero-couple-desktop-loop-fallback.mp4';
-            activeVideo.load();
-          }
-        }, { once: true });
+        // Master timeline controlling the single-image continuous camera sequence
+        heroTimeline = gsap.timeline();
 
-        activeVideo.load();
+        // Phase 1: Slow, purposeful opening push-in towards couple
+        // Begins at T=0 (click). Reveals during T=1.3s-1.8s (doors swing). Peaks at pushDuration.
+        heroTimeline.to(img, {
+          scale: peakScale,
+          x: offsetX,
+          y: offsetY,
+          duration: pushDuration,
+          ease: 'power1.inOut'
+        }, 0);
+
+        // Phase 2: Seamless reversal into gentle partial pull-back to close resting framing
+        // Decelerates smoothly at peak and glides backward to final closer framing (not back to wide 1.00)
+        heroTimeline.to(img, {
+          scale: finalScale,
+          x: offsetX,
+          y: offsetY,
+          duration: pullDuration,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            // Phase 3: Ambient cinematic breathing loop oscillating subtly around close framing
+            // Starts seamlessly from finalScale without any scale jump or visual pop
+            gsap.to(img, {
+              scale: ambientPeakScale,
+              x: offsetX,
+              y: offsetY,
+              duration: 14.0,
+              ease: 'sine.inOut',
+              yoyo: true,
+              repeat: -1,
+              transformOrigin: origin
+            });
+          }
+        });
       }
 
-      // Dynamic responsive source switcher: handles live viewport resize & orientation changes across 768px
-      function handleResponsiveVideoSwitch() {
-        const newIsMobile = window.innerWidth < 768;
-        if (newIsMobile === isMobile) return;
-        isMobile = newIsMobile;
-
-        const newActiveVideo = isMobile ? videoMobile : videoDesktop;
-        const oldActiveVideo = isMobile ? videoDesktop : videoMobile;
-        const newSrc = getHeroVideoSource(isMobile);
-
-        // Pre-launch state: door has not opened yet
-        if (introState !== 'video' && introState !== 'complete') {
-          activeVideo = newActiveVideo;
-          if (oldActiveVideo) {
-            try { oldActiveVideo.pause(); } catch(e) {}
-            oldActiveVideo.removeAttribute('src');
-            oldActiveVideo.preload = 'none';
-          }
-          if (activeVideo) {
-            activeVideo.src = newSrc;
-            activeVideo.preload = 'auto';
-            activeVideo.muted = true;
-            activeVideo.loop = true;
-            activeVideo.playsInline = true;
-            activeVideo.load();
-          }
-          return;
+      function onHeroImageReady() {
+        if (heroImageReady) return;
+        heroImageReady = true;
+        if (introState === 'opening' || introState === 'complete') {
+          startHeroZoom();
         }
+      }
 
-        // Active state: video has been prepared or is actively playing
-        let progressTime = 0;
-        let oldDuration = 0;
-        if (oldActiveVideo) {
-          progressTime = oldActiveVideo.currentTime || 0;
-          oldDuration = oldActiveVideo.duration || 0;
-          try { oldActiveVideo.pause(); } catch(e) {}
-          oldActiveVideo.removeAttribute('src');
-          oldActiveVideo.load();
-          oldActiveVideo.style.opacity = '0';
-          oldActiveVideo.style.removeProperty('display');
-        }
-
-        const knownOldDuration = oldDuration > 0 ? oldDuration : (isMobile ? 7.875 : 7.967);
-        const knownNewDuration = isMobile ? 7.967 : 7.875;
-        const progressRatio = knownOldDuration > 0
-          ? Math.min(Math.max(progressTime / knownOldDuration, 0), 0.999)
-          : 0;
-        const targetTime = progressRatio * knownNewDuration;
-
-        activeVideo = newActiveVideo;
-        activeVideo.src = newSrc;
-        activeVideo.preload = 'auto';
-        activeVideo.muted = true;
-        activeVideo.loop = true;
-        activeVideo.style.opacity = '1';
-        gsap.set(activeVideo, { opacity: 1 });
-
-        // Error fallback listener on responsive switch
-        const onSwitchError = function() {
-          const cSrc = activeVideo.currentSrc || activeVideo.src || '';
-          if (cSrc.includes('.webm') || (activeVideo.src && activeVideo.src.includes('.webm'))) {
-            console.warn('[HeroVideo] Switch WebM error; retrying with MP4 fallback.');
-            markHeroWebmUnsupported();
-            const fallbackSrc = isMobile
-              ? 'assets/videos/hero-couple-mobile-loop-fallback.mp4'
-              : 'assets/videos/hero-couple-desktop-loop-fallback.mp4';
-            activeVideo.src = fallbackSrc;
-            activeVideo.load();
-            const p = activeVideo.play();
-            if (p) p.catch(() => {});
-          }
-        };
-        activeVideo.addEventListener('error', onSwitchError, { once: true });
-
-        activeVideo.style.removeProperty('display');
-
-        // Align playback to matching visual camera phase
-        const syncProgress = () => {
-          if (targetTime > 0 && activeVideo.duration) {
-            try {
-              activeVideo.currentTime = Math.min(targetTime, activeVideo.duration - 0.15);
-            } catch(e) {}
-          }
-          const p = activeVideo.play();
-          if (p) p.catch(() => {});
-        };
-
-        if (activeVideo.readyState >= 1) {
-          syncProgress();
+      if (heroCoupleImage) {
+        if (heroCoupleImage.complete && heroCoupleImage.naturalWidth > 0) {
+          onHeroImageReady();
         } else {
-          activeVideo.addEventListener('loadedmetadata', syncProgress, { once: true });
+          heroCoupleImage.addEventListener('load', onHeroImageReady, { once: true });
+          heroCoupleImage.addEventListener('error', function onHeroImgError() {
+            console.warn('[HeroImage] Primary image failed to load; relying on fallback / dark backing.');
+            heroImageReady = true;
+          }, { once: true });
+          if (typeof heroCoupleImage.decode === 'function') {
+            heroCoupleImage.decode().then(onHeroImageReady).catch(function() {});
+          }
         }
-        const p = activeVideo.play();
-        if (p) p.catch(() => {});
       }
-
-      window.addEventListener('resize', handleResponsiveVideoSwitch);
-      window.addEventListener('orientationchange', handleResponsiveVideoSwitch);
 
 
       // GSAP initial states
@@ -2999,20 +2953,6 @@
 
         // REDUCED MOTION GUEST FLOW: instantaneous, non-disorienting crossfade directly into ceremony
         if (prefersReducedMotion) {
-          if (activeVideo) {
-            if (!activeVideo.src) {
-              activeVideo.src = isMobile
-                ? 'assets/videos/hero-couple-mobile-loop.webm'
-                : 'assets/videos/hero-couple-desktop-loop.webm';
-            }
-            activeVideo.muted = true;
-            activeVideo.loop = true;
-            activeVideo.playsInline = true;
-            activeVideo.style.opacity = '1';
-            gsap.set(activeVideo, { opacity: 1 });
-            const p = activeVideo.play();
-            if (p) p.catch(() => {});
-          }
           gsap.to(weddingIntro, {
             opacity: 0,
             duration: 0.35,
@@ -3030,8 +2970,8 @@
         // Reveal decorative medallion halves on door leaves for 3D swing
         gsap.set(['.door-medallion-leaf-left', '.door-medallion-leaf-right'], { opacity: 1 });
 
-        // Start loading video immediately so canplay fires early
-        prepareVideo();
+        // Start subtle cinematic zoom loop on couple photo
+        startHeroZoom();
 
         const tl = gsap.timeline();
 
@@ -3085,13 +3025,16 @@
         }
 
         // T=1.30 — Aperture reveal point:
-        // Mask fade is strictly gated on actual frame confirmation to prevent any black gap or artwork exposure
+        // Dark interior curtain fades out to reveal the zooming hero image underneath
+        if (doorInteriorReveal) {
+          tl.to(doorInteriorReveal, { opacity: 0, duration: 0.50, ease: 'power2.out' }, 1.30);
+        }
+
+        // T=2.05 — Door leaves finish physical rotation (0.20 + 1.85 = 2.05s)
+        // Hand off smoothly to homepage entrance without waiting for video decoders
         tl.call(() => {
-          revealTriggered = true;
-          if (frameConfirmed) {
-            revealAperture();
-          }
-        }, null, 1.30);
+          triggerHomepageEntrance();
+        }, null, 2.05);
 
         // T=2.50 — Door stage (leaves) and zoom wrapper fade out completely
         const doorStage = document.getElementById('doorStage');
@@ -3111,174 +3054,10 @@
         failsafeTimer = setTimeout(() => {
           if (introState !== 'complete') {
             console.warn('[DoorIntro] Failsafe triggered — completing.');
-            returnVideoToHero();
             completeIntro();
           }
-        }, 14000);
+        }, 8000);
       }
-
-      // ── prepareVideo & revealAperture ─────────────────────────────────────
-      let revealTriggered = false;
-      let frameConfirmed = false;
-      let videoPlaybackStarted = false;
-
-      function revealAperture() {
-        if (doorInteriorReveal) {
-          gsap.to(doorInteriorReveal, { opacity: 0, duration: 0.50, ease: 'power2.out' });
-        }
-        startVideoPlayback();
-      }
-
-      function startVideoPlayback() {
-        if (videoPlaybackStarted || !activeVideo) return;
-        videoPlaybackStarted = true;
-
-        // Defensively ensure playback starts from exact frame 0
-        try { activeVideo.currentTime = 0; } catch(e) {}
-
-        console.log('[HeroVideo] Starting playback at reveal point. currentTime:', activeVideo.currentTime);
-
-        let revealScheduled = false;
-        function onVideoPlaying() {
-          if (revealScheduled) return;
-          revealScheduled = true;
-          activeVideo.removeEventListener('playing', onVideoPlaying);
-          console.log('[HeroVideo] Playing event detected; triggering homepage entrance in exactly 0.5s');
-          setTimeout(() => {
-            triggerHomepageEntrance();
-          }, 500);
-        }
-
-        activeVideo.addEventListener('playing', onVideoPlaying, { once: true });
-
-        const p = activeVideo.play();
-        if (p) p.catch(e => {
-          if (e.name !== 'AbortError') console.warn('[HeroVideo] play():', e.message);
-          if (!revealScheduled) {
-            onVideoPlaying();
-          }
-        });
-
-        // Defensive check: if video already started playing
-        if (!activeVideo.paused && activeVideo.currentTime > 0) {
-          onVideoPlaying();
-        }
-      }
-
-      function prepareVideo() {
-        if (!activeVideo || !doorVideoAperture) {
-          console.warn('[DoorIntro] prepareVideo: no video or aperture');
-          setTimeout(completeIntro, 3000);
-          return;
-        }
-        introState = 'video';
-        revealTriggered = false;
-        frameConfirmed = false;
-        videoPlaybackStarted = false;
-
-        // Clear any GSAP tweens + hero opacity class
-        gsap.killTweensOf(activeVideo);
-        activeVideo.style.opacity = '0';
-
-        // Re-confirm responsive selection at prepare time
-        const isMobileNow = window.innerWidth < 768;
-        activeVideo = isMobileNow ? videoMobile : videoDesktop;
-        const currentInactiveVideo = isMobileNow ? videoDesktop : videoMobile;
-        if (currentInactiveVideo) {
-          try { currentInactiveVideo.pause(); } catch(e) {}
-          currentInactiveVideo.removeAttribute('src');
-          currentInactiveVideo.preload = 'none';
-        }
-
-        // Assign source to active video only
-        const activeSrc = getHeroVideoSource(isMobileNow);
-        if (!activeVideo.src || (!activeVideo.src.endsWith(activeSrc) && activeVideo.src !== activeSrc)) {
-          activeVideo.src = activeSrc;
-        }
-        activeVideo.preload = 'auto';
-        activeVideo.muted   = true;
-        activeVideo.loop    = true;
-        activeVideo.playsInline = true;
-
-        function onFrameReady() {
-          if (frameConfirmed) return;
-          frameConfirmed = true;
-
-          // Seek to actual frame 0
-          try { activeVideo.currentTime = 0; } catch(e) {}
-
-          // Ensure video is PAUSED — DO NOT PLAY YET while covered
-          try { activeVideo.pause(); } catch(e) {}
-
-          // Set opacity:1 — frame 0 is decoded & ready in #heroSection beneath #doorInteriorReveal
-          activeVideo.style.opacity = '1';
-          gsap.set(activeVideo, { opacity: 1 });
-
-          console.log('[HeroVideo] Frame 0 confirmed and ready. readyState:', activeVideo.readyState, 'currentTime:', activeVideo.currentTime);
-
-          // If reveal point was already reached before video buffered, reveal aperture and start playback now
-          if (revealTriggered) {
-            revealAperture();
-          }
-        }
-
-        // Single-retry error fallback for WebM decode/load issues
-        const onPrepareError = function(e) {
-          const currentSrc = activeVideo.currentSrc || activeVideo.src || '';
-          if (currentSrc.includes('.webm') || (activeVideo.src && activeVideo.src.includes('.webm'))) {
-            console.warn('[HeroVideo] WebM load/decode error detected during prepareVideo. Retrying with MP4 fallback.');
-            markHeroWebmUnsupported();
-            const fallbackSrc = isMobileNow
-              ? 'assets/videos/hero-couple-mobile-loop-fallback.mp4'
-              : 'assets/videos/hero-couple-desktop-loop-fallback.mp4';
-            activeVideo.src = fallbackSrc;
-            watchForDecodedFrame(activeVideo, onFrameReady);
-            activeVideo.load();
-          } else {
-            console.error('[HeroVideo] Video error with fallback source:', e);
-            setTimeout(() => {
-              if (!frameConfirmed) {
-                console.warn('[HeroVideo] Video fallback error timeout — triggering onFrameReady');
-                onFrameReady();
-              }
-            }, 1000);
-          }
-        };
-        activeVideo.addEventListener('error', onPrepareError, { once: true });
-
-        // If video already reached readyState >= 2 (due to pre-priming on landing!)
-        if (activeVideo.readyState >= 2) {
-          onFrameReady();
-        } else {
-          watchForDecodedFrame(activeVideo, onFrameReady);
-        }
-
-        // Hard timeout fallback
-        setTimeout(() => {
-          if (!frameConfirmed) {
-            console.warn('[HeroVideo] Frame readiness timeout fallback');
-            onFrameReady();
-          }
-        }, 4500);
-
-        activeVideo.load();
-      }
-
-      // ── returnVideoToHero ─────────────────────────────────────────────────
-      // Video is maintained in #heroSection throughout the intro sequence,
-      // eliminating hardware compositor teardown and black blinks.
-      function doReturnVideoToHero() {
-        if (!activeVideo) return;
-        activeVideo.style.opacity = '1';
-        gsap.set(activeVideo, { opacity: 1 });
-
-        // Defensively ensure playback continues
-        if (activeVideo.paused) {
-          const p = activeVideo.play();
-          if (p) p.catch(e => { if (e.name !== 'AbortError') console.warn('[returnVideoToHero] play():', e.message); });
-        }
-      }
-      returnVideoToHero = doReturnVideoToHero;
     }
 
     // --- 1. HERO SECTION MOTION (Sections 5, 6, 7) ---
@@ -3287,12 +3066,10 @@
       const heroTypography = document.getElementById('heroTypography');
       const heroBottomBar = document.getElementById('heroBottomBar');
       const heroDarkOverlay = document.getElementById('heroDarkOverlay');
-      const videoDesktop = document.getElementById('heroVideoDesktop');
-      const videoMobile = document.getElementById('heroVideoMobile');
 
       if (!heroBg || !heroTypography) return;
 
-      const heroVisuals = [heroBg, videoDesktop, videoMobile].filter(Boolean);
+      const heroVisuals = [heroBg].filter(Boolean);
 
       if (!prefersReducedMotion) {
         // Responsive Scroll-Linked Hero Motion via gsap.matchMedia
