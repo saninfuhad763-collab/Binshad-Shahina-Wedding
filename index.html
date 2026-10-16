@@ -2778,10 +2778,10 @@
         const originX = w / 2;
         let offsetX = Math.round(w / 2 - (originX + (noseXBeforeTransform - originX) * finalScale));
 
-        // Task 27L & Task 27M: Tiny rightward refinement on phone and tablet layouts only (w < 1200)
-        // Task 27L (+1.5px) + Task 27M (+0.5px) = +2.0px total micro-nudge
+        // Task 27L, 27M & 27N: Tiny rightward refinement on phone and tablet layouts only (w < 1200)
+        // Task 27L (+1.5px) + Task 27M (+0.5px) + Task 27N (+0.5px) = +2.5px total micro-nudge
         if (w < 1200) {
-          offsetX += 2.0;
+          offsetX += 2.5;
         }
 
         return { startScale, peakScale, finalScale, pushDuration, pullDuration, ambientPeakScale, origin, offsetX, offsetY };
