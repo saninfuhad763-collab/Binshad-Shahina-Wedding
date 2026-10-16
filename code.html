@@ -458,6 +458,7 @@
       pointer-events: none;
       will-change: opacity;
       contain: paint;
+      opacity: 0.998;
     }
 
     /* VIDEO APERTURE — the hero <video> element is reparented here at click time.
@@ -817,12 +818,22 @@
       position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%);
       width: 5px; height: 5px; border-radius: 50%;
       background: rgba(226,193,151,0.90); box-shadow: 0 0 8px rgba(226,193,151,0.60);
+      will-change: transform;
     }
     @media (max-width: 767px) { #doorProgressRail { right: 16px; } }
 
+    #musicToggleBtn {
+      width: 44px !important;
+      height: 44px !important;
+      min-width: 44px !important;
+      min-height: 44px !important;
+      flex-shrink: 0 !important;
+      box-sizing: border-box !important;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-      .reveal-inner { transform: none !important; opacity: 1 !important; }
       #storyPinSection { display: none !important; }
       #storyMobileContainer {
         display: block !important;
@@ -1782,9 +1793,10 @@
       <div class="flex items-center gap-3 sm:gap-4">
         <!-- Background Music Toggle / Retry Button -->
         <button id="musicToggleBtn" type="button" aria-label="Play background music"
-                class="flex items-center justify-center w-8 h-8 rounded-full border border-secondary/40 text-secondary hover:border-secondary hover:bg-secondary/10 transition-all focus:outline-none cursor-pointer"
+                class="flex items-center justify-center shrink-0 min-w-[44px] min-h-[44px] w-11 h-11 rounded-full border border-secondary/40 text-secondary hover:border-secondary hover:bg-secondary/10 transition-all focus:outline-none cursor-pointer select-none active:scale-95"
+                style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;"
                 title="Play / Pause Music">
-          <span class="material-symbols-outlined text-[18px]" id="musicToggleIcon">volume_off</span>
+          <span class="material-symbols-outlined text-[20px] pointer-events-none" id="musicToggleIcon">volume_off</span>
         </button>
         <a class="hidden sm:inline-flex items-center gap-2 px-5 py-2 border border-secondary/40 text-[11px] uppercase tracking-[0.25em] text-secondary hover:bg-secondary/10 hover:border-secondary transition-all" href="#rsvp">
           <span>Attend</span>
@@ -1820,10 +1832,10 @@
       <!-- Background Parallax Image & Video Container -->
       <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <!-- Hero Background Image Stage (Underneath Scrims at z-0) -->
-        <div class="absolute inset-0 w-full h-full will-change-transform z-0 bg-[#090607] overflow-hidden" id="heroBg">
+        <div class="absolute inset-0 w-full h-full will-change-transform z-0 bg-[#090607] overflow-hidden" id="heroBg" style="transform: translateZ(0); -webkit-transform: translateZ(0); backface-visibility: hidden;">
           <picture class="block w-full h-full">
             <source srcset="assets/images/Couple-intro-optimized-image.webp" type="image/webp"/>
-            <img id="heroCoupleImage" src="assets/images/Couple-intro-optimized-image.webp" alt="Binshad and Shahina" class="w-full h-full object-cover object-center will-change-transform" fetchpriority="high" decoding="async"/>
+            <img id="heroCoupleImage" src="assets/images/Couple-intro-optimized-image.webp" alt="Binshad and Shahina" class="w-full h-full object-cover object-center will-change-transform" fetchpriority="high" decoding="async" style="transform: translateZ(0); -webkit-transform: translateZ(0); backface-visibility: hidden;"/>
           </picture>
         </div>
         <!-- Restored 3-Part Cinematic Video Scrims (Identical to #doorVideoAperture) -->
@@ -2482,71 +2494,210 @@
     let homepageRevealStarted = false;
     let failsafeTimer = null;
 
-    // --- BACKGROUND MUSIC ENGINE ---
-    const backgroundMusic = new Audio('assets/music/Love Story - Indila (Orchestra Version + Layered ~ Slowed + Reverb).mp3');
+    // --- TEMPORARY REMOVABLE PERFORMANCE RECORDER (Disabled post-verification) ---
+    window.__perfRecorder = null;
+
+    // --- BACKGROUND MUSIC ENGINE & RESILIENT CONTROLLER (Fix B) ---
+    const MUSIC_SRC = 'assets/music/Love%20Story%20-%20Indila%20(Orchestra%20Version%20%2B%20Layered%20~%20Slowed%20%2B%20Reverb).mp3';
+    const backgroundMusic = new Audio(MUSIC_SRC);
     backgroundMusic.loop = true;
-    backgroundMusic.volume = 0;
-    backgroundMusic.preload = 'metadata';
+    backgroundMusic.preload = 'auto';
     window.backgroundMusic = backgroundMusic;
 
-    let musicPlaybackStarted = false;
+    // Audio State Machine: 'idle' | 'loading' | 'playing' | 'paused' | 'failed'
+    let audioState = 'idle';
+    let audioFadeRaf = null;
+    const TARGET_AUDIO_VOLUME = 0.35;
 
-    function updateMusicButtonState(isPlaying) {
+    function setAudioVolumeDirect(vol) {
+      try {
+        backgroundMusic.volume = Math.max(0, Math.min(1, vol));
+      } catch (e) {
+        // iOS ignores .volume setter and maintains hardware level
+      }
+    }
+
+    function cancelAudioFade() {
+      if (audioFadeRaf) {
+        cancelAnimationFrame(audioFadeRaf);
+        audioFadeRaf = null;
+      }
+    }
+
+    function fadeAudioVolume(targetVol, durationMs, onDone) {
+      cancelAudioFade();
+      let currentVol = 0;
+      try { currentVol = backgroundMusic.volume; } catch (e) { currentVol = 0; }
+      const startVol = currentVol;
+      const startTime = performance.now();
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / durationMs);
+        setAudioVolumeDirect(startVol + (targetVol - startVol) * progress);
+        if (progress < 1) {
+          audioFadeRaf = requestAnimationFrame(step);
+        } else {
+          audioFadeRaf = null;
+          setAudioVolumeDirect(targetVol);
+          if (onDone) onDone();
+        }
+      }
+      audioFadeRaf = requestAnimationFrame(step);
+    }
+
+    function updateMusicButtonUI(state) {
+      audioState = state;
       const btn = document.getElementById('musicToggleBtn');
       const icon = document.getElementById('musicToggleIcon');
       if (!btn || !icon) return;
-      if (isPlaying) {
+
+      if (state === 'playing') {
         btn.setAttribute('aria-label', 'Pause background music');
         btn.classList.add('border-secondary', 'bg-secondary/15');
+        btn.classList.remove('border-amber-400/40', 'border-secondary/60');
         icon.textContent = 'volume_up';
-      } else {
+      } else if (state === 'loading') {
+        btn.setAttribute('aria-label', 'Loading background music...');
+        btn.classList.add('border-secondary/60');
+        btn.classList.remove('bg-secondary/15', 'border-amber-400/40');
+        icon.textContent = 'volume_up';
+      } else if (state === 'paused') {
         btn.setAttribute('aria-label', 'Play background music');
-        btn.classList.remove('border-secondary', 'bg-secondary/15');
+        btn.classList.remove('border-secondary', 'bg-secondary/15', 'border-secondary/60', 'border-amber-400/40');
+        icon.textContent = 'volume_off';
+      } else if (state === 'failed') {
+        btn.setAttribute('aria-label', 'Music playback blocked — tap to play');
+        btn.classList.remove('border-secondary', 'bg-secondary/15', 'border-secondary/60');
+        btn.classList.add('border-amber-400/40');
+        icon.textContent = 'volume_off';
+      } else {
+        // idle
+        btn.setAttribute('aria-label', 'Play background music');
+        btn.classList.remove('border-secondary', 'bg-secondary/15', 'border-secondary/60', 'border-amber-400/40');
         icon.textContent = 'volume_off';
       }
     }
 
-    function toggleMusicPlayback() {
+    // Audio lifecycle listeners
+    backgroundMusic.addEventListener('play', () => {
+      console.log('[Audio] Event: play');
+      if (audioState !== 'playing') updateMusicButtonUI('loading');
+    });
+
+    backgroundMusic.addEventListener('playing', () => {
+      console.log('[Audio] Event: playing');
+      // Assert that volume is never stuck at 0 if settable
+      try {
+        if (backgroundMusic.volume === 0) {
+          setAudioVolumeDirect(TARGET_AUDIO_VOLUME);
+        }
+      } catch (e) {}
+      updateMusicButtonUI('playing');
+    });
+
+    backgroundMusic.addEventListener('pause', () => {
+      console.log('[Audio] Event: pause');
+      cancelAudioFade();
+      updateMusicButtonUI('paused');
+    });
+
+    backgroundMusic.addEventListener('ended', () => {
+      console.log('[Audio] Event: ended');
+      cancelAudioFade();
+      updateMusicButtonUI('paused');
+    });
+
+    backgroundMusic.addEventListener('error', (e) => {
+      console.warn('[Audio] Event: error', e, backgroundMusic.error);
+      cancelAudioFade();
+      updateMusicButtonUI('failed');
+    });
+
+    backgroundMusic.addEventListener('canplay', () => {
+      console.log('[Audio] Event: canplay');
+    });
+
+    backgroundMusic.addEventListener('loadedmetadata', () => {
+      console.log('[Audio] Event: loadedmetadata. Duration:', backgroundMusic.duration);
+    });
+
+    // Synchronous user gesture entry point
+    function playBackgroundMusicSync() {
       if (!backgroundMusic) return;
-      if (backgroundMusic.paused) {
-        backgroundMusic.volume = 0;
-        const p = backgroundMusic.play();
-        if (p !== undefined) {
-          p.then(() => {
-            musicPlaybackStarted = true;
-            updateMusicButtonState(true);
-            gsap.to(backgroundMusic, { volume: 0.35, duration: 1.5, ease: 'power1.out', overwrite: true });
-          }).catch(err => {
-            musicPlaybackStarted = false;
-            updateMusicButtonState(false);
-            console.warn('[Audio] Toggle play failed:', err);
+      cancelAudioFade();
+
+      // Set gentle audible start volume (not zero so it is never stuck silent)
+      setAudioVolumeDirect(0.08);
+      updateMusicButtonUI('loading');
+
+      try {
+        const playPromise = backgroundMusic.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            console.log('[Audio] Playback started successfully from user gesture');
+            fadeAudioVolume(TARGET_AUDIO_VOLUME, 1500);
+            updateMusicButtonUI('playing');
+          }).catch((err) => {
+            console.warn('[Audio] User gesture play() rejected:', err.name, err.message);
+            updateMusicButtonUI('failed');
           });
         }
-      } else {
-        gsap.to(backgroundMusic, {
-          volume: 0,
-          duration: 0.8,
-          ease: 'power1.in',
-          onComplete: () => {
-            backgroundMusic.pause();
-            musicPlaybackStarted = false;
-            updateMusicButtonState(false);
+      } catch (err) {
+        console.warn('[Audio] Synchronous play() exception:', err);
+        updateMusicButtonUI('failed');
+      }
+    }
+
+    // User toggle handler with rapid tap debouncing
+    let isAudioToggling = false;
+    function toggleMusicPlayback() {
+      if (!backgroundMusic || isAudioToggling) return;
+      isAudioToggling = true;
+      setTimeout(() => { isAudioToggling = false; }, 300);
+
+      if (backgroundMusic.paused || audioState === 'paused' || audioState === 'failed' || audioState === 'idle') {
+        cancelAudioFade();
+        setAudioVolumeDirect(0.08);
+        updateMusicButtonUI('loading');
+        try {
+          const p = backgroundMusic.play();
+          if (p !== undefined) {
+            p.then(() => {
+              fadeAudioVolume(TARGET_AUDIO_VOLUME, 1200);
+              updateMusicButtonUI('playing');
+            }).catch(err => {
+              console.warn('[Audio] Toggle play() rejected:', err.name, err.message);
+              updateMusicButtonUI('failed');
+            });
           }
+        } catch (err) {
+          console.warn('[Audio] Toggle synchronous play error:', err);
+          updateMusicButtonUI('failed');
+        }
+      } else {
+        // Currently playing -> smooth fade down to pause
+        fadeAudioVolume(0, 500, () => {
+          try { backgroundMusic.pause(); } catch (e) {}
+          updateMusicButtonUI('paused');
         });
       }
     }
 
-    backgroundMusic.addEventListener('play', () => updateMusicButtonState(true));
-    backgroundMusic.addEventListener('pause', () => updateMusicButtonState(false));
-    backgroundMusic.addEventListener('error', (e) => {
-      console.warn('[Audio] Background music load error:', e);
-      musicPlaybackStarted = false;
-      updateMusicButtonState(false);
-    });
-
+    // Setup music button click and touch handling
     const musicBtnInit = document.getElementById('musicToggleBtn');
     if (musicBtnInit) {
-      musicBtnInit.addEventListener('click', toggleMusicPlayback);
+      let lastTouchTime = 0;
+      musicBtnInit.addEventListener('touchend', (e) => {
+        lastTouchTime = Date.now();
+        e.preventDefault();
+        toggleMusicPlayback();
+      }, { passive: false });
+
+      musicBtnInit.addEventListener('click', (e) => {
+        if (Date.now() - lastTouchTime < 500) return; // Prevent synthetic click after touch
+        toggleMusicPlayback();
+      });
     }
 
     // beginHomepageReveal: reveals nav + hero UI with luxury cinematic fade-in.
@@ -2598,10 +2749,22 @@
           gsap.fromTo(heroBottomBar, cfg.bar.from, cfg.bar.to);
         }
       } else {
-        if (mainNav)        { mainNav.classList.remove('opacity-0','pointer-events-none');        gsap.set(mainNav,        { opacity: 1, y: 0 }); }
-        if (heroTypography) { heroTypography.classList.remove('opacity-0','pointer-events-none'); gsap.set(heroTypography, { opacity: 1, y: 0, scale: 1 }); }
-        if (heroAnimItems.length > 0) gsap.set(heroAnimItems, { y: 0, opacity: 1 });
-        if (heroBottomBar)  { heroBottomBar.classList.remove('opacity-0','pointer-events-none');  gsap.set(heroBottomBar,  { y: 0, opacity: 1 }); }
+        // REDUCED MOTION PROFILE: Gentle visible entrance
+        if (mainNav) {
+          mainNav.classList.remove('opacity-0', 'pointer-events-none');
+          gsap.fromTo(mainNav, { opacity: 0, y: -2 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power1.out' });
+        }
+        if (heroTypography) {
+          heroTypography.classList.remove('opacity-0', 'pointer-events-none');
+          gsap.fromTo(heroTypography, { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: 0.7, delay: 0.1, ease: 'power1.out' });
+        }
+        if (heroAnimItems.length > 0) {
+          gsap.fromTo(heroAnimItems, { opacity: 0 }, { opacity: 1, duration: 0.6, stagger: 0.08, delay: 0.15, ease: 'power1.out' });
+        }
+        if (heroBottomBar) {
+          heroBottomBar.classList.remove('opacity-0', 'pointer-events-none');
+          gsap.fromTo(heroBottomBar, { opacity: 0 }, { opacity: 1, duration: 0.6, delay: 0.3, ease: 'power1.out' });
+        }
       }
     }
 
@@ -2801,7 +2964,17 @@
         let origin = '50% 45%';
         let offsetY = 0;
 
-        if (w >= 1200) {
+        if (prefersReducedMotion) {
+          // REDUCED MOTION PROFILE: Low-travel gentle zoom
+          startScale = 1.01;
+          peakScale = 1.05;
+          finalScale = 1.03;
+          pushDuration = 3.8;
+          pullDuration = 2.2;
+          ambientPeakScale = 1.034;
+          origin = '50% 40%';
+          offsetY = Math.round(h * -0.040);
+        } else if (w >= 1200) {
           // Desktop and large desktop: stronger zoom-in (1.03 -> 1.38 over 7.0s; partial pull-back to 1.27 over 3.7s; exact groom nose-tip centering)
           startScale = 1.03;
           peakScale = 1.38;
@@ -2885,10 +3058,13 @@
       let heroTimeline = null;
 
       function startHeroZoom() {
-        if (heroZoomStarted || prefersReducedMotion) return;
+        if (heroZoomStarted) return;
         const img = document.getElementById('heroCoupleImage');
         if (!img) return;
         heroZoomStarted = true;
+        if (window.__perfRecorder) {
+          window.__perfRecorder.recordMilestone('zoom start');
+        }
 
         const {
           startScale,
@@ -2938,7 +3114,7 @@
               scale: ambientPeakScale,
               x: offsetX,
               y: offsetY,
-              duration: 14.0,
+              duration: prefersReducedMotion ? 16.0 : 14.0,
               ease: 'sine.inOut',
               yoyo: true,
               repeat: -1,
@@ -2950,9 +3126,27 @@
 
       let heroDecodePromise = null;
 
+      function prewarmHeroTexture(img) {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = 16;
+          canvas.height = 16;
+          const ctx = canvas.getContext('2d', { willReadFrequently: false });
+          if (ctx && img) {
+            ctx.drawImage(img, 0, 0, 16, 16);
+          }
+        } catch (e) {}
+      }
+
       function onHeroImageReady() {
         if (heroImageReady) return;
         heroImageReady = true;
+        if (heroCoupleImage) {
+          prewarmHeroTexture(heroCoupleImage);
+        }
+        if (window.__perfRecorder) {
+          window.__perfRecorder.recordMilestone('image decode readiness');
+        }
         if (introState === 'opening' || introState === 'complete') {
           startHeroZoom();
         }
@@ -3028,51 +3222,47 @@
         window.scrollTo(0, 0);
         doorRoundBtn.disabled = true;
 
-        // Start background music from user click gesture (silent start -> 3.0s fade to 0.35)
-        if (backgroundMusic && !musicPlaybackStarted) {
-          try {
-            backgroundMusic.volume = 0;
-            const playPromise = backgroundMusic.play();
-            if (playPromise !== undefined) {
-              playPromise.then(() => {
-                musicPlaybackStarted = true;
-                updateMusicButtonState(true);
-                gsap.to(backgroundMusic, {
-                  volume: 0.35,
-                  duration: 3.0,
-                  ease: 'power1.out',
-                  overwrite: true
-                });
-              }).catch((err) => {
-                musicPlaybackStarted = false;
-                updateMusicButtonState(false);
-                console.warn('[Audio] Background music playback prevented or interrupted:', err);
-              });
-            }
-          } catch (err) {
-            musicPlaybackStarted = false;
-            updateMusicButtonState(false);
-            console.warn('[Audio] Synchronous play() error:', err);
-          }
+        if (window.__perfRecorder) {
+          window.__perfRecorder.start();
         }
+
+        // Start background music synchronously from user click gesture (Fix B)
+        playBackgroundMusicSync();
+
         introEntrance.kill();
         if (doorZoomTween) {
           doorZoomTween.pause();
         }
 
-        // REDUCED MOTION GUEST FLOW: instantaneous, non-disorienting crossfade directly into ceremony
+        // REDUCED MOTION GUEST FLOW: gentle visible alternative opening with low-travel hero zoom
         if (prefersReducedMotion) {
-          gsap.to(weddingIntro, {
-            opacity: 0,
-            duration: 0.35,
-            ease: 'power1.out',
+          startHeroZoom();
+
+          const rmTl = gsap.timeline({
             onComplete: () => {
-              weddingIntro.style.display = 'none';
-              weddingIntro.setAttribute('aria-hidden', 'true');
-              weddingIntro.style.pointerEvents = 'none';
+              if (weddingIntro) {
+                weddingIntro.style.display = 'none';
+                weddingIntro.setAttribute('aria-hidden', 'true');
+                weddingIntro.style.pointerEvents = 'none';
+              }
               triggerHomepageEntrance();
             }
           });
+
+          rmTl.to([doorRoundBtn, doorEyebrow, doorNamesDisplay, doorProgressRail].filter(Boolean), {
+            opacity: 0,
+            duration: 0.40,
+            ease: 'power1.out'
+          }, 0);
+
+          if (doorLeft)  rmTl.to(doorLeft,  { rotateY: -35, opacity: 0, duration: 1.1, ease: 'power2.out' }, 0.10);
+          if (doorRight) rmTl.to(doorRight, { rotateY:  35, opacity: 0, duration: 1.1, ease: 'power2.out' }, 0.10);
+
+          if (doorInteriorReveal) {
+            rmTl.to(doorInteriorReveal, { opacity: 0, duration: 0.80, ease: 'power1.out' }, 0.10);
+          }
+
+          rmTl.to(weddingIntro, { opacity: 0, duration: 0.50, ease: 'power1.in' }, 0.90);
           return;
         }
 
@@ -3081,6 +3271,9 @@
 
         // Coordinated door opening execution once hero image decode is verified
         function executeOpeningSequence() {
+          if (window.__perfRecorder) {
+            window.__perfRecorder.recordMilestone('zoom start');
+          }
           // Start subtle cinematic zoom loop on couple photo
           startHeroZoom();
 
@@ -3092,27 +3285,27 @@
             { opacity: 0, y: -10, duration: 0.38, ease: 'power2.in', stagger: 0.05 }, 0);
 
           // T=0 — Seam shadow fades
-          if (doorCenterSeam) tl.to(doorCenterSeam, { opacity: 0, duration: 0.28, ease: 'power2.out' }, 0);
+          if (doorCenterSeam) tl.to(doorCenterSeam, { opacity: 0, duration: 0.28, ease: 'power2.out', onComplete: () => { doorCenterSeam.style.display = 'none'; } }, 0);
 
           // T=0.08 — Center ignition flash
           if (doorIgnition) {
             tl.to(doorIgnition, { opacity: 1, duration: 0.10, ease: 'power3.out' }, 0.08);
-            tl.to(doorIgnition, { scale: 2.8, opacity: 0, duration: 0.55, ease: 'power2.out' }, 0.15);
+            tl.to(doorIgnition, { scale: 2.8, opacity: 0, duration: 0.55, ease: 'power2.out', onComplete: () => { doorIgnition.style.display = 'none'; } }, 0.15);
           }
 
           // T=0.10 — Seam glow
           if (doorLightSeam) {
             tl.to(doorLightSeam, { opacity: 1, duration: 0.28, ease: 'power2.out' }, 0.10);
-            tl.to(doorLightSeam, { opacity: 0, duration: 0.55, ease: 'power1.in' }, 0.55);
+            tl.to(doorLightSeam, { opacity: 0, duration: 0.55, ease: 'power1.in', onComplete: () => { doorLightSeam.style.display = 'none'; } }, 0.55);
           }
 
           // T=0.12 — Button collapses
-          tl.to(doorRoundBtn, { scale: 0.40, opacity: 0, duration: 0.38, ease: 'power2.in' }, 0.12);
+          tl.to(doorRoundBtn, { scale: 0.40, opacity: 0, duration: 0.38, ease: 'power2.in', onComplete: () => { doorRoundBtn.style.display = 'none'; } }, 0.12);
 
           // T=0.08 — Bloom illuminates doors during opening
           if (doorLightBloom) {
             tl.to(doorLightBloom, { opacity: 0.88, duration: 0.52, ease: 'power2.out' }, 0.08);
-            tl.to(doorLightBloom, { opacity: 0, duration: 0.65, ease: 'power1.in' }, 0.65);
+            tl.to(doorLightBloom, { opacity: 0, duration: 0.65, ease: 'power1.in', onComplete: () => { doorLightBloom.style.display = 'none'; } }, 0.65);
           }
 
           // T=0.10 — RADIAL WAVE EXPANDS across doors (contain: paint, clean removal after fade)
@@ -3130,6 +3323,11 @@
           }
 
           // T=0.20 — Doors open (heavy, physical, hinged)
+          tl.call(() => {
+            if (window.__perfRecorder) {
+              window.__perfRecorder.recordMilestone('door rotation start');
+            }
+          }, null, 0.20);
           if (doorLeft)  tl.to(doorLeft,  { rotateY: -95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
           if (doorRight) tl.to(doorRight, { rotateY:  95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
 
@@ -3152,6 +3350,12 @@
           // T=0.40 — Aperture reveal: dark interior curtain smoothly softens as doors part,
           // revealing the continuous zoom on couple underneath without waiting for late pop
           if (doorInteriorReveal) {
+            tl.call(() => {
+              if (window.__perfRecorder) {
+                window.__perfRecorder.recordMilestone('interior overlay fade');
+                window.__perfRecorder.recordMilestone('hero image first visible frame');
+              }
+            }, null, 0.40);
             tl.to(doorInteriorReveal, {
               opacity: 0,
               duration: 0.70,
@@ -3163,23 +3367,29 @@
           }
 
           // T=2.05 — Door leaves finish physical rotation (0.20 + 1.85 = 2.05s)
-          // Hand off smoothly to homepage entrance without waiting for video decoders
+          // Hide door leaves so their heavy SVG filters stop consuming GPU/compositor resources!
           tl.call(() => {
+            if (doorLeft)  doorLeft.style.display = 'none';
+            if (doorRight) doorRight.style.display = 'none';
+            if (window.__perfRecorder) {
+              window.__perfRecorder.recordMilestone('transition completion');
+            }
             triggerHomepageEntrance();
           }, null, 2.05);
 
           // T=2.50 — Door stage (leaves) and zoom wrapper fade out completely
           const doorStage = document.getElementById('doorStage');
-          if (doorStage) tl.to(doorStage, { opacity: 0, duration: 0.30, ease: 'power1.in' }, 2.50);
-          if (doorZoomWrapper) tl.to(doorZoomWrapper, { opacity: 0, duration: 0.30, ease: 'power1.in' }, 2.50);
+          if (doorStage) tl.to(doorStage, { opacity: 0, duration: 0.30, ease: 'power1.in', onComplete: () => { doorStage.style.display = 'none'; } }, 2.50);
+          if (doorZoomWrapper) tl.to(doorZoomWrapper, { opacity: 0, duration: 0.30, ease: 'power1.in', onComplete: () => { doorZoomWrapper.style.display = 'none'; } }, 2.50);
 
           // T=2.70 — Progress rail fades
-          if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.25, ease: 'power1.in' }, 2.70);
+          if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.25, ease: 'power1.in', onComplete: () => { doorProgressRail.style.display = 'none'; } }, 2.70);
 
-          // Progress rail fill animation
+          // Progress rail fill animation — TRANSFORM COMPOSITOR ONLY, NO TOP LAYOUT THRASH!
           if (doorProgressFill && doorProgressDot) {
+            const railHeight = doorProgressRail ? doorProgressRail.offsetHeight : 140;
             gsap.to(doorProgressFill, { scaleY: 1, duration: 1.85, ease: 'power2.inOut', delay: 0.20 });
-            gsap.to(doorProgressDot,  { top: '100%', duration: 1.85, ease: 'power2.inOut', delay: 0.20 });
+            gsap.to(doorProgressDot,  { y: railHeight, duration: 1.85, ease: 'power2.inOut', delay: 0.20, force3D: true });
           }
         }
 
@@ -3277,25 +3487,39 @@
       if (!storyPinSection || !storyPinViewport) return;
 
       if (prefersReducedMotion) {
+        if (storyPinSection) storyPinSection.style.display = 'none';
         const mobileContainer = document.getElementById('storyMobileContainer');
         if (mobileContainer) {
           gsap.set(mobileContainer, { display: 'block', opacity: 1 });
           const items = mobileContainer.querySelectorAll(':scope > div');
-          items.forEach(item => {
+          items.forEach((item, index) => {
             gsap.set(item, { opacity: 1, y: 0 });
             const v = item.querySelector('video');
             if (v) {
               v.preload = 'metadata';
               item.style.cursor = 'pointer';
               item.setAttribute('role', 'button');
-              item.setAttribute('aria-label', 'Play or pause chapter video');
+              item.setAttribute('aria-label', `Play or pause Chapter ${index + 1} video`);
+
+              let playBadge = item.querySelector('.story-play-badge');
+              if (!playBadge) {
+                playBadge = document.createElement('div');
+                playBadge.className = 'story-play-badge absolute bottom-4 right-4 z-30 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/85 backdrop-blur-md border border-secondary/40 text-secondary text-[11px] uppercase tracking-wider select-none pointer-events-none transition-all';
+                playBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">play_arrow</span><span>Play Video</span>';
+                const wrapper = item.querySelector('[id^="storyMobileMediaWrapper"]');
+                if (wrapper) wrapper.appendChild(playBadge);
+              }
+
               item.addEventListener('click', () => {
                 if (v.paused) {
                   v.muted = true;
                   v.playsInline = true;
-                  v.play().catch(e => console.warn('[StoryVideo] User play error:', e));
+                  v.play().then(() => {
+                    if (playBadge) playBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">pause</span><span>Pause</span>';
+                  }).catch(e => console.warn('[StoryVideo] User play error:', e));
                 } else {
                   v.pause();
+                  if (playBadge) playBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">play_arrow</span><span>Play Video</span>';
                 }
               });
             }
@@ -3762,7 +3986,22 @@
     // --- 3. EDITORIAL TYPOGRAPHY REVEALS (Section 13) ---
     function initTypographyReveals() {
       if (prefersReducedMotion) {
-        gsap.set('.reveal-inner', { y: '0%', opacity: 1 });
+        gsap.utils.toArray('.reveal-inner').forEach(inner => {
+          gsap.fromTo(inner,
+            { opacity: 0, y: 3 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: 'power1.out',
+              scrollTrigger: {
+                trigger: inner.parentElement,
+                start: 'top 92%',
+                toggleActions: 'play none none none'
+              }
+            }
+          );
+        });
         return;
       }
 
@@ -3783,7 +4022,24 @@
 
     // --- 4. IMAGE PARALLAX (Section 14) ---
     function initImageParallax() {
-      if (prefersReducedMotion) return;
+      if (prefersReducedMotion) {
+        gsap.utils.toArray('.parallax-img').forEach(img => {
+          gsap.fromTo(img,
+            { opacity: 0.88 },
+            {
+              opacity: 1,
+              duration: 0.8,
+              ease: 'power1.out',
+              scrollTrigger: {
+                trigger: img.parentElement,
+                start: 'top 90%',
+                toggleActions: 'play none none none'
+              }
+            }
+          );
+        });
+        return;
+      }
 
       gsap.utils.toArray('.parallax-img').forEach(img => {
         gsap.to(img, {
