@@ -2704,59 +2704,71 @@
         let pullDuration = 3.0;
         let ambientPeakScale = 1.255;
         let origin = '50% 45%';
+        let offsetX = 0;
+        let offsetY = 0;
 
         if (w >= 1200) {
-          // Desktop and large desktop (1.03 -> 1.32 push over 5.8s; partial pull-back to 1.23 over 3.0s)
+          // Desktop and large desktop: unchanged (1.03 -> 1.32 push over 5.8s; partial pull-back to 1.23 over 3.0s)
           startScale = 1.03;
           peakScale = 1.32;
           finalScale = 1.23;
-          pushDuration = 5.8; // 3.6 * (1.32 - 1.03) / (1.21 - 1.03) = 3.6 * 0.29 / 0.18 = 5.80s
-          pullDuration = 3.0; // Proportional: 7.0 * (0.09 / 0.21) = 3.00s
+          pushDuration = 5.8; // Preserved unchanged
+          pullDuration = 3.0; // Preserved unchanged
           ambientPeakScale = 1.255; // Subtle oscillation: 1.230 <-> 1.255 (+0.025 amplitude)
           origin = '50% 45%';
+          offsetX = 0;
+          offsetY = 0;
         } else if (w >= 768) {
           if (isLandscape) {
-            // Tablet landscape (1.03 -> 1.32 push over 4.9s; partial pull-back to 1.23 over 3.0s)
+            // Tablet landscape (1.03 -> 1.34 push over 5.24s; partial pull-back to 1.25 over 3.0s)
             startScale = 1.03;
-            peakScale = 1.32;
-            finalScale = 1.23;
-            pushDuration = 4.9; // 3.2 * (1.32 - 1.03) / (1.22 - 1.03) = 3.2 * 0.29 / 0.19 = 4.88s ~= 4.9s
-            pullDuration = 3.0; // Proportional: 7.0 * (0.09 / 0.22) = 2.86s ~= 3.0s
-            ambientPeakScale = 1.252; // Subtle oscillation: 1.230 <-> 1.252 (+0.022 amplitude)
+            peakScale = 1.34;
+            finalScale = 1.25;
+            pushDuration = 5.24; // 4.9 * (1.34 - 1.03) / (1.32 - 1.03) = 4.9 * 0.31 / 0.29 = 5.238s ~= 5.24s
+            pullDuration = 3.0; // Proportional travel
+            ambientPeakScale = 1.272; // Subtle oscillation: 1.250 <-> 1.272 (+0.022 amplitude)
             origin = '50% 45%';
+            offsetX = Math.round(w * 0.010); // +1.0% vw rightward centering
+            offsetY = Math.round(h * -0.020); // -2.0% vh upward centering
           } else {
-            // Tablet portrait (1.03 -> 1.31 push over 5.0s; partial pull-back to 1.22 over 3.0s)
+            // Tablet portrait (1.03 -> 1.34 push over 5.54s; partial pull-back to 1.25 over 3.0s)
             startScale = 1.03;
-            peakScale = 1.31;
-            finalScale = 1.22;
-            pushDuration = 5.0; // 3.2 * (1.31 - 1.03) / (1.21 - 1.03) = 3.2 * 0.28 / 0.18 = 4.98s ~= 5.0s
-            pullDuration = 3.0; // Proportional: 7.0 * (0.09 / 0.21) = 3.00s
-            ambientPeakScale = 1.240; // Subtle oscillation: 1.220 <-> 1.240 (+0.020 amplitude)
+            peakScale = 1.34;
+            finalScale = 1.25;
+            pushDuration = 5.54; // 5.0 * (1.34 - 1.03) / (1.31 - 1.03) = 5.0 * 0.31 / 0.28 = 5.536s ~= 5.54s
+            pullDuration = 3.0; // Proportional travel
+            ambientPeakScale = 1.270; // Subtle oscillation: 1.250 <-> 1.270 (+0.020 amplitude)
             origin = '50% 42%';
+            offsetX = Math.round(w * 0.011); // +1.1% vw rightward centering
+            offsetY = Math.round(h * -0.045); // -4.5% vh upward centering
           }
         } else {
           if (isLandscape) {
-            // Mobile landscape (1.03 -> 1.31 push over 5.0s; partial pull-back to 1.22 over 3.0s)
+            // Mobile landscape (1.03 -> 1.33 push over 5.36s; partial pull-back to 1.24 over 3.0s)
             startScale = 1.03;
-            peakScale = 1.31;
-            finalScale = 1.22;
-            pushDuration = 5.0; // 3.2 * (1.31 - 1.03) / (1.21 - 1.03) = 3.2 * 0.28 / 0.18 = 4.98s ~= 5.0s
-            pullDuration = 3.0; // Proportional: 7.0 * (0.09 / 0.21) = 3.00s
-            ambientPeakScale = 1.240; // Subtle oscillation: 1.220 <-> 1.240 (+0.020 amplitude)
+            peakScale = 1.33;
+            finalScale = 1.24;
+            pushDuration = 5.36; // 5.0 * (1.33 - 1.03) / (1.31 - 1.03) = 5.0 * 0.30 / 0.28 = 5.357s ~= 5.36s
+            pullDuration = 3.0; // Proportional travel
+            ambientPeakScale = 1.260; // Subtle oscillation: 1.240 <-> 1.260 (+0.020 amplitude)
             origin = '50% 45%';
+            offsetX = Math.round(w * 0.010); // +1.0% vw rightward centering
+            offsetY = Math.round(h * -0.020); // -2.0% vh upward centering
           } else {
-            // Mobile portrait (1.03 -> 1.29 push over 4.9s; partial pull-back to 1.21 over 2.8s)
+            // Mobile portrait (1.03 -> 1.32 push over 5.47s; partial pull-back to 1.24 over 2.8s)
             startScale = 1.03;
-            peakScale = 1.29;
-            finalScale = 1.21;
-            pushDuration = 4.9; // 3.2 * (1.29 - 1.03) / (1.20 - 1.03) = 3.2 * 0.26 / 0.17 = 4.89s ~= 4.9s
-            pullDuration = 2.8; // Proportional: 7.0 * (0.08 / 0.20) = 2.80s
-            ambientPeakScale = 1.228; // Subtle oscillation: 1.210 <-> 1.228 (+0.018 amplitude)
+            peakScale = 1.32;
+            finalScale = 1.24;
+            pushDuration = 5.47; // 4.9 * (1.32 - 1.03) / (1.29 - 1.03) = 4.9 * 0.29 / 0.26 = 5.465s ~= 5.47s
+            pullDuration = 2.8; // Proportional travel
+            ambientPeakScale = 1.258; // Subtle oscillation: 1.240 <-> 1.258 (+0.018 amplitude)
             origin = '50% 40%';
+            offsetX = Math.round(w * 0.011); // +1.1% vw rightward centering
+            offsetY = Math.round(h * -0.040); // -4.0% vh upward centering
           }
         }
 
-        return { startScale, peakScale, finalScale, pushDuration, pullDuration, ambientPeakScale, origin };
+        return { startScale, peakScale, finalScale, pushDuration, pullDuration, ambientPeakScale, origin, offsetX, offsetY };
       }
 
       let heroTimeline = null;
@@ -2767,10 +2779,25 @@
         if (!img) return;
         heroZoomStarted = true;
 
-        const { startScale, peakScale, finalScale, pushDuration, pullDuration, ambientPeakScale, origin } = getHeroScaleTargets();
+        const {
+          startScale,
+          peakScale,
+          finalScale,
+          pushDuration,
+          pullDuration,
+          ambientPeakScale,
+          origin,
+          offsetX,
+          offsetY
+        } = getHeroScaleTargets();
 
         // Establish deterministic baseline and couple focal origin
-        gsap.set(img, { scale: startScale, transformOrigin: origin });
+        gsap.set(img, {
+          scale: startScale,
+          x: offsetX,
+          y: offsetY,
+          transformOrigin: origin
+        });
 
         // Master timeline controlling the single-image continuous camera sequence
         heroTimeline = gsap.timeline();
@@ -2779,6 +2806,8 @@
         // Begins at T=0 (click). Reveals during T=1.3s-1.8s (doors swing). Peaks at pushDuration.
         heroTimeline.to(img, {
           scale: peakScale,
+          x: offsetX,
+          y: offsetY,
           duration: pushDuration,
           ease: 'power1.inOut'
         }, 0);
@@ -2787,6 +2816,8 @@
         // Decelerates smoothly at peak and glides backward to final closer framing (not back to wide 1.00)
         heroTimeline.to(img, {
           scale: finalScale,
+          x: offsetX,
+          y: offsetY,
           duration: pullDuration,
           ease: 'power2.inOut',
           onComplete: () => {
@@ -2794,6 +2825,8 @@
             // Starts seamlessly from finalScale without any scale jump or visual pop
             gsap.to(img, {
               scale: ambientPeakScale,
+              x: offsetX,
+              y: offsetY,
               duration: 14.0,
               ease: 'sine.inOut',
               yoyo: true,
