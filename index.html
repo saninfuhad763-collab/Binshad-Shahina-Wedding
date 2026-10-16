@@ -2697,76 +2697,78 @@
         const h = window.innerHeight;
         const isLandscape = w > h;
 
+        // Calculate rendered width under object-fit: cover (natural aspect ratio 16:9 / 2048x1152)
+        const rw = (w / h >= 16 / 9) ? w : h * (16 / 9);
+
         let startScale = 1.03;
-        let peakScale = 1.32;
-        let finalScale = 1.23;
-        let pushDuration = 5.8;
-        let pullDuration = 3.0;
-        let ambientPeakScale = 1.255;
+        let peakScale = 1.38;
+        let finalScale = 1.27;
+        let pushDuration = 7.0;
+        let pullDuration = 3.7;
+        let ambientPeakScale = 1.295;
         let origin = '50% 45%';
-        let offsetX = 0;
         let offsetY = 0;
 
         if (w >= 1200) {
-          // Desktop and large desktop: unchanged (1.03 -> 1.32 push over 5.8s; partial pull-back to 1.23 over 3.0s)
+          // Desktop and large desktop: stronger zoom-in (1.03 -> 1.38 over 7.0s; partial pull-back to 1.27 over 3.7s; exact rightward face centering)
           startScale = 1.03;
-          peakScale = 1.32;
-          finalScale = 1.23;
-          pushDuration = 5.8; // Preserved unchanged
-          pullDuration = 3.0; // Preserved unchanged
-          ambientPeakScale = 1.255; // Subtle oscillation: 1.230 <-> 1.255 (+0.025 amplitude)
+          peakScale = 1.38;
+          finalScale = 1.27;
+          pushDuration = 7.0; // 5.8 * (1.38 - 1.03) / (1.32 - 1.03) = 5.8 * 0.35 / 0.29 = 7.00s (velocity 0.0500 scale/s preserved)
+          pullDuration = 3.7; // Proportional travel: 3.0 * (0.11 / 0.09) = 3.67s ~= 3.7s
+          ambientPeakScale = 1.295; // Subtle oscillation: 1.270 <-> 1.295 (+0.025 amplitude)
           origin = '50% 45%';
-          offsetX = 0;
           offsetY = 0;
         } else if (w >= 768) {
           if (isLandscape) {
-            // Tablet landscape (1.03 -> 1.34 push over 5.24s; partial pull-back to 1.25 over 3.0s)
+            // Tablet landscape: scales preserved (1.03 -> 1.34 push over 5.24s; partial pull-back to 1.25 over 3.0s; exact rightward face centering)
             startScale = 1.03;
             peakScale = 1.34;
             finalScale = 1.25;
-            pushDuration = 5.24; // 4.9 * (1.34 - 1.03) / (1.32 - 1.03) = 4.9 * 0.31 / 0.29 = 5.238s ~= 5.24s
-            pullDuration = 3.0; // Proportional travel
+            pushDuration = 5.24; // Preserved
+            pullDuration = 3.0; // Preserved
             ambientPeakScale = 1.272; // Subtle oscillation: 1.250 <-> 1.272 (+0.022 amplitude)
             origin = '50% 45%';
-            offsetX = Math.round(w * 0.010); // +1.0% vw rightward centering
-            offsetY = Math.round(h * -0.020); // -2.0% vh upward centering
+            offsetY = Math.round(h * -0.020); // -2.0% vh upward centering (preserved)
           } else {
-            // Tablet portrait (1.03 -> 1.34 push over 5.54s; partial pull-back to 1.25 over 3.0s)
+            // Tablet portrait: scales preserved (1.03 -> 1.34 push over 5.54s; partial pull-back to 1.25 over 3.0s; exact rightward face centering)
             startScale = 1.03;
             peakScale = 1.34;
             finalScale = 1.25;
-            pushDuration = 5.54; // 5.0 * (1.34 - 1.03) / (1.31 - 1.03) = 5.0 * 0.31 / 0.28 = 5.536s ~= 5.54s
-            pullDuration = 3.0; // Proportional travel
+            pushDuration = 5.54; // Preserved
+            pullDuration = 3.0; // Preserved
             ambientPeakScale = 1.270; // Subtle oscillation: 1.250 <-> 1.270 (+0.020 amplitude)
             origin = '50% 42%';
-            offsetX = Math.round(w * 0.011); // +1.1% vw rightward centering
-            offsetY = Math.round(h * -0.045); // -4.5% vh upward centering
+            offsetY = Math.round(h * -0.045); // -4.5% vh upward centering (preserved)
           }
         } else {
           if (isLandscape) {
-            // Mobile landscape (1.03 -> 1.33 push over 5.36s; partial pull-back to 1.24 over 3.0s)
+            // Mobile landscape: scales preserved (1.03 -> 1.33 push over 5.36s; partial pull-back to 1.24 over 3.0s; exact rightward face centering)
             startScale = 1.03;
             peakScale = 1.33;
             finalScale = 1.24;
-            pushDuration = 5.36; // 5.0 * (1.33 - 1.03) / (1.31 - 1.03) = 5.0 * 0.30 / 0.28 = 5.357s ~= 5.36s
-            pullDuration = 3.0; // Proportional travel
+            pushDuration = 5.36; // Preserved
+            pullDuration = 3.0; // Preserved
             ambientPeakScale = 1.260; // Subtle oscillation: 1.240 <-> 1.260 (+0.020 amplitude)
             origin = '50% 45%';
-            offsetX = Math.round(w * 0.010); // +1.0% vw rightward centering
-            offsetY = Math.round(h * -0.020); // -2.0% vh upward centering
+            offsetY = Math.round(h * -0.020); // -2.0% vh upward centering (preserved)
           } else {
-            // Mobile portrait (1.03 -> 1.32 push over 5.47s; partial pull-back to 1.24 over 2.8s)
+            // Mobile portrait: scales preserved (1.03 -> 1.32 push over 5.47s; partial pull-back to 1.24 over 2.8s; exact rightward face centering)
             startScale = 1.03;
             peakScale = 1.32;
             finalScale = 1.24;
-            pushDuration = 5.47; // 4.9 * (1.32 - 1.03) / (1.29 - 1.03) = 4.9 * 0.29 / 0.26 = 5.465s ~= 5.47s
-            pullDuration = 2.8; // Proportional travel
+            pushDuration = 5.47; // Preserved
+            pullDuration = 2.8; // Preserved
             ambientPeakScale = 1.258; // Subtle oscillation: 1.240 <-> 1.258 (+0.018 amplitude)
             origin = '50% 40%';
-            offsetX = Math.round(w * 0.011); // +1.1% vw rightward centering
-            offsetY = Math.round(h * -0.040); // -4.0% vh upward centering
+            offsetY = Math.round(h * -0.040); // -4.0% vh upward centering (preserved)
           }
         }
+
+        // Calibrated horizontal offset: aligns the midpoint between the couple's faces with the horizontal center
+        // of the visible hero viewport across all responsive breakpoints and device aspect ratios under object-fit: cover.
+        const faceK = (w >= 768) ? 76.0 : 69.0;
+        const offsetX = Math.round(faceK * (rw / 2048.0) * finalScale);
 
         return { startScale, peakScale, finalScale, pushDuration, pullDuration, ambientPeakScale, origin, offsetX, offsetY };
       }
