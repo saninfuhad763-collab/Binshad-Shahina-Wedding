@@ -2776,7 +2776,12 @@
         const imageLeft = (w - renderedWidth) / 2;
         const noseXBeforeTransform = imageLeft + noseX * fitScale;
         const originX = w / 2;
-        const offsetX = Math.round(w / 2 - (originX + (noseXBeforeTransform - originX) * finalScale));
+        let offsetX = Math.round(w / 2 - (originX + (noseXBeforeTransform - originX) * finalScale));
+
+        // Task 27L: Tiny 1.5px rightward refinement on phone and tablet layouts only (w < 1200)
+        if (w < 1200) {
+          offsetX += 1.5;
+        }
 
         return { startScale, peakScale, finalScale, pushDuration, pullDuration, ambientPeakScale, origin, offsetX, offsetY };
       }
