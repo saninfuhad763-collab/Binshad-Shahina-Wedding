@@ -40,6 +40,15 @@
     }
   </script>
 
+  <!-- Video Telemetry Diagnostic Hook (Only loaded if ?videoDebug=1 is present) -->
+  <script>
+    if (new URLSearchParams(window.location.search).has('videoDebug')) {
+      const s = document.createElement('script');
+      s.src = 'assets/js/video-debug.js';
+      document.head.appendChild(s);
+    }
+  </script>
+
   <style>
     /* Critical base rendering */
     html {
