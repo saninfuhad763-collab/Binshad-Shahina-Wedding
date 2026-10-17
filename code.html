@@ -31,6 +31,15 @@
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
 
+  <!-- Motion Telemetry Diagnostic Hook (Only loaded if ?motionDebug=1 is present) -->
+  <script>
+    if (new URLSearchParams(window.location.search).has('motionDebug')) {
+      const s = document.createElement('script');
+      s.src = 'assets/js/motion-debug.js';
+      document.head.appendChild(s);
+    }
+  </script>
+
   <style>
     /* Critical base rendering */
     html {
@@ -2493,7 +2502,7 @@
     let failsafeTimer = null;
 
     // --- TEMPORARY REMOVABLE PERFORMANCE RECORDER (Disabled post-verification) ---
-    window.__perfRecorder = null;
+    if (!window.__perfRecorder) window.__perfRecorder = null;
 
     // --- BACKGROUND MUSIC ENGINE & RESILIENT CONTROLLER (Fix B) ---
     const MUSIC_SRC = 'assets/music/Love%20Story%20-%20Indila%20(Orchestra%20Version%20%2B%20Layered%20~%20Slowed%20%2B%20Reverb).mp3';
@@ -2825,6 +2834,9 @@
             // Defer ScrollTrigger refresh until weddingIntro is completely hidden
             // so layout reflow never collides with the active door completion transition!
             requestAnimationFrame(() => {
+              if (window.__perfRecorder) {
+                window.__perfRecorder.recordMilestone('ScrollTrigger Refresh');
+              }
               ScrollTrigger.sort();
               ScrollTrigger.refresh();
             });
@@ -3099,6 +3111,9 @@
 
         // Phase 1: Purposeful opening push-in towards couple
         // Begins at T=0 (click). Reveals during T=1.3s-1.8s (doors swing). Peaks at pushDuration.
+        if (window.__perfRecorder && typeof window.__perfRecorder.recordPhase === 'function') {
+          window.__perfRecorder.recordPhase('Phase 1: Push-In');
+        }
         heroTimeline.to(img, {
           scale: peakScale,
           x: offsetX,
@@ -3117,7 +3132,15 @@
           force3D: true,
           duration: pullDuration,
           ease: 'power2.inOut',
+          onStart: () => {
+            if (window.__perfRecorder && typeof window.__perfRecorder.recordPhase === 'function') {
+              window.__perfRecorder.recordPhase('Phase 2: Pull-Back');
+            }
+          },
           onComplete: () => {
+            if (window.__perfRecorder && typeof window.__perfRecorder.recordPhase === 'function') {
+              window.__perfRecorder.recordPhase('Phase 3: Ambient Loop');
+            }
             // Phase 3: Ambient cinematic breathing loop oscillating subtly around close framing
             // Starts seamlessly from finalScale without any scale jump or visual pop
             gsap.to(img, {
