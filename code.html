@@ -524,9 +524,8 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background: #4a101d;
-      opacity: 0.15;
-      mix-blend-mode: color;
+      background: rgba(74, 16, 29, 0.15);
+      mix-blend-mode: normal;
       z-index: 20;
     }
 
@@ -3139,18 +3138,8 @@
       let heroDecodePromise = null;
 
       function prewarmHeroTexture(img) {
-        try {
-          if (typeof window.createImageBitmap === 'function' && img) {
-            window.createImageBitmap(img).catch(() => {});
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = 16;
-          canvas.height = 16;
-          const ctx = canvas.getContext('2d', { willReadFrequently: false });
-          if (ctx && img) {
-            ctx.drawImage(img, 0, 0, 16, 16);
-          }
-        } catch (e) {}
+        // Texture decode is natively fulfilled by heroCoupleImage.decode() without allocating
+        // redundant offscreen ImageBitmaps or 2D canvas contexts that induce GC thread pauses.
       }
 
       function onHeroImageReady() {
