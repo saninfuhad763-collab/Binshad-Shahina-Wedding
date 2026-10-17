@@ -457,8 +457,7 @@
       z-index: 3;
       pointer-events: none;
       will-change: opacity;
-      contain: paint;
-      opacity: 0.998;
+      opacity: 0.995;
     }
 
     /* VIDEO APERTURE — the hero <video> element is reparented here at click time.
@@ -2791,21 +2790,24 @@
 
       beginHomepageReveal();
 
-      // Early predictable pre-buffering of Chapter 1 upon entrance
-      if (window.innerWidth >= 768) {
-        const img1 = document.getElementById('storyImg1');
-        if (img1 && img1.tagName === 'VIDEO') warmVideo(img1);
-      } else {
-        const m1 = document.getElementById('storyMobileVideo1');
-        if (m1) warmVideo(m1);
-      }
+      // Early predictable pre-buffering of Chapter 1 upon entrance, deferred slightly
+      // so media pipeline startup does not compete with the active door completion frame
+      setTimeout(() => {
+        if (window.innerWidth >= 768) {
+          const img1 = document.getElementById('storyImg1');
+          if (img1 && img1.tagName === 'VIDEO') warmVideo(img1);
+        } else {
+          const m1 = document.getElementById('storyMobileVideo1');
+          if (m1) warmVideo(m1);
+        }
+      }, 250);
 
       // Ensure viewport is cleanly aligned at top before unlocking scroll
       if (window.scrollY !== 0) {
         window.scrollTo(0, 0);
       }
 
-      // Restore native scrolling simultaneously at 0.5s mark
+      // Restore native scrolling simultaneously
       document.body.classList.remove('overflow-hidden');
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
@@ -2821,14 +2823,20 @@
           ease: 'power1.in',
           onComplete: () => {
             weddingIntro.style.display = 'none';
+            // Defer ScrollTrigger refresh until weddingIntro is completely hidden
+            // so layout reflow never collides with the active door completion transition!
+            requestAnimationFrame(() => {
+              ScrollTrigger.sort();
+              ScrollTrigger.refresh();
+            });
           }
         });
+      } else {
+        requestAnimationFrame(() => {
+          ScrollTrigger.sort();
+          ScrollTrigger.refresh();
+        });
       }
-
-      requestAnimationFrame(() => {
-        ScrollTrigger.sort();
-        ScrollTrigger.refresh();
-      });
     }
 
     // completeIntro: backward compatibility / failsafe delegate to triggerHomepageEntrance
@@ -2975,32 +2983,32 @@
           origin = '50% 40%';
           offsetY = Math.round(h * -0.040);
         } else if (w >= 1200) {
-          // Desktop and large desktop: stronger zoom-in (1.03 -> 1.38 over 7.0s; partial pull-back to 1.27 over 3.7s; exact groom nose-tip centering)
+          // Desktop and large desktop: refined zoom-in (1.03 -> 1.38 over 6.70s; partial pull-back to 1.27 over 3.7s; exact groom nose-tip centering)
           startScale = 1.03;
           peakScale = 1.38;
           finalScale = 1.27;
-          pushDuration = 7.0; // 5.8 * (1.38 - 1.03) / (1.32 - 1.03) = 5.8 * 0.35 / 0.29 = 7.00s (velocity 0.0500 scale/s preserved)
+          pushDuration = 6.70; // Task 28C slight acceleration: 6.70s (was 7.00s)
           pullDuration = 3.7; // Proportional travel: 3.0 * (0.11 / 0.09) = 3.67s ~= 3.7s
           ambientPeakScale = 1.295; // Subtle oscillation: 1.270 <-> 1.295 (+0.025 amplitude)
           origin = '50% 45%';
           offsetY = 0;
         } else if (w >= 768) {
           if (isLandscape) {
-            // Tablet landscape: scales preserved (1.03 -> 1.34 push over 5.24s; partial pull-back to 1.25 over 3.0s; exact groom nose-tip centering)
+            // Tablet landscape: refined zoom-in (1.03 -> 1.34 push over 4.75s; partial pull-back to 1.25 over 3.0s; exact groom nose-tip centering)
             startScale = 1.03;
             peakScale = 1.34;
             finalScale = 1.25;
-            pushDuration = 5.24; // Preserved
+            pushDuration = 4.75; // Task 28C moderate acceleration: 4.75s (was 5.24s)
             pullDuration = 3.0; // Preserved
             ambientPeakScale = 1.272; // Subtle oscillation: 1.250 <-> 1.272 (+0.022 amplitude)
             origin = '50% 45%';
             offsetY = Math.round(h * -0.020); // -2.0% vh upward centering (preserved)
           } else {
-            // Tablet portrait: scales preserved (1.03 -> 1.34 push over 5.54s; partial pull-back to 1.25 over 3.0s; exact groom nose-tip centering)
+            // Tablet portrait: refined zoom-in (1.03 -> 1.34 push over 5.00s; partial pull-back to 1.25 over 3.0s; exact groom nose-tip centering)
             startScale = 1.03;
             peakScale = 1.34;
             finalScale = 1.25;
-            pushDuration = 5.54; // Preserved
+            pushDuration = 5.00; // Task 28C moderate acceleration: 5.00s (was 5.54s)
             pullDuration = 3.0; // Preserved
             ambientPeakScale = 1.270; // Subtle oscillation: 1.250 <-> 1.270 (+0.020 amplitude)
             origin = '50% 42%';
@@ -3008,21 +3016,21 @@
           }
         } else {
           if (isLandscape) {
-            // Mobile landscape: scales preserved (1.03 -> 1.33 push over 5.36s; partial pull-back to 1.24 over 3.0s; exact groom nose-tip centering)
+            // Mobile landscape: refined zoom-in (1.03 -> 1.33 push over 4.65s; partial pull-back to 1.24 over 3.0s; exact groom nose-tip centering)
             startScale = 1.03;
             peakScale = 1.33;
             finalScale = 1.24;
-            pushDuration = 5.36; // Preserved
+            pushDuration = 4.65; // Task 28C moderate acceleration: 4.65s (was 5.36s)
             pullDuration = 3.0; // Preserved
             ambientPeakScale = 1.260; // Subtle oscillation: 1.240 <-> 1.260 (+0.020 amplitude)
             origin = '50% 45%';
             offsetY = Math.round(h * -0.020); // -2.0% vh upward centering (preserved)
           } else {
-            // Mobile portrait: scales preserved (1.03 -> 1.32 push over 5.47s; partial pull-back to 1.24 over 2.8s; exact groom nose-tip centering)
+            // Mobile portrait: refined zoom-in (1.03 -> 1.32 push over 4.75s; partial pull-back to 1.24 over 2.8s; exact groom nose-tip centering)
             startScale = 1.03;
             peakScale = 1.32;
             finalScale = 1.24;
-            pushDuration = 5.47; // Preserved
+            pushDuration = 4.75; // Task 28C moderate acceleration: 4.75s (was 5.47s)
             pullDuration = 2.8; // Preserved
             ambientPeakScale = 1.258; // Subtle oscillation: 1.240 <-> 1.258 (+0.018 amplitude)
             origin = '50% 40%';
@@ -3078,23 +3086,25 @@
           offsetY
         } = getHeroScaleTargets();
 
-        // Establish deterministic baseline and couple focal origin
+        // Establish deterministic baseline and couple focal origin with persistent 3D compositing
         gsap.set(img, {
           scale: startScale,
           x: offsetX,
           y: offsetY,
+          force3D: true,
           transformOrigin: origin
         });
 
         // Master timeline controlling the single-image continuous camera sequence
         heroTimeline = gsap.timeline();
 
-        // Phase 1: Slow, purposeful opening push-in towards couple
+        // Phase 1: Purposeful opening push-in towards couple
         // Begins at T=0 (click). Reveals during T=1.3s-1.8s (doors swing). Peaks at pushDuration.
         heroTimeline.to(img, {
           scale: peakScale,
           x: offsetX,
           y: offsetY,
+          force3D: true,
           duration: pushDuration,
           ease: 'power1.inOut'
         }, 0);
@@ -3105,6 +3115,7 @@
           scale: finalScale,
           x: offsetX,
           y: offsetY,
+          force3D: true,
           duration: pullDuration,
           ease: 'power2.inOut',
           onComplete: () => {
@@ -3114,6 +3125,7 @@
               scale: ambientPeakScale,
               x: offsetX,
               y: offsetY,
+              force3D: true,
               duration: prefersReducedMotion ? 16.0 : 14.0,
               ease: 'sine.inOut',
               yoyo: true,
@@ -3128,6 +3140,9 @@
 
       function prewarmHeroTexture(img) {
         try {
+          if (typeof window.createImageBitmap === 'function' && img) {
+            window.createImageBitmap(img).catch(() => {});
+          }
           const canvas = document.createElement('canvas');
           canvas.width = 16;
           canvas.height = 16;
@@ -3146,9 +3161,6 @@
         }
         if (window.__perfRecorder) {
           window.__perfRecorder.recordMilestone('image decode readiness');
-        }
-        if (introState === 'opening' || introState === 'complete') {
-          startHeroZoom();
         }
       }
 
@@ -3285,27 +3297,27 @@
             { opacity: 0, y: -10, duration: 0.38, ease: 'power2.in', stagger: 0.05 }, 0);
 
           // T=0 — Seam shadow fades
-          if (doorCenterSeam) tl.to(doorCenterSeam, { opacity: 0, duration: 0.28, ease: 'power2.out', onComplete: () => { doorCenterSeam.style.display = 'none'; } }, 0);
+          if (doorCenterSeam) tl.to(doorCenterSeam, { opacity: 0, duration: 0.28, ease: 'power2.out', onComplete: () => { doorCenterSeam.style.visibility = 'hidden'; } }, 0);
 
           // T=0.08 — Center ignition flash
           if (doorIgnition) {
             tl.to(doorIgnition, { opacity: 1, duration: 0.10, ease: 'power3.out' }, 0.08);
-            tl.to(doorIgnition, { scale: 2.8, opacity: 0, duration: 0.55, ease: 'power2.out', onComplete: () => { doorIgnition.style.display = 'none'; } }, 0.15);
+            tl.to(doorIgnition, { scale: 2.8, opacity: 0, duration: 0.55, ease: 'power2.out', onComplete: () => { doorIgnition.style.visibility = 'hidden'; } }, 0.15);
           }
 
           // T=0.10 — Seam glow
           if (doorLightSeam) {
             tl.to(doorLightSeam, { opacity: 1, duration: 0.28, ease: 'power2.out' }, 0.10);
-            tl.to(doorLightSeam, { opacity: 0, duration: 0.55, ease: 'power1.in', onComplete: () => { doorLightSeam.style.display = 'none'; } }, 0.55);
+            tl.to(doorLightSeam, { opacity: 0, duration: 0.55, ease: 'power1.in', onComplete: () => { doorLightSeam.style.visibility = 'hidden'; } }, 0.55);
           }
 
           // T=0.12 — Button collapses
-          tl.to(doorRoundBtn, { scale: 0.40, opacity: 0, duration: 0.38, ease: 'power2.in', onComplete: () => { doorRoundBtn.style.display = 'none'; } }, 0.12);
+          tl.to(doorRoundBtn, { scale: 0.40, opacity: 0, duration: 0.38, ease: 'power2.in', onComplete: () => { doorRoundBtn.style.visibility = 'hidden'; } }, 0.12);
 
           // T=0.08 — Bloom illuminates doors during opening
           if (doorLightBloom) {
             tl.to(doorLightBloom, { opacity: 0.88, duration: 0.52, ease: 'power2.out' }, 0.08);
-            tl.to(doorLightBloom, { opacity: 0, duration: 0.65, ease: 'power1.in', onComplete: () => { doorLightBloom.style.display = 'none'; } }, 0.65);
+            tl.to(doorLightBloom, { opacity: 0, duration: 0.65, ease: 'power1.in', onComplete: () => { doorLightBloom.style.visibility = 'hidden'; } }, 0.65);
           }
 
           // T=0.10 — RADIAL WAVE EXPANDS across doors (contain: paint, clean removal after fade)
@@ -3317,7 +3329,7 @@
               duration: 0.50,
               ease: 'power1.in',
               onComplete: () => {
-                doorLightWave.style.display = 'none';
+                doorLightWave.style.visibility = 'hidden';
               }
             }, 0.78);
           }
@@ -3341,8 +3353,8 @@
                 duration: 0.60,
                 ease: 'power2.out',
                 onComplete: () => {
-                  if (doorArtworkFrame) doorArtworkFrame.style.display = 'none';
-                  if (doorAtmosphere)   doorAtmosphere.style.display = 'none';
+                  if (doorArtworkFrame) doorArtworkFrame.style.visibility = 'hidden';
+                  if (doorAtmosphere)   doorAtmosphere.style.visibility = 'hidden';
                 }
               }, 0.20);
           }
@@ -3361,16 +3373,16 @@
               duration: 0.70,
               ease: 'power2.out',
               onComplete: () => {
-                doorInteriorReveal.style.display = 'none';
+                doorInteriorReveal.style.visibility = 'hidden';
               }
             }, 0.40);
           }
 
           // T=2.05 — Door leaves finish physical rotation (0.20 + 1.85 = 2.05s)
-          // Hide door leaves so their heavy SVG filters stop consuming GPU/compositor resources!
+          // Hide door leaves smoothly without layout disruption
           tl.call(() => {
-            if (doorLeft)  doorLeft.style.display = 'none';
-            if (doorRight) doorRight.style.display = 'none';
+            if (doorLeft)  doorLeft.style.visibility = 'hidden';
+            if (doorRight) doorRight.style.visibility = 'hidden';
             if (window.__perfRecorder) {
               window.__perfRecorder.recordMilestone('transition completion');
             }
@@ -3379,15 +3391,15 @@
 
           // T=2.50 — Door stage (leaves) and zoom wrapper fade out completely
           const doorStage = document.getElementById('doorStage');
-          if (doorStage) tl.to(doorStage, { opacity: 0, duration: 0.30, ease: 'power1.in', onComplete: () => { doorStage.style.display = 'none'; } }, 2.50);
-          if (doorZoomWrapper) tl.to(doorZoomWrapper, { opacity: 0, duration: 0.30, ease: 'power1.in', onComplete: () => { doorZoomWrapper.style.display = 'none'; } }, 2.50);
+          if (doorStage) tl.to(doorStage, { opacity: 0, duration: 0.30, ease: 'power1.in', onComplete: () => { doorStage.style.visibility = 'hidden'; } }, 2.50);
+          if (doorZoomWrapper) tl.to(doorZoomWrapper, { opacity: 0, duration: 0.30, ease: 'power1.in', onComplete: () => { doorZoomWrapper.style.visibility = 'hidden'; } }, 2.50);
 
           // T=2.70 — Progress rail fades
-          if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.25, ease: 'power1.in', onComplete: () => { doorProgressRail.style.display = 'none'; } }, 2.70);
+          if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.25, ease: 'power1.in', onComplete: () => { doorProgressRail.style.visibility = 'hidden'; } }, 2.70);
 
           // Progress rail fill animation — TRANSFORM COMPOSITOR ONLY, NO TOP LAYOUT THRASH!
           if (doorProgressFill && doorProgressDot) {
-            const railHeight = doorProgressRail ? doorProgressRail.offsetHeight : 140;
+            const railHeight = 140;
             gsap.to(doorProgressFill, { scaleY: 1, duration: 1.85, ease: 'power2.inOut', delay: 0.20 });
             gsap.to(doorProgressDot,  { y: railHeight, duration: 1.85, ease: 'power2.inOut', delay: 0.20, force3D: true });
           }
