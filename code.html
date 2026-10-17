@@ -3936,12 +3936,13 @@
           const media = item.querySelector('img, video');
           const video = item.querySelector('video');
 
-          // Entrance animation
+          // Entrance animation (plays once to resting framing; no reverse on upward scroll)
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: item,
               start: 'top 85%',
-              toggleActions: 'play none none reverse'
+              once: true,
+              toggleActions: 'play none none none'
             }
           });
           tl.from(item, {
