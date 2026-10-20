@@ -35,6 +35,7 @@
       initialReadyState: null,
       playCount: 0,
       endedCount: 0,
+      completedFallbackActive: false,
       lastEvent: 'initialized'
     };
   });
@@ -53,7 +54,8 @@
       paused: v.paused,
       ended: v.ended,
       seeking: v.seeking,
-      muted: v.muted
+      muted: v.muted,
+      isCompleted: v.dataset.completed === 'true'
     } : null;
 
     const entry = {
@@ -71,6 +73,8 @@
       report.videos[videoId].lastEvent = `${eventType} @ ${vState?.currentTime || 0}s`;
       if (eventType === 'play') report.videos[videoId].playCount++;
       if (eventType === 'ended') report.videos[videoId].endedCount++;
+      if (eventType === 'completed_fallback_active') report.videos[videoId].completedFallbackActive = true;
+      if (eventType === 'replay_frame_confirmed') report.videos[videoId].completedFallbackActive = false;
       if (vState?.duration && !report.videos[videoId].observedDuration) {
         report.videos[videoId].observedDuration = vState.duration;
       }
@@ -78,6 +82,8 @@
 
     updateHUD();
   }
+
+  window.__videoTelemetryLog = logDiagnosticEvent;
 
   // 1. Attach Media Event Listeners when elements are ready
   function initVideoListeners() {
@@ -106,7 +112,8 @@
         wrapper.addEventListener('click', () => {
           logDiagnosticEvent(item.id, 'user_tap', {
             target: 'wrapper',
-            wasPaused: v.paused
+            wasPaused: v.paused,
+            isCompleted: v.dataset.completed === 'true'
           });
         }, { passive: true });
       }
@@ -230,19 +237,28 @@
     });
   }
 
+  function formatStatus(item) {
+    if (!item) return 'idle';
+    let status = item.lastEvent || 'idle';
+    if (item.completedFallbackActive) {
+      status += ' <span style="color:#88c999;font-weight:bold;">[OVERLAY ACTIVE]</span>';
+    }
+    return `${status} | plays:${item.playCount} ends:${item.endedCount}`;
+  }
+
   function updateHUD() {
     const statusDiv = hud.querySelector('#videoDebugStatus');
     const logDiv = hud.querySelector('#videoDebugLog');
     if (!statusDiv) return;
 
-    const m1 = report.videos['storyMobileVideo1'] || {};
-    const m2 = report.videos['storyMobileVideo2'] || {};
-    const m3 = report.videos['storyMobileVideo3'] || {};
+    const m1 = report.videos['storyMobileVideo1'];
+    const m2 = report.videos['storyMobileVideo2'];
+    const m3 = report.videos['storyMobileVideo3'];
 
     statusDiv.innerHTML = `
-      <div><strong>Ch1:</strong> ${m1.lastEvent || 'idle'} | plays:${m1.playCount} ends:${m1.endedCount}</div>
-      <div><strong>Ch2:</strong> ${m2.lastEvent || 'idle'} | plays:${m2.playCount} ends:${m2.endedCount}</div>
-      <div><strong>Ch3:</strong> ${m3.lastEvent || 'idle'} | plays:${m3.playCount} ends:${m3.endedCount}</div>
+      <div><strong>Ch1:</strong> ${formatStatus(m1)}</div>
+      <div><strong>Ch2:</strong> ${formatStatus(m2)}</div>
+      <div><strong>Ch3:</strong> ${formatStatus(m3)}</div>
       <div style="margin-top:2px; color:#aaa;">Total Events: ${report.events.length} | ScrollY: ${Math.round(window.scrollY)}px</div>
     `;
 

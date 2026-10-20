@@ -849,6 +849,14 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    #storyMobileContainer video,
+    .story-mobile-endframe {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       #storyPinSection { display: none !important; }
       #storyMobileContainer {
@@ -2054,6 +2062,10 @@
                      poster="assets/images/story-bride-frame0.webp"
                      muted playsinline preload="none"
                      aria-label="Shahina Veil Portrait"></video>
+              <img id="storyMobileEndFrame1"
+                   class="story-mobile-endframe absolute inset-0 w-full h-full object-cover pointer-events-none select-none opacity-0 transition-opacity duration-150"
+                   src="assets/images/story-bride-frame-last.webp"
+                   alt="" aria-hidden="true" />
             </div>
 
             <!-- Chapter I Outer Floral Open-Corner Frame: outside clipped card, pointer-events-none -->
@@ -2087,6 +2099,10 @@
                      poster="assets/images/story-groom-frame0.webp"
                      muted playsinline preload="none"
                      aria-label="Binshad Black Tie Portrait"></video>
+              <img id="storyMobileEndFrame2"
+                   class="story-mobile-endframe absolute inset-0 w-full h-full object-cover pointer-events-none select-none opacity-0 transition-opacity duration-150"
+                   src="assets/images/story-groom-frame-last.webp"
+                   alt="" aria-hidden="true" />
             </div>
 
             <!-- Chapter II Outer Floral Open-Corner Frame: outside clipped card, pointer-events-none -->
@@ -2120,6 +2136,10 @@
                      poster="assets/images/story-couple-frame0.webp"
                      muted playsinline preload="none"
                      aria-label="Couple Archway Candlelight Portrait"></video>
+              <img id="storyMobileEndFrame3"
+                   class="story-mobile-endframe absolute inset-0 w-full h-full object-cover pointer-events-none select-none opacity-0 transition-opacity duration-150"
+                   src="assets/images/story-couple-frame-last.webp"
+                   alt="" aria-hidden="true" />
             </div>
 
             <!-- Chapter III Outer Floral Open-Corner Frame: outside clipped card, pointer-events-none -->
@@ -2787,6 +2807,11 @@
     // Video warmup helper (idempotent, never resets playing video)
     function warmVideo(v) {
       if (!v) return;
+      const endFrame = v.parentElement ? v.parentElement.querySelector('.story-mobile-endframe') : null;
+      if (endFrame && endFrame.decode && !endFrame.dataset.decoded) {
+        endFrame.dataset.decoded = 'true';
+        endFrame.decode().catch(() => {});
+      }
       if (v.dataset.primed === 'true' || !v.paused) return;
       if (v.readyState === 0) {
         v.dataset.primed = 'true';
@@ -3543,8 +3568,40 @@
                 if (wrapper) wrapper.appendChild(playBadge);
               }
 
+              const endFrameImg = item.querySelector('.story-mobile-endframe');
+              const cardDiv = v.parentElement;
+              const initialPoster = v.getAttribute('poster') || '';
+              const initialBg = cardDiv ? cardDiv.style.backgroundImage : '';
+              const lastFrameSrc = endFrameImg ? (endFrameImg.getAttribute('src') || endFrameImg.src) : '';
+              let isCompleted = false;
+
+              v.addEventListener('ended', () => {
+                isCompleted = true;
+                v.dataset.completed = 'true';
+                if (endFrameImg) endFrameImg.style.opacity = '1';
+                if (lastFrameSrc) {
+                  v.setAttribute('poster', lastFrameSrc);
+                  if (cardDiv) cardDiv.style.backgroundImage = `url("${lastFrameSrc}")`;
+                }
+                v.style.opacity = '0';
+                if (playBadge) playBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">replay</span><span>Replay</span>';
+              });
+
               item.addEventListener('click', () => {
-                if (v.paused) {
+                if (isCompleted || v.ended) {
+                  isCompleted = false;
+                  v.dataset.completed = 'false';
+                  v.currentTime = 0;
+                  v.muted = true;
+                  v.playsInline = true;
+                  v.play().then(() => {
+                    if (playBadge) playBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">pause</span><span>Pause</span>';
+                    v.setAttribute('poster', initialPoster);
+                    if (cardDiv) cardDiv.style.backgroundImage = initialBg;
+                    v.style.opacity = '1';
+                    if (endFrameImg) endFrameImg.style.opacity = '0';
+                  }).catch(e => console.warn('[StoryVideo] User play error:', e));
+                } else if (v.paused) {
                   v.muted = true;
                   v.playsInline = true;
                   v.play().then(() => {
@@ -3969,6 +4026,82 @@
           }
 
           if (video) {
+            const cardDiv = video.parentElement;
+            const endFrameImg = cardDiv ? cardDiv.querySelector('.story-mobile-endframe') : null;
+            const initialPoster = video.getAttribute('poster') || '';
+            const initialBg = cardDiv ? cardDiv.style.backgroundImage : '';
+            const lastFrameSrc = endFrameImg ? (endFrameImg.getAttribute('src') || endFrameImg.src) : '';
+            let isCompleted = false;
+
+            const setCompletedState = () => {
+              isCompleted = true;
+              video.dataset.completed = 'true';
+              if (endFrameImg) {
+                endFrameImg.style.opacity = '1';
+              }
+              if (lastFrameSrc) {
+                video.setAttribute('poster', lastFrameSrc);
+                if (cardDiv) {
+                  cardDiv.style.backgroundImage = `url("${lastFrameSrc}")`;
+                }
+              }
+              video.style.opacity = '0';
+              if (window.__videoTelemetryLog) {
+                window.__videoTelemetryLog(video.id, 'completed_fallback_active', {
+                  chapter: index + 1,
+                  lastFrameSrc
+                });
+              }
+            };
+
+            video.addEventListener('ended', setCompletedState);
+
+            const waitForNewPlaybackFrame = (onReady) => {
+              let settled = false;
+              const finish = (time) => {
+                if (settled) return;
+                settled = true;
+                onReady(time);
+              };
+
+              if (typeof video.requestVideoFrameCallback === 'function') {
+                video.requestVideoFrameCallback((now, metadata) => {
+                  const mediaTime = (metadata && typeof metadata.mediaTime === 'number') ? metadata.mediaTime : video.currentTime;
+                  finish(mediaTime);
+                });
+                setTimeout(() => finish(video.currentTime), 400);
+              } else {
+                const onTimeUpdate = () => {
+                  if (video.currentTime > 0 && video.currentTime < 0.35) {
+                    video.removeEventListener('timeupdate', onTimeUpdate);
+                    finish(video.currentTime);
+                  }
+                };
+                video.addEventListener('timeupdate', onTimeUpdate);
+                setTimeout(() => {
+                  video.removeEventListener('timeupdate', onTimeUpdate);
+                  finish(video.currentTime);
+                }, 400);
+              }
+            };
+
+            const restoreReplayState = (time) => {
+              video.setAttribute('poster', initialPoster);
+              if (cardDiv) {
+                cardDiv.style.backgroundImage = initialBg;
+              }
+              video.style.opacity = '1';
+              if (endFrameImg) {
+                endFrameImg.style.opacity = '0';
+              }
+              if (window.__videoTelemetryLog) {
+                window.__videoTelemetryLog(video.id, 'replay_frame_confirmed', {
+                  chapter: index + 1,
+                  mediaTime: time
+                });
+              }
+            };
+
             // Predictable pipeline: warm up the NEXT upcoming chapter video before it enters viewport
             ScrollTrigger.create({
               trigger: item,
@@ -3983,7 +4116,7 @@
             // Autoplay-once when entering reading focal zone (75%)
             let isPlayingOrPlayed = false;
             const attemptPlay = () => {
-              if (isPlayingOrPlayed || !video.paused) return;
+              if (isPlayingOrPlayed || !video.paused || isCompleted || video.ended) return;
               video.muted = true;
               video.playsInline = true;
               const playPromise = video.play();
@@ -4004,7 +4137,23 @@
 
             // User interaction tap/click toggle for low-power mode or intentional control
             item.addEventListener('click', () => {
-              if (video.paused) {
+              if (isCompleted || video.ended) {
+                isCompleted = false;
+                video.dataset.completed = 'false';
+                video.currentTime = 0;
+                video.muted = true;
+                video.playsInline = true;
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                  playPromise.then(() => {
+                    waitForNewPlaybackFrame(restoreReplayState);
+                  }).catch(e => {
+                    console.warn('[StoryVideo] Replay play error:', e);
+                    restoreReplayState(0);
+                  });
+                }
+              } else if (video.paused) {
+                isPlayingOrPlayed = true;
                 video.muted = true;
                 video.playsInline = true;
                 video.play().catch(() => {});
