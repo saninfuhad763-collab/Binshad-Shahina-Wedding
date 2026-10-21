@@ -27,9 +27,10 @@
   <!-- Preload Cinematic Hero Couple Photograph -->
   <link rel="preload" as="image" href="assets/images/Couple-intro-optimized-image.webp" type="image/webp" fetchpriority="high"/>
 
-  <!-- Local GSAP & ScrollTrigger Libraries -->
+  <!-- Local GSAP, ScrollTrigger & ScrollSmoother Libraries -->
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/ScrollSmoother.min.js"></script>
 
   <!-- Motion Telemetry Diagnostic Hook (Only loaded if ?motionDebug=1 is present) -->
   <script>
@@ -847,6 +848,19 @@
       box-sizing: border-box !important;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    #smooth-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    #smooth-content {
+      position: relative;
+      width: 100%;
+      overflow: visible;
     }
 
     #storyMobileContainer video,
@@ -1850,6 +1864,12 @@
     </div>
   </div>
 
+  <!-- ======================================================== -->
+  <!-- SMOOTH SCROLL CONTAINER (GSAP ScrollSmoother Wrapper)     -->
+  <!-- ======================================================== -->
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+
   <main class="w-full">
     <!-- ======================================================== -->
     <!-- 1. HERO SECTION: CINEMATIC FLUID OPENING                -->
@@ -2521,18 +2541,45 @@
     </div>
   </footer>
 
+    </div><!-- /#smooth-content -->
+  </div><!-- /#smooth-wrapper -->
+
   <!-- ======================================================== -->
   <!-- REAL MOTION ENGINE SCRIPT (GSAP + ScrollTrigger)         -->
   <!-- ======================================================== -->
   <script>
     // Register GSAP plugins
-    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-      gsap.registerPlugin(ScrollTrigger);
+    if (typeof gsap !== 'undefined') {
+      if (typeof ScrollTrigger !== 'undefined' && typeof ScrollSmoother !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+      } else if (typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+      }
     } else {
       console.error('GSAP or ScrollTrigger failed to load');
     }
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // --- 0. GSAP SCROLLSMOOTHER (Cinematic Luxury Smooth Scroll) ---
+    let smoother = null;
+    if (!prefersReducedMotion && typeof ScrollSmoother !== 'undefined') {
+      try {
+        smoother = ScrollSmoother.create({
+          wrapper: '#smooth-wrapper',
+          content: '#smooth-content',
+          smooth: 1.2,
+          smoothTouch: 0, // CRITICAL: 0 disables touch smoothing on phones & tablets for 100% native mobile performance
+          effects: false,
+          normalizeScroll: false,
+          ignoreMobileResize: true
+        });
+        window.smoother = smoother;
+        smoother.paused(true); // Locked while ceremonial doors are closed
+      } catch (e) {
+        console.warn('[ScrollSmoother] Fallback to native scroll:', e);
+      }
+    }
 
     // =====================================================
     // STEP 10 — CINEMATIC DOOR INTRO ENGINE
@@ -2867,6 +2914,9 @@
       document.body.classList.remove('overflow-hidden');
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
+      if (window.smoother) {
+        window.smoother.paused(false);
+      }
 
       // Transfer pointer interactions to homepage; fade intro overlay out cleanly
       const weddingIntro = document.getElementById('weddingIntro');
@@ -3867,7 +3917,6 @@
             pinSpacing: true,
             scrub: 0.5,
             anticipatePin: 2,
-            pinType: 'fixed',
             onEnter: () => {
               playDesktopVideoOnce(0);
             }
@@ -3978,7 +4027,6 @@
             pinSpacing: true,
             scrub: 0.4,
             anticipatePin: 2,
-            pinType: 'fixed',
             onEnter: () => {
               playDesktopVideoOnce(0);
             }
@@ -4368,6 +4416,30 @@
     function initNavScroll() {
       const nav = document.getElementById('mainNav');
       if (!nav) return;
+
+      // Smooth scroll for internal navigation links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          const href = this.getAttribute('href');
+          if (!href || href === '#' || href.length <= 1) return;
+          const target = document.querySelector(href);
+          if (target) {
+            e.preventDefault();
+            const mobOverlay = document.getElementById('mobileOverlay');
+            const menuIconEl = document.getElementById('menuIcon');
+            if (mobOverlay && mobOverlay.classList.contains('opacity-100')) {
+              mobOverlay.classList.remove('opacity-100');
+              mobOverlay.classList.add('opacity-0', 'pointer-events-none');
+              if (menuIconEl) menuIconEl.textContent = 'menu';
+            }
+            if (window.smoother && !ScrollTrigger.isTouch) {
+              window.smoother.scrollTo(target, true, 'top top');
+            } else {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        });
+      });
 
       let isScrolled = false;
       const TOP_THRESHOLD = 8;
