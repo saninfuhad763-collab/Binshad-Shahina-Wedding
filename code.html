@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <meta content="web_standard" name="shell-type"/>
-  <title>Binshad &amp; Shahina</title>
+  <title>Hisham &amp; Shahina</title>
   
   <!-- Establish deterministic top-of-page entry on initial load and refresh -->
   <script>
@@ -30,6 +30,24 @@
   <!-- Local GSAP & ScrollTrigger Libraries -->
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
+
+  <!-- Motion Telemetry Diagnostic Hook (Only loaded if ?motionDebug=1 is present) -->
+  <script>
+    if (new URLSearchParams(window.location.search).has('motionDebug')) {
+      const s = document.createElement('script');
+      s.src = 'assets/js/motion-debug.js';
+      document.head.appendChild(s);
+    }
+  </script>
+
+  <!-- Video Telemetry Diagnostic Hook (Only loaded if ?videoDebug=1 is present) -->
+  <script>
+    if (new URLSearchParams(window.location.search).has('videoDebug')) {
+      const s = document.createElement('script');
+      s.src = 'assets/js/video-debug.js';
+      document.head.appendChild(s);
+    }
+  </script>
 
   <style>
     /* Critical base rendering */
@@ -456,6 +474,8 @@
       background: radial-gradient(ellipse at 50% 50%, #1a0810 0%, #0e0507 45%, #090607 100%);
       z-index: 3;
       pointer-events: none;
+      will-change: opacity;
+      opacity: 0.995;
     }
 
     /* VIDEO APERTURE — the hero <video> element is reparented here at click time.
@@ -522,9 +542,8 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background: #4a101d;
-      opacity: 0.15;
-      mix-blend-mode: color;
+      background: rgba(74, 16, 29, 0.15);
+      mix-blend-mode: normal;
       z-index: 20;
     }
 
@@ -593,7 +612,7 @@
        Gradient creates a distinct RING edge → visibly travels outward. */
     #doorLightWave {
       position: absolute; top: 50%; left: 50%;
-      width: 280vmax; height: 280vmax; border-radius: 50%;
+      width: 170vmax; height: 170vmax; border-radius: 50%;
       background: radial-gradient(circle,
         rgba(255,252,240,0.92) 0%,   rgba(255,230,160,0.75) 3%,
         rgba(226,193,151,0.60) 8%,   rgba(200,150,80,0.35)  16%,
@@ -601,6 +620,7 @@
         transparent            65%
       );
       opacity: 0; pointer-events: none; z-index: 8;
+      contain: paint;
       will-change: transform, opacity;
     }
 
@@ -814,12 +834,41 @@
       position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%);
       width: 5px; height: 5px; border-radius: 50%;
       background: rgba(226,193,151,0.90); box-shadow: 0 0 8px rgba(226,193,151,0.60);
+      will-change: transform;
     }
     @media (max-width: 767px) { #doorProgressRail { right: 16px; } }
 
+    #musicToggleBtn {
+      width: 44px !important;
+      height: 44px !important;
+      min-width: 44px !important;
+      min-height: 44px !important;
+      flex-shrink: 0 !important;
+      box-sizing: border-box !important;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    #storyMobileContainer video,
+    .story-mobile-endframe,
+    #storyPinSection video,
+    .story-desktop-endframe {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-      .reveal-inner { transform: none !important; opacity: 1 !important; }
+      #storyPinSection { display: none !important; }
+      #storyMobileContainer {
+        display: block !important;
+        max-width: 860px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+      }
     }
   </style>
 </head>
@@ -1735,7 +1784,7 @@
       <div id="doorEyebrow">A Welcome to Our Celebration</div>
 
       <!-- Couple names — large italic serif -->
-      <div id="doorNamesDisplay">Binshad <span class="ampersand">&amp;</span> Shahina</div>
+      <div id="doorNamesDisplay">Hisham <span class="ampersand">&amp;</span> Shahina</div>
 
     </div>
 
@@ -1756,7 +1805,7 @@
   <header class="fixed top-0 left-0 w-full z-50 transition-all duration-500 py-6 border-b border-transparent opacity-0 pointer-events-none" id="mainNav">
     <div class="max-w-[1440px] mx-auto px-gutter-mobile lg:px-margin flex items-center justify-between">
       <a class="group flex items-center gap-2" href="#">
-        <span class="font-title-editorial text-2xl tracking-[0.25em] text-secondary font-light transition-all group-hover:text-primary">B &amp; S</span>
+        <span class="font-title-editorial text-2xl tracking-[0.25em] text-secondary font-light transition-all group-hover:text-primary">H &amp; S</span>
       </a>
       <!-- Desktop Nav Links -->
       <nav class="hidden md:flex items-center gap-8 text-[11px] uppercase tracking-[0.28em] font-semibold text-on-surface-variant">
@@ -1767,7 +1816,14 @@
         <a class="text-secondary hover:text-primary-fixed transition-colors font-semibold" href="#rsvp">RSVP</a>
       </nav>
       <!-- Right Action & Mobile Toggle -->
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3 sm:gap-4">
+        <!-- Background Music Toggle / Retry Button -->
+        <button id="musicToggleBtn" type="button" aria-label="Play background music"
+                class="flex items-center justify-center shrink-0 min-w-[44px] min-h-[44px] w-11 h-11 rounded-full border border-secondary/40 text-secondary hover:border-secondary hover:bg-secondary/10 transition-all focus:outline-none cursor-pointer select-none active:scale-95"
+                style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;"
+                title="Play / Pause Music">
+          <span class="material-symbols-outlined text-[20px] pointer-events-none" id="musicToggleIcon">volume_off</span>
+        </button>
         <a class="hidden sm:inline-flex items-center gap-2 px-5 py-2 border border-secondary/40 text-[11px] uppercase tracking-[0.25em] text-secondary hover:bg-secondary/10 hover:border-secondary transition-all" href="#rsvp">
           <span>Attend</span>
         </a>
@@ -1802,10 +1858,10 @@
       <!-- Background Parallax Image & Video Container -->
       <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <!-- Hero Background Image Stage (Underneath Scrims at z-0) -->
-        <div class="absolute inset-0 w-full h-full will-change-transform z-0 bg-[#090607] overflow-hidden" id="heroBg">
+        <div class="absolute inset-0 w-full h-full will-change-transform z-0 bg-[#090607] overflow-hidden" id="heroBg" style="transform: translateZ(0); -webkit-transform: translateZ(0); backface-visibility: hidden;">
           <picture class="block w-full h-full">
             <source srcset="assets/images/Couple-intro-optimized-image.webp" type="image/webp"/>
-            <img id="heroCoupleImage" src="assets/images/Couple-intro-optimized-image.webp" alt="Binshad and Shahina" class="w-full h-full object-cover object-center will-change-transform" fetchpriority="high" decoding="async"/>
+            <img id="heroCoupleImage" src="assets/images/Couple-intro-optimized-image.webp" alt="Hisham and Shahina" class="w-full h-full object-cover object-center will-change-transform" fetchpriority="high" decoding="async" style="transform: translateZ(0); -webkit-transform: translateZ(0); backface-visibility: hidden;"/>
           </picture>
         </div>
         <!-- Restored 3-Part Cinematic Video Scrims (Identical to #doorVideoAperture) -->
@@ -1825,7 +1881,7 @@
         </div>
         <div class="overflow-hidden mb-6">
           <h1 class="hero-anim-item font-display-hero text-5xl sm:text-7xl lg:text-[7rem] xl:text-[100px] leading-[0.95] text-on-surface tracking-tight">
-            Binshad <span class="font-title-editorial italic text-secondary font-light">&amp;</span> Shahina
+            Hisham <span class="font-title-editorial italic text-secondary font-light">&amp;</span> Shahina
           </h1>
         </div>
         <!-- Symmetrical Date / Location Metadata Row -->
@@ -1867,35 +1923,47 @@
               <div class="w-full h-full relative overflow-hidden rounded-sm shadow-2xl border border-transparent bg-[#110d0e]" id="storyMediaCard">
 
                 <!-- Slide 1: Shahina Veil Portrait -->
-                <div class="story-slide-layer opacity-100 bg-cover bg-center" id="storySlide1" style="background-image: url('assets/images/story-bride-frame0.webp');">
+                <div class="story-slide-layer opacity-100 bg-cover bg-center cursor-pointer" id="storySlide1" style="background-image: url('assets/images/story-bride-frame0.webp');">
                   <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg1"
                          src="assets/videos/bride-veil-manor-scrub.mp4"
                          poster="assets/images/story-bride-frame0.webp"
                          muted playsinline preload="none"></video>
+                  <img id="storyDesktopEndFrame1"
+                       class="story-desktop-endframe absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none opacity-0 transition-opacity duration-150"
+                       src="assets/images/story-bride-frame-last.webp"
+                       alt="" aria-hidden="true" />
                   <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
                   <div class="absolute bottom-6 left-6 flex items-center gap-3 z-20">
                     <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate I • Shahina</span>
                   </div>
                 </div>
 
-                <!-- Slide 2: Binshad Black Tie Portrait -->
-                <div class="story-slide-layer opacity-0 bg-cover bg-center" id="storySlide2" style="background-image: url('assets/images/story-groom-frame0.webp');">
+                <!-- Slide 2: Hisham Black Tie Portrait -->
+                <div class="story-slide-layer opacity-0 bg-cover bg-center cursor-pointer" id="storySlide2" style="background-image: url('assets/images/story-groom-frame0.webp');">
                   <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg2"
                          src="assets/videos/groom-luxury-interior-scrub.mp4"
                          poster="assets/images/story-groom-frame0.webp"
                          muted playsinline preload="none"></video>
+                  <img id="storyDesktopEndFrame2"
+                       class="story-desktop-endframe absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none opacity-0 transition-opacity duration-150"
+                       src="assets/images/story-groom-frame-last.webp"
+                       alt="" aria-hidden="true" />
                   <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
                   <div class="absolute bottom-6 left-6 flex items-center gap-3 z-20">
-                    <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate II • Binshad</span>
+                    <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate II • Hisham</span>
                   </div>
                 </div>
 
                 <!-- Slide 3: Couple Archway Candlelight -->
-                <div class="story-slide-layer opacity-0 bg-cover bg-center" id="storySlide3" style="background-image: url('assets/images/story-couple-frame0.webp');">
+                <div class="story-slide-layer opacity-0 bg-cover bg-center cursor-pointer" id="storySlide3" style="background-image: url('assets/images/story-couple-frame0.webp');">
                   <video class="w-full h-full object-cover object-center will-change-transform" id="storyImg3"
                          src="assets/videos/couple-staircase-scrub.mp4"
                          poster="assets/images/story-couple-frame0.webp"
                          muted playsinline preload="none"></video>
+                  <img id="storyDesktopEndFrame3"
+                       class="story-desktop-endframe absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none opacity-0 transition-opacity duration-150"
+                       src="assets/images/story-couple-frame-last.webp"
+                       alt="" aria-hidden="true" />
                   <div class="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent pointer-events-none"></div>
                   <div class="absolute bottom-6 left-6 flex items-center gap-3 z-20">
                     <span class="text-xs uppercase tracking-[0.25em] text-secondary font-medium">Plate III • The Vow</span>
@@ -2008,6 +2076,10 @@
                      poster="assets/images/story-bride-frame0.webp"
                      muted playsinline preload="none"
                      aria-label="Shahina Veil Portrait"></video>
+              <img id="storyMobileEndFrame1"
+                   class="story-mobile-endframe absolute inset-0 w-full h-full object-cover pointer-events-none select-none opacity-0 transition-opacity duration-150"
+                   src="assets/images/story-bride-frame-last.webp"
+                   alt="" aria-hidden="true" />
             </div>
 
             <!-- Chapter I Outer Floral Open-Corner Frame: outside clipped card, pointer-events-none -->
@@ -2040,7 +2112,11 @@
                      src="assets/videos/groom-luxury-interior-scrub.mp4"
                      poster="assets/images/story-groom-frame0.webp"
                      muted playsinline preload="none"
-                     aria-label="Binshad Black Tie Portrait"></video>
+                     aria-label="Hisham Black Tie Portrait"></video>
+              <img id="storyMobileEndFrame2"
+                   class="story-mobile-endframe absolute inset-0 w-full h-full object-cover pointer-events-none select-none opacity-0 transition-opacity duration-150"
+                   src="assets/images/story-groom-frame-last.webp"
+                   alt="" aria-hidden="true" />
             </div>
 
             <!-- Chapter II Outer Floral Open-Corner Frame: outside clipped card, pointer-events-none -->
@@ -2074,6 +2150,10 @@
                      poster="assets/images/story-couple-frame0.webp"
                      muted playsinline preload="none"
                      aria-label="Couple Archway Candlelight Portrait"></video>
+              <img id="storyMobileEndFrame3"
+                   class="story-mobile-endframe absolute inset-0 w-full h-full object-cover pointer-events-none select-none opacity-0 transition-opacity duration-150"
+                   src="assets/images/story-couple-frame-last.webp"
+                   alt="" aria-hidden="true" />
             </div>
 
             <!-- Chapter III Outer Floral Open-Corner Frame: outside clipped card, pointer-events-none -->
@@ -2286,7 +2366,7 @@
           </div>
 
           <!-- Plate II: Archway Centerpiece (Higher Anchor) -->
-          <div class="gallery-plate md:col-span-5 cursor-pointer group space-y-4 md:-mt-8" onclick="openLightbox('assets/images/gallery-couple.avif', 'Plate II ΓÇó The Union', 'Binshad and Shahina beneath candlelit floral installations.')">
+          <div class="gallery-plate md:col-span-5 cursor-pointer group space-y-4 md:-mt-8" onclick="openLightbox('assets/images/gallery-couple.avif', 'Plate II ΓÇó The Union', 'Hisham and Shahina beneath candlelit floral installations.')">
             <div class="w-full h-[620px] overflow-hidden border border-secondary/30 rounded-sm">
               <img alt="Couple Portrait" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out parallax-img" src="assets/images/gallery-couple.avif"/>
             </div>
@@ -2297,13 +2377,13 @@
           </div>
 
           <!-- Plate III: Groom Portrait -->
-          <div class="gallery-plate md:col-span-3 cursor-pointer group space-y-4" onclick="openLightbox('assets/images/gallery-arjun.avif', 'Plate III ΓÇó Binshad', 'Bespoke velvet tuxedo tailored for the winter celebration.')">
+          <div class="gallery-plate md:col-span-3 cursor-pointer group space-y-4" onclick="openLightbox('assets/images/gallery-arjun.avif', 'Plate III ΓÇó Hisham', 'Bespoke velvet tuxedo tailored for the winter celebration.')">
             <div class="w-full h-[460px] overflow-hidden border border-secondary/20 rounded-sm">
-              <img alt="Binshad Portrait" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out parallax-img" src="assets/images/gallery-arjun.avif"/>
+              <img alt="Hisham Portrait" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out parallax-img" src="assets/images/gallery-arjun.avif"/>
             </div>
             <div class="flex justify-between text-xs tracking-widest uppercase">
               <span class="text-secondary font-medium">Plate III</span>
-              <span class="text-outline">Binshad</span>
+              <span class="text-outline">Hisham</span>
             </div>
           </div>
         </div>
@@ -2387,7 +2467,7 @@
         <!-- Confirmation Note -->
         <div class="hidden mt-12 p-8 border border-secondary/40 bg-surface text-center space-y-4 transition-all duration-700" id="rsvpConfirmation">
           <div class="w-12 h-12 mx-auto rounded-full bg-primary-container border border-secondary/50 flex items-center justify-center text-secondary font-title-editorial italic text-lg shadow-inner">
-            B&amp;S
+            H&amp;S
           </div>
           <h3 class="font-headline-sm text-2xl text-on-surface">Gratitude for Your Response</h3>
           <p class="font-body-md text-sm text-on-surface-variant font-light max-w-md mx-auto leading-relaxed">
@@ -2412,7 +2492,7 @@
       <!-- Outro Monogram & Sign-off -->
       <div class="relative z-10 text-center max-w-2xl mx-auto space-y-6">
         <div class="w-14 h-14 mx-auto border border-secondary/40 rounded-full flex items-center justify-center shadow-lg bg-surface/50 backdrop-blur-sm">
-          <span class="font-title-editorial italic text-2xl text-secondary">B&amp;S</span>
+          <span class="font-title-editorial italic text-2xl text-secondary">H&amp;S</span>
         </div>
         <div class="reveal-mask">
           <h2 class="reveal-inner font-headline-lg text-4xl sm:text-5xl text-on-surface font-light">
@@ -2436,7 +2516,7 @@
   <!-- ======================================================== -->
   <footer class="w-full bg-[#080606] border-t border-secondary/15 py-12 px-gutter-mobile lg:px-margin">
     <div class="max-w-[1440px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-6 text-xs text-outline tracking-widest uppercase">
-      <div>┬⌐ 2026 Binshad &amp; Shahina. A Private Celebration.</div>
+      <div>┬⌐ 2026 Hisham &amp; Shahina. A Private Celebration.</div>
       <div class="text-secondary/70">Florence &amp; Lake Como, Italy</div>
     </div>
   </footer>
@@ -2464,15 +2544,211 @@
     let homepageRevealStarted = false;
     let failsafeTimer = null;
 
-    // --- BACKGROUND MUSIC ENGINE ---
-    const backgroundMusic = new Audio('assets/music/Love Story - Indila (Orchestra Version + Layered ~ Slowed + Reverb).mp3');
+    // --- TEMPORARY REMOVABLE PERFORMANCE RECORDER (Disabled post-verification) ---
+    if (!window.__perfRecorder) window.__perfRecorder = null;
+
+    // --- BACKGROUND MUSIC ENGINE & RESILIENT CONTROLLER (Fix B) ---
+    const MUSIC_SRC = 'assets/music/Love%20Story%20-%20Indila%20(Orchestra%20Version%20%2B%20Layered%20~%20Slowed%20%2B%20Reverb).mp3';
+    const backgroundMusic = new Audio(MUSIC_SRC);
     backgroundMusic.loop = true;
-    backgroundMusic.volume = 0;
-    backgroundMusic.preload = 'none';
-    backgroundMusic.addEventListener('error', (e) => {
-      console.warn('[Audio] Background music load error:', e);
+    backgroundMusic.preload = 'auto';
+    window.backgroundMusic = backgroundMusic;
+
+    // Audio State Machine: 'idle' | 'loading' | 'playing' | 'paused' | 'failed'
+    let audioState = 'idle';
+    let audioFadeRaf = null;
+    const TARGET_AUDIO_VOLUME = 0.35;
+
+    function setAudioVolumeDirect(vol) {
+      try {
+        backgroundMusic.volume = Math.max(0, Math.min(1, vol));
+      } catch (e) {
+        // iOS ignores .volume setter and maintains hardware level
+      }
+    }
+
+    function cancelAudioFade() {
+      if (audioFadeRaf) {
+        cancelAnimationFrame(audioFadeRaf);
+        audioFadeRaf = null;
+      }
+    }
+
+    function fadeAudioVolume(targetVol, durationMs, onDone) {
+      cancelAudioFade();
+      let currentVol = 0;
+      try { currentVol = backgroundMusic.volume; } catch (e) { currentVol = 0; }
+      const startVol = currentVol;
+      const startTime = performance.now();
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / durationMs);
+        setAudioVolumeDirect(startVol + (targetVol - startVol) * progress);
+        if (progress < 1) {
+          audioFadeRaf = requestAnimationFrame(step);
+        } else {
+          audioFadeRaf = null;
+          setAudioVolumeDirect(targetVol);
+          if (onDone) onDone();
+        }
+      }
+      audioFadeRaf = requestAnimationFrame(step);
+    }
+
+    function updateMusicButtonUI(state) {
+      audioState = state;
+      const btn = document.getElementById('musicToggleBtn');
+      const icon = document.getElementById('musicToggleIcon');
+      if (!btn || !icon) return;
+
+      if (state === 'playing') {
+        btn.setAttribute('aria-label', 'Pause background music');
+        btn.classList.add('border-secondary', 'bg-secondary/15');
+        btn.classList.remove('border-amber-400/40', 'border-secondary/60');
+        icon.textContent = 'volume_up';
+      } else if (state === 'loading') {
+        btn.setAttribute('aria-label', 'Loading background music...');
+        btn.classList.add('border-secondary/60');
+        btn.classList.remove('bg-secondary/15', 'border-amber-400/40');
+        icon.textContent = 'volume_up';
+      } else if (state === 'paused') {
+        btn.setAttribute('aria-label', 'Play background music');
+        btn.classList.remove('border-secondary', 'bg-secondary/15', 'border-secondary/60', 'border-amber-400/40');
+        icon.textContent = 'volume_off';
+      } else if (state === 'failed') {
+        btn.setAttribute('aria-label', 'Music playback blocked — tap to play');
+        btn.classList.remove('border-secondary', 'bg-secondary/15', 'border-secondary/60');
+        btn.classList.add('border-amber-400/40');
+        icon.textContent = 'volume_off';
+      } else {
+        // idle
+        btn.setAttribute('aria-label', 'Play background music');
+        btn.classList.remove('border-secondary', 'bg-secondary/15', 'border-secondary/60', 'border-amber-400/40');
+        icon.textContent = 'volume_off';
+      }
+    }
+
+    // Audio lifecycle listeners
+    backgroundMusic.addEventListener('play', () => {
+      console.log('[Audio] Event: play');
+      if (audioState !== 'playing') updateMusicButtonUI('loading');
     });
-    let musicPlaybackStarted = false;
+
+    backgroundMusic.addEventListener('playing', () => {
+      console.log('[Audio] Event: playing');
+      // Assert that volume is never stuck at 0 if settable
+      try {
+        if (backgroundMusic.volume === 0) {
+          setAudioVolumeDirect(TARGET_AUDIO_VOLUME);
+        }
+      } catch (e) {}
+      updateMusicButtonUI('playing');
+    });
+
+    backgroundMusic.addEventListener('pause', () => {
+      console.log('[Audio] Event: pause');
+      cancelAudioFade();
+      updateMusicButtonUI('paused');
+    });
+
+    backgroundMusic.addEventListener('ended', () => {
+      console.log('[Audio] Event: ended');
+      cancelAudioFade();
+      updateMusicButtonUI('paused');
+    });
+
+    backgroundMusic.addEventListener('error', (e) => {
+      console.warn('[Audio] Event: error', e, backgroundMusic.error);
+      cancelAudioFade();
+      updateMusicButtonUI('failed');
+    });
+
+    backgroundMusic.addEventListener('canplay', () => {
+      console.log('[Audio] Event: canplay');
+    });
+
+    backgroundMusic.addEventListener('loadedmetadata', () => {
+      console.log('[Audio] Event: loadedmetadata. Duration:', backgroundMusic.duration);
+    });
+
+    // Synchronous user gesture entry point
+    function playBackgroundMusicSync() {
+      if (!backgroundMusic) return;
+      cancelAudioFade();
+
+      // Set gentle audible start volume (not zero so it is never stuck silent)
+      setAudioVolumeDirect(0.08);
+      updateMusicButtonUI('loading');
+
+      try {
+        const playPromise = backgroundMusic.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            console.log('[Audio] Playback started successfully from user gesture');
+            fadeAudioVolume(TARGET_AUDIO_VOLUME, 1500);
+            updateMusicButtonUI('playing');
+          }).catch((err) => {
+            console.warn('[Audio] User gesture play() rejected:', err.name, err.message);
+            updateMusicButtonUI('failed');
+          });
+        }
+      } catch (err) {
+        console.warn('[Audio] Synchronous play() exception:', err);
+        updateMusicButtonUI('failed');
+      }
+    }
+
+    // User toggle handler with rapid tap debouncing
+    let isAudioToggling = false;
+    function toggleMusicPlayback() {
+      if (!backgroundMusic || isAudioToggling) return;
+      isAudioToggling = true;
+      setTimeout(() => { isAudioToggling = false; }, 300);
+
+      if (backgroundMusic.paused || audioState === 'paused' || audioState === 'failed' || audioState === 'idle') {
+        cancelAudioFade();
+        setAudioVolumeDirect(0.08);
+        updateMusicButtonUI('loading');
+        try {
+          const p = backgroundMusic.play();
+          if (p !== undefined) {
+            p.then(() => {
+              fadeAudioVolume(TARGET_AUDIO_VOLUME, 1200);
+              updateMusicButtonUI('playing');
+            }).catch(err => {
+              console.warn('[Audio] Toggle play() rejected:', err.name, err.message);
+              updateMusicButtonUI('failed');
+            });
+          }
+        } catch (err) {
+          console.warn('[Audio] Toggle synchronous play error:', err);
+          updateMusicButtonUI('failed');
+        }
+      } else {
+        // Currently playing -> smooth fade down to pause
+        fadeAudioVolume(0, 500, () => {
+          try { backgroundMusic.pause(); } catch (e) {}
+          updateMusicButtonUI('paused');
+        });
+      }
+    }
+
+    // Setup music button click and touch handling
+    const musicBtnInit = document.getElementById('musicToggleBtn');
+    if (musicBtnInit) {
+      let lastTouchTime = 0;
+      musicBtnInit.addEventListener('touchend', (e) => {
+        lastTouchTime = Date.now();
+        e.preventDefault();
+        toggleMusicPlayback();
+      }, { passive: false });
+
+      musicBtnInit.addEventListener('click', (e) => {
+        if (Date.now() - lastTouchTime < 500) return; // Prevent synthetic click after touch
+        toggleMusicPlayback();
+      });
+    }
 
     // beginHomepageReveal: reveals nav + hero UI with luxury cinematic fade-in.
     // Audited slower, softer editorial timing with responsive motion tiers.
@@ -2523,10 +2799,38 @@
           gsap.fromTo(heroBottomBar, cfg.bar.from, cfg.bar.to);
         }
       } else {
-        if (mainNav)        { mainNav.classList.remove('opacity-0','pointer-events-none');        gsap.set(mainNav,        { opacity: 1, y: 0 }); }
-        if (heroTypography) { heroTypography.classList.remove('opacity-0','pointer-events-none'); gsap.set(heroTypography, { opacity: 1, y: 0, scale: 1 }); }
-        if (heroAnimItems.length > 0) gsap.set(heroAnimItems, { y: 0, opacity: 1 });
-        if (heroBottomBar)  { heroBottomBar.classList.remove('opacity-0','pointer-events-none');  gsap.set(heroBottomBar,  { y: 0, opacity: 1 }); }
+        // REDUCED MOTION PROFILE: Gentle visible entrance
+        if (mainNav) {
+          mainNav.classList.remove('opacity-0', 'pointer-events-none');
+          gsap.fromTo(mainNav, { opacity: 0, y: -2 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power1.out' });
+        }
+        if (heroTypography) {
+          heroTypography.classList.remove('opacity-0', 'pointer-events-none');
+          gsap.fromTo(heroTypography, { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: 0.7, delay: 0.1, ease: 'power1.out' });
+        }
+        if (heroAnimItems.length > 0) {
+          gsap.fromTo(heroAnimItems, { opacity: 0 }, { opacity: 1, duration: 0.6, stagger: 0.08, delay: 0.15, ease: 'power1.out' });
+        }
+        if (heroBottomBar) {
+          heroBottomBar.classList.remove('opacity-0', 'pointer-events-none');
+          gsap.fromTo(heroBottomBar, { opacity: 0 }, { opacity: 1, duration: 0.6, delay: 0.3, ease: 'power1.out' });
+        }
+      }
+    }
+
+    // Video warmup helper (idempotent, never resets playing video)
+    function warmVideo(v) {
+      if (!v) return;
+      const endFrame = v.parentElement ? v.parentElement.querySelector('.story-mobile-endframe, .story-desktop-endframe') : null;
+      if (endFrame && endFrame.decode && !endFrame.dataset.decoded) {
+        endFrame.dataset.decoded = 'true';
+        endFrame.decode().catch(() => {});
+      }
+      if (v.dataset.primed === 'true' || !v.paused) return;
+      if (v.readyState === 0) {
+        v.dataset.primed = 'true';
+        v.preload = 'auto';
+        v.load();
       }
     }
 
@@ -2542,12 +2846,24 @@
 
       beginHomepageReveal();
 
+      // Early predictable pre-buffering of Chapter 1 upon entrance, deferred slightly
+      // so media pipeline startup does not compete with the active door completion frame
+      setTimeout(() => {
+        if (window.innerWidth >= 768) {
+          const img1 = document.getElementById('storyImg1');
+          if (img1 && img1.tagName === 'VIDEO') warmVideo(img1);
+        } else {
+          const m1 = document.getElementById('storyMobileVideo1');
+          if (m1) warmVideo(m1);
+        }
+      }, 250);
+
       // Ensure viewport is cleanly aligned at top before unlocking scroll
       if (window.scrollY !== 0) {
         window.scrollTo(0, 0);
       }
 
-      // Restore native scrolling simultaneously at 0.5s mark
+      // Restore native scrolling simultaneously
       document.body.classList.remove('overflow-hidden');
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
@@ -2563,14 +2879,23 @@
           ease: 'power1.in',
           onComplete: () => {
             weddingIntro.style.display = 'none';
+            // Defer ScrollTrigger refresh until weddingIntro is completely hidden
+            // so layout reflow never collides with the active door completion transition!
+            requestAnimationFrame(() => {
+              if (window.__perfRecorder) {
+                window.__perfRecorder.recordMilestone('ScrollTrigger Refresh');
+              }
+              ScrollTrigger.sort();
+              ScrollTrigger.refresh();
+            });
           }
         });
+      } else {
+        requestAnimationFrame(() => {
+          ScrollTrigger.sort();
+          ScrollTrigger.refresh();
+        });
       }
-
-      requestAnimationFrame(() => {
-        ScrollTrigger.sort();
-        ScrollTrigger.refresh();
-      });
     }
 
     // completeIntro: backward compatibility / failsafe delegate to triggerHomepageEntrance
@@ -2706,33 +3031,43 @@
         let origin = '50% 45%';
         let offsetY = 0;
 
-        if (w >= 1200) {
-          // Desktop and large desktop: stronger zoom-in (1.03 -> 1.38 over 7.0s; partial pull-back to 1.27 over 3.7s; exact groom nose-tip centering)
+        if (prefersReducedMotion) {
+          // REDUCED MOTION PROFILE: Low-travel gentle zoom
+          startScale = 1.01;
+          peakScale = 1.05;
+          finalScale = 1.03;
+          pushDuration = 3.8;
+          pullDuration = 2.2;
+          ambientPeakScale = 1.034;
+          origin = '50% 40%';
+          offsetY = Math.round(h * -0.040);
+        } else if (w >= 1200) {
+          // Desktop and large desktop: refined zoom-in (1.03 -> 1.38 over 6.70s; partial pull-back to 1.27 over 3.7s; exact groom nose-tip centering)
           startScale = 1.03;
           peakScale = 1.38;
           finalScale = 1.27;
-          pushDuration = 7.0; // 5.8 * (1.38 - 1.03) / (1.32 - 1.03) = 5.8 * 0.35 / 0.29 = 7.00s (velocity 0.0500 scale/s preserved)
+          pushDuration = 6.70; // Task 28C slight acceleration: 6.70s (was 7.00s)
           pullDuration = 3.7; // Proportional travel: 3.0 * (0.11 / 0.09) = 3.67s ~= 3.7s
           ambientPeakScale = 1.295; // Subtle oscillation: 1.270 <-> 1.295 (+0.025 amplitude)
           origin = '50% 45%';
           offsetY = 0;
         } else if (w >= 768) {
           if (isLandscape) {
-            // Tablet landscape: scales preserved (1.03 -> 1.34 push over 5.24s; partial pull-back to 1.25 over 3.0s; exact groom nose-tip centering)
+            // Tablet landscape: refined zoom-in (1.03 -> 1.34 push over 4.75s; partial pull-back to 1.25 over 3.0s; exact groom nose-tip centering)
             startScale = 1.03;
             peakScale = 1.34;
             finalScale = 1.25;
-            pushDuration = 5.24; // Preserved
+            pushDuration = 4.75; // Task 28C moderate acceleration: 4.75s (was 5.24s)
             pullDuration = 3.0; // Preserved
             ambientPeakScale = 1.272; // Subtle oscillation: 1.250 <-> 1.272 (+0.022 amplitude)
             origin = '50% 45%';
             offsetY = Math.round(h * -0.020); // -2.0% vh upward centering (preserved)
           } else {
-            // Tablet portrait: scales preserved (1.03 -> 1.34 push over 5.54s; partial pull-back to 1.25 over 3.0s; exact groom nose-tip centering)
+            // Tablet portrait: refined zoom-in (1.03 -> 1.34 push over 5.00s; partial pull-back to 1.25 over 3.0s; exact groom nose-tip centering)
             startScale = 1.03;
             peakScale = 1.34;
             finalScale = 1.25;
-            pushDuration = 5.54; // Preserved
+            pushDuration = 5.00; // Task 28C moderate acceleration: 5.00s (was 5.54s)
             pullDuration = 3.0; // Preserved
             ambientPeakScale = 1.270; // Subtle oscillation: 1.250 <-> 1.270 (+0.020 amplitude)
             origin = '50% 42%';
@@ -2740,21 +3075,21 @@
           }
         } else {
           if (isLandscape) {
-            // Mobile landscape: scales preserved (1.03 -> 1.33 push over 5.36s; partial pull-back to 1.24 over 3.0s; exact groom nose-tip centering)
+            // Mobile landscape: refined zoom-in (1.03 -> 1.33 push over 4.65s; partial pull-back to 1.24 over 3.0s; exact groom nose-tip centering)
             startScale = 1.03;
             peakScale = 1.33;
             finalScale = 1.24;
-            pushDuration = 5.36; // Preserved
+            pushDuration = 4.65; // Task 28C moderate acceleration: 4.65s (was 5.36s)
             pullDuration = 3.0; // Preserved
             ambientPeakScale = 1.260; // Subtle oscillation: 1.240 <-> 1.260 (+0.020 amplitude)
             origin = '50% 45%';
             offsetY = Math.round(h * -0.020); // -2.0% vh upward centering (preserved)
           } else {
-            // Mobile portrait: scales preserved (1.03 -> 1.32 push over 5.47s; partial pull-back to 1.24 over 2.8s; exact groom nose-tip centering)
+            // Mobile portrait: refined zoom-in (1.03 -> 1.32 push over 4.75s; partial pull-back to 1.24 over 2.8s; exact groom nose-tip centering)
             startScale = 1.03;
             peakScale = 1.32;
             finalScale = 1.24;
-            pushDuration = 5.47; // Preserved
+            pushDuration = 4.75; // Task 28C moderate acceleration: 4.75s (was 5.47s)
             pullDuration = 2.8; // Preserved
             ambientPeakScale = 1.258; // Subtle oscillation: 1.240 <-> 1.258 (+0.018 amplitude)
             origin = '50% 40%';
@@ -2790,10 +3125,13 @@
       let heroTimeline = null;
 
       function startHeroZoom() {
-        if (heroZoomStarted || prefersReducedMotion) return;
+        if (heroZoomStarted) return;
         const img = document.getElementById('heroCoupleImage');
         if (!img) return;
         heroZoomStarted = true;
+        if (window.__perfRecorder) {
+          window.__perfRecorder.recordMilestone('zoom start');
+        }
 
         const {
           startScale,
@@ -2807,23 +3145,28 @@
           offsetY
         } = getHeroScaleTargets();
 
-        // Establish deterministic baseline and couple focal origin
+        // Establish deterministic baseline and couple focal origin with persistent 3D compositing
         gsap.set(img, {
           scale: startScale,
           x: offsetX,
           y: offsetY,
+          force3D: true,
           transformOrigin: origin
         });
 
         // Master timeline controlling the single-image continuous camera sequence
         heroTimeline = gsap.timeline();
 
-        // Phase 1: Slow, purposeful opening push-in towards couple
+        // Phase 1: Purposeful opening push-in towards couple
         // Begins at T=0 (click). Reveals during T=1.3s-1.8s (doors swing). Peaks at pushDuration.
+        if (window.__perfRecorder && typeof window.__perfRecorder.recordPhase === 'function') {
+          window.__perfRecorder.recordPhase('Phase 1: Push-In');
+        }
         heroTimeline.to(img, {
           scale: peakScale,
           x: offsetX,
           y: offsetY,
+          force3D: true,
           duration: pushDuration,
           ease: 'power1.inOut'
         }, 0);
@@ -2834,16 +3177,26 @@
           scale: finalScale,
           x: offsetX,
           y: offsetY,
+          force3D: true,
           duration: pullDuration,
           ease: 'power2.inOut',
+          onStart: () => {
+            if (window.__perfRecorder && typeof window.__perfRecorder.recordPhase === 'function') {
+              window.__perfRecorder.recordPhase('Phase 2: Pull-Back');
+            }
+          },
           onComplete: () => {
+            if (window.__perfRecorder && typeof window.__perfRecorder.recordPhase === 'function') {
+              window.__perfRecorder.recordPhase('Phase 3: Ambient Loop');
+            }
             // Phase 3: Ambient cinematic breathing loop oscillating subtly around close framing
             // Starts seamlessly from finalScale without any scale jump or visual pop
             gsap.to(img, {
               scale: ambientPeakScale,
               x: offsetX,
               y: offsetY,
-              duration: 14.0,
+              force3D: true,
+              duration: prefersReducedMotion ? 16.0 : 14.0,
               ease: 'sine.inOut',
               yoyo: true,
               repeat: -1,
@@ -2853,29 +3206,46 @@
         });
       }
 
+      let heroDecodePromise = null;
+
+      function prewarmHeroTexture(img) {
+        // Texture decode is natively fulfilled by heroCoupleImage.decode() without allocating
+        // redundant offscreen ImageBitmaps or 2D canvas contexts that induce GC thread pauses.
+      }
+
       function onHeroImageReady() {
         if (heroImageReady) return;
         heroImageReady = true;
-        if (introState === 'opening' || introState === 'complete') {
-          startHeroZoom();
+        if (heroCoupleImage) {
+          prewarmHeroTexture(heroCoupleImage);
+        }
+        if (window.__perfRecorder) {
+          window.__perfRecorder.recordMilestone('image decode readiness');
         }
       }
 
       if (heroCoupleImage) {
-        if (heroCoupleImage.complete && heroCoupleImage.naturalWidth > 0) {
+        if (typeof heroCoupleImage.decode === 'function') {
+          heroDecodePromise = heroCoupleImage.decode().then(onHeroImageReady).catch(function(e) {
+            console.warn('[HeroImage] Primary image decode fallback:', e);
+            onHeroImageReady();
+          });
+        } else if (heroCoupleImage.complete && heroCoupleImage.naturalWidth > 0) {
           onHeroImageReady();
+          heroDecodePromise = Promise.resolve();
         } else {
-          heroCoupleImage.addEventListener('load', onHeroImageReady, { once: true });
-          heroCoupleImage.addEventListener('error', function onHeroImgError() {
-            console.warn('[HeroImage] Primary image failed to load; relying on fallback / dark backing.');
-            heroImageReady = true;
-          }, { once: true });
-          if (typeof heroCoupleImage.decode === 'function') {
-            heroCoupleImage.decode().then(onHeroImageReady).catch(function() {});
-          }
+          heroDecodePromise = new Promise(resolve => {
+            heroCoupleImage.addEventListener('load', () => { onHeroImageReady(); resolve(); }, { once: true });
+            heroCoupleImage.addEventListener('error', function onHeroImgError() {
+              console.warn('[HeroImage] Primary image failed to load; relying on fallback / dark backing.');
+              onHeroImageReady();
+              resolve();
+            }, { once: true });
+          });
         }
+      } else {
+        heroDecodePromise = Promise.resolve();
       }
-
 
       // GSAP initial states
       if (doorLeft)  gsap.set(doorLeft,  { transformOrigin: '0% 50%',   rotateY: 0 });
@@ -2924,130 +3294,183 @@
         window.scrollTo(0, 0);
         doorRoundBtn.disabled = true;
 
-        // Start background music from user click gesture (silent start -> 3.0s fade to 0.35)
-        if (backgroundMusic && !musicPlaybackStarted) {
-          musicPlaybackStarted = true;
-          try {
-            backgroundMusic.volume = 0;
-            const playPromise = backgroundMusic.play();
-            if (playPromise !== undefined) {
-              playPromise.then(() => {
-                gsap.to(backgroundMusic, {
-                  volume: 0.35,
-                  duration: 3.0,
-                  ease: 'power1.out',
-                  overwrite: true
-                });
-              }).catch((err) => {
-                console.warn('[Audio] Background music playback prevented or interrupted:', err);
-              });
-            }
-          } catch (err) {
-            console.warn('[Audio] Synchronous play() error:', err);
-          }
+        if (window.__perfRecorder) {
+          window.__perfRecorder.start();
         }
+
+        // Start background music synchronously from user click gesture (Fix B)
+        playBackgroundMusicSync();
+
         introEntrance.kill();
         if (doorZoomTween) {
           doorZoomTween.pause();
         }
 
-        // REDUCED MOTION GUEST FLOW: instantaneous, non-disorienting crossfade directly into ceremony
+        // REDUCED MOTION GUEST FLOW: gentle visible alternative opening with low-travel hero zoom
         if (prefersReducedMotion) {
-          gsap.to(weddingIntro, {
-            opacity: 0,
-            duration: 0.35,
-            ease: 'power1.out',
+          startHeroZoom();
+
+          const rmTl = gsap.timeline({
             onComplete: () => {
-              weddingIntro.style.display = 'none';
-              weddingIntro.setAttribute('aria-hidden', 'true');
-              weddingIntro.style.pointerEvents = 'none';
+              if (weddingIntro) {
+                weddingIntro.style.display = 'none';
+                weddingIntro.setAttribute('aria-hidden', 'true');
+                weddingIntro.style.pointerEvents = 'none';
+              }
               triggerHomepageEntrance();
             }
           });
+
+          rmTl.to([doorRoundBtn, doorEyebrow, doorNamesDisplay, doorProgressRail].filter(Boolean), {
+            opacity: 0,
+            duration: 0.40,
+            ease: 'power1.out'
+          }, 0);
+
+          if (doorLeft)  rmTl.to(doorLeft,  { rotateY: -35, opacity: 0, duration: 1.1, ease: 'power2.out' }, 0.10);
+          if (doorRight) rmTl.to(doorRight, { rotateY:  35, opacity: 0, duration: 1.1, ease: 'power2.out' }, 0.10);
+
+          if (doorInteriorReveal) {
+            rmTl.to(doorInteriorReveal, { opacity: 0, duration: 0.80, ease: 'power1.out' }, 0.10);
+          }
+
+          rmTl.to(weddingIntro, { opacity: 0, duration: 0.50, ease: 'power1.in' }, 0.90);
           return;
         }
 
         // Reveal decorative medallion halves on door leaves for 3D swing
         gsap.set(['.door-medallion-leaf-left', '.door-medallion-leaf-right'], { opacity: 1 });
 
-        // Start subtle cinematic zoom loop on couple photo
-        startHeroZoom();
+        // Coordinated door opening execution once hero image decode is verified
+        function executeOpeningSequence() {
+          if (window.__perfRecorder) {
+            window.__perfRecorder.recordMilestone('zoom start');
+          }
+          // Start subtle cinematic zoom loop on couple photo
+          startHeroZoom();
 
-        const tl = gsap.timeline();
+          const tl = gsap.timeline();
 
-        // T=0 — Welcome text yields
-        tl.to(doorRoundBtn, { opacity: 0, duration: 0.20, ease: 'power2.inOut' }, 0);
-        tl.to([doorEyebrow, doorNamesDisplay].filter(Boolean),
-          { opacity: 0, y: -8, filter: 'blur(3px)', duration: 0.45, ease: 'power2.in', stagger: 0.06 }, 0);
+          // T=0 — Welcome text yields smoothly without expensive filter blur re-rasterization
+          tl.to(doorRoundBtn, { opacity: 0, duration: 0.20, ease: 'power2.inOut' }, 0);
+          tl.to([doorEyebrow, doorNamesDisplay].filter(Boolean),
+            { opacity: 0, y: -10, duration: 0.38, ease: 'power2.in', stagger: 0.05 }, 0);
 
-        // T=0 — Seam shadow fades
-        if (doorCenterSeam) tl.to(doorCenterSeam, { opacity: 0, duration: 0.28, ease: 'power2.out' }, 0);
+          // T=0 — Seam shadow fades
+          if (doorCenterSeam) tl.to(doorCenterSeam, { opacity: 0, duration: 0.28, ease: 'power2.out', onComplete: () => { doorCenterSeam.style.visibility = 'hidden'; } }, 0);
 
-        // T=0.08 — Center ignition flash
-        if (doorIgnition) {
-          tl.to(doorIgnition, { opacity: 1, duration: 0.10, ease: 'power3.out' }, 0.08);
-          tl.to(doorIgnition, { scale: 2.8, opacity: 0, duration: 0.55, ease: 'power2.out' }, 0.15);
+          // T=0.08 — Center ignition flash
+          if (doorIgnition) {
+            tl.to(doorIgnition, { opacity: 1, duration: 0.10, ease: 'power3.out' }, 0.08);
+            tl.to(doorIgnition, { scale: 2.8, opacity: 0, duration: 0.55, ease: 'power2.out', onComplete: () => { doorIgnition.style.visibility = 'hidden'; } }, 0.15);
+          }
+
+          // T=0.10 — Seam glow
+          if (doorLightSeam) {
+            tl.to(doorLightSeam, { opacity: 1, duration: 0.28, ease: 'power2.out' }, 0.10);
+            tl.to(doorLightSeam, { opacity: 0, duration: 0.55, ease: 'power1.in', onComplete: () => { doorLightSeam.style.visibility = 'hidden'; } }, 0.55);
+          }
+
+          // T=0.12 — Button collapses
+          tl.to(doorRoundBtn, { scale: 0.40, opacity: 0, duration: 0.38, ease: 'power2.in', onComplete: () => { doorRoundBtn.style.visibility = 'hidden'; } }, 0.12);
+
+          // T=0.08 — Bloom illuminates doors during opening
+          if (doorLightBloom) {
+            tl.to(doorLightBloom, { opacity: 0.88, duration: 0.52, ease: 'power2.out' }, 0.08);
+            tl.to(doorLightBloom, { opacity: 0, duration: 0.65, ease: 'power1.in', onComplete: () => { doorLightBloom.style.visibility = 'hidden'; } }, 0.65);
+          }
+
+          // T=0.10 — RADIAL WAVE EXPANDS across doors (contain: paint, clean removal after fade)
+          if (doorLightWave) {
+            tl.to(doorLightWave, { opacity: 0.92, duration: 0.14, ease: 'power3.out' }, 0.10);
+            tl.to(doorLightWave, { scale: 1, duration: 1.18, ease: 'power2.out' }, 0.10);
+            tl.to(doorLightWave, {
+              opacity: 0,
+              duration: 0.50,
+              ease: 'power1.in',
+              onComplete: () => {
+                doorLightWave.style.visibility = 'hidden';
+              }
+            }, 0.78);
+          }
+
+          // T=0.20 — Doors open (heavy, physical, hinged)
+          tl.call(() => {
+            if (window.__perfRecorder) {
+              window.__perfRecorder.recordMilestone('door rotation start');
+            }
+          }, null, 0.20);
+          if (doorLeft)  tl.to(doorLeft,  { rotateY: -95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
+          if (doorRight) tl.to(doorRight, { rotateY:  95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
+
+          // T=0.20 — Artwork frame + atmosphere begins smooth fade immediately as doors swing open
+          const doorArtworkFrame = document.getElementById('doorArtworkFrame');
+          const doorAtmosphere   = document.getElementById('doorAtmosphere');
+          if (doorArtworkFrame || doorAtmosphere) {
+            tl.to([doorArtworkFrame, doorAtmosphere].filter(Boolean),
+              {
+                opacity: 0,
+                duration: 0.60,
+                ease: 'power2.out',
+                onComplete: () => {
+                  if (doorArtworkFrame) doorArtworkFrame.style.visibility = 'hidden';
+                  if (doorAtmosphere)   doorAtmosphere.style.visibility = 'hidden';
+                }
+              }, 0.20);
+          }
+
+          // T=0.40 — Aperture reveal: dark interior curtain smoothly softens as doors part,
+          // revealing the continuous zoom on couple underneath without waiting for late pop
+          if (doorInteriorReveal) {
+            tl.call(() => {
+              if (window.__perfRecorder) {
+                window.__perfRecorder.recordMilestone('interior overlay fade');
+                window.__perfRecorder.recordMilestone('hero image first visible frame');
+              }
+            }, null, 0.40);
+            tl.to(doorInteriorReveal, {
+              opacity: 0,
+              duration: 0.70,
+              ease: 'power2.out',
+              onComplete: () => {
+                doorInteriorReveal.style.visibility = 'hidden';
+              }
+            }, 0.40);
+          }
+
+          // T=2.05 — Door leaves finish physical rotation (0.20 + 1.85 = 2.05s)
+          // Hide door leaves smoothly without layout disruption
+          tl.call(() => {
+            if (doorLeft)  doorLeft.style.visibility = 'hidden';
+            if (doorRight) doorRight.style.visibility = 'hidden';
+            if (window.__perfRecorder) {
+              window.__perfRecorder.recordMilestone('transition completion');
+            }
+            triggerHomepageEntrance();
+          }, null, 2.05);
+
+          // T=2.50 — Door stage (leaves) and zoom wrapper fade out completely
+          const doorStage = document.getElementById('doorStage');
+          if (doorStage) tl.to(doorStage, { opacity: 0, duration: 0.30, ease: 'power1.in', onComplete: () => { doorStage.style.visibility = 'hidden'; } }, 2.50);
+          if (doorZoomWrapper) tl.to(doorZoomWrapper, { opacity: 0, duration: 0.30, ease: 'power1.in', onComplete: () => { doorZoomWrapper.style.visibility = 'hidden'; } }, 2.50);
+
+          // T=2.70 — Progress rail fades
+          if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.25, ease: 'power1.in', onComplete: () => { doorProgressRail.style.visibility = 'hidden'; } }, 2.70);
+
+          // Progress rail fill animation — TRANSFORM COMPOSITOR ONLY, NO TOP LAYOUT THRASH!
+          if (doorProgressFill && doorProgressDot) {
+            const railHeight = 140;
+            gsap.to(doorProgressFill, { scaleY: 1, duration: 1.85, ease: 'power2.inOut', delay: 0.20 });
+            gsap.to(doorProgressDot,  { y: railHeight, duration: 1.85, ease: 'power2.inOut', delay: 0.20, force3D: true });
+          }
         }
 
-        // T=0.10 — Seam glow
-        if (doorLightSeam) {
-          tl.to(doorLightSeam, { opacity: 1, duration: 0.28, ease: 'power2.out' }, 0.10);
-          tl.to(doorLightSeam, { opacity: 0, duration: 0.55, ease: 'power1.in' }, 0.55);
-        }
-
-        // T=0.12 — Button collapses
-        tl.to(doorRoundBtn, { scale: 0.40, opacity: 0, duration: 0.38, ease: 'power2.in' }, 0.12);
-
-        // T=0.08 — Bloom illuminates doors during opening
-        if (doorLightBloom) {
-          tl.to(doorLightBloom, { opacity: 0.88, duration: 0.52, ease: 'power2.out' }, 0.08);
-          tl.to(doorLightBloom, { opacity: 0, duration: 0.65, ease: 'power1.in' }, 0.65);
-        }
-
-        // T=0.10 — RADIAL WAVE EXPANDS across doors
-        if (doorLightWave) {
-          tl.to(doorLightWave, { opacity: 0.92, duration: 0.14, ease: 'power3.out' }, 0.10);
-          tl.to(doorLightWave, { scale: 1, duration: 1.18, ease: 'power2.out' }, 0.10);
-          tl.to(doorLightWave, { opacity: 0, duration: 0.50, ease: 'power1.in' }, 0.78);
-        }
-
-        // T=0.20 — Doors open (heavy, physical, hinged)
-        if (doorLeft)  tl.to(doorLeft,  { rotateY: -95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
-        if (doorRight) tl.to(doorRight, { rotateY:  95, duration: 1.85, ease: 'power3.inOut' }, 0.20);
-
-        // T=0.20 — Artwork frame + atmosphere begins smooth fade immediately as doors swing open
-        // Ensures Layer 1 flat artwork is at opacity 0 before doorway reveals aperture
-        const doorArtworkFrame = document.getElementById('doorArtworkFrame');
-        const doorAtmosphere   = document.getElementById('doorAtmosphere');
-        if (doorArtworkFrame || doorAtmosphere) {
-          tl.to([doorArtworkFrame, doorAtmosphere].filter(Boolean),
-            { opacity: 0, duration: 0.60, ease: 'power2.out' }, 0.20);
-        }
-
-        // T=1.30 — Aperture reveal point:
-        // Dark interior curtain fades out to reveal the zooming hero image underneath
-        if (doorInteriorReveal) {
-          tl.to(doorInteriorReveal, { opacity: 0, duration: 0.50, ease: 'power2.out' }, 1.30);
-        }
-
-        // T=2.05 — Door leaves finish physical rotation (0.20 + 1.85 = 2.05s)
-        // Hand off smoothly to homepage entrance without waiting for video decoders
-        tl.call(() => {
-          triggerHomepageEntrance();
-        }, null, 2.05);
-
-        // T=2.50 — Door stage (leaves) and zoom wrapper fade out completely
-        const doorStage = document.getElementById('doorStage');
-        if (doorStage) tl.to(doorStage, { opacity: 0, duration: 0.30, ease: 'power1.in' }, 2.50);
-        if (doorZoomWrapper) tl.to(doorZoomWrapper, { opacity: 0, duration: 0.30, ease: 'power1.in' }, 2.50);
-
-        // T=2.70 — Progress rail fades
-        if (doorProgressRail) tl.to(doorProgressRail, { opacity: 0, duration: 0.25, ease: 'power1.in' }, 2.70);
-
-        // Progress rail fill animation
-        if (doorProgressFill && doorProgressDot) {
-          gsap.to(doorProgressFill, { scaleY: 1, duration: 1.85, ease: 'power2.inOut', delay: 0.20 });
-          gsap.to(doorProgressDot,  { top: '100%', duration: 1.85, ease: 'power2.inOut', delay: 0.20 });
+        if (heroImageReady) {
+          executeOpeningSequence();
+        } else {
+          // Fast coordination failsafe: max 120ms safety race to ensure decode without perceived pause
+          const maxWait = new Promise(r => setTimeout(r, 120));
+          Promise.race([heroDecodePromise || Promise.resolve(), maxWait]).then(executeOpeningSequence);
         }
 
         // Failsafe
@@ -3136,8 +3559,76 @@
       if (!storyPinSection || !storyPinViewport) return;
 
       if (prefersReducedMotion) {
-        gsap.set(['#storySlide1', '#storyFloralFrame', '#storyChapter1'], { autoAlpha: 1 });
-        gsap.set(['#storySlide2', '#storySlide3', '#storyChapter2', '#storyChapter3'], { autoAlpha: 0 });
+        if (storyPinSection) storyPinSection.style.display = 'none';
+        const mobileContainer = document.getElementById('storyMobileContainer');
+        if (mobileContainer) {
+          gsap.set(mobileContainer, { display: 'block', opacity: 1 });
+          const items = mobileContainer.querySelectorAll(':scope > div');
+          items.forEach((item, index) => {
+            gsap.set(item, { opacity: 1, y: 0 });
+            const v = item.querySelector('video');
+            if (v) {
+              v.preload = 'metadata';
+              item.style.cursor = 'pointer';
+              item.setAttribute('role', 'button');
+              item.setAttribute('aria-label', `Play or pause Chapter ${index + 1} video`);
+
+              let playBadge = item.querySelector('.story-play-badge');
+              if (!playBadge) {
+                playBadge = document.createElement('div');
+                playBadge.className = 'story-play-badge absolute bottom-4 right-4 z-30 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/85 backdrop-blur-md border border-secondary/40 text-secondary text-[11px] uppercase tracking-wider select-none pointer-events-none transition-all';
+                playBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">play_arrow</span><span>Play Video</span>';
+                const wrapper = item.querySelector('[id^="storyMobileMediaWrapper"]');
+                if (wrapper) wrapper.appendChild(playBadge);
+              }
+
+              const endFrameImg = item.querySelector('.story-mobile-endframe');
+              const cardDiv = v.parentElement;
+              const initialPoster = v.getAttribute('poster') || '';
+              const initialBg = cardDiv ? cardDiv.style.backgroundImage : '';
+              const lastFrameSrc = endFrameImg ? (endFrameImg.getAttribute('src') || endFrameImg.src) : '';
+              let isCompleted = false;
+
+              v.addEventListener('ended', () => {
+                isCompleted = true;
+                v.dataset.completed = 'true';
+                if (endFrameImg) endFrameImg.style.opacity = '1';
+                if (lastFrameSrc) {
+                  v.setAttribute('poster', lastFrameSrc);
+                  if (cardDiv) cardDiv.style.backgroundImage = `url("${lastFrameSrc}")`;
+                }
+                v.style.opacity = '0';
+                if (playBadge) playBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">replay</span><span>Replay</span>';
+              });
+
+              item.addEventListener('click', () => {
+                if (isCompleted || v.ended) {
+                  isCompleted = false;
+                  v.dataset.completed = 'false';
+                  v.currentTime = 0;
+                  v.muted = true;
+                  v.playsInline = true;
+                  v.play().then(() => {
+                    if (playBadge) playBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">pause</span><span>Pause</span>';
+                    v.setAttribute('poster', initialPoster);
+                    if (cardDiv) cardDiv.style.backgroundImage = initialBg;
+                    v.style.opacity = '1';
+                    if (endFrameImg) endFrameImg.style.opacity = '0';
+                  }).catch(e => console.warn('[StoryVideo] User play error:', e));
+                } else if (v.paused) {
+                  v.muted = true;
+                  v.playsInline = true;
+                  v.play().then(() => {
+                    if (playBadge) playBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">pause</span><span>Pause</span>';
+                  }).catch(e => console.warn('[StoryVideo] User play error:', e));
+                } else {
+                  v.pause();
+                  if (playBadge) playBadge.innerHTML = '<span class="material-symbols-outlined text-[16px]">play_arrow</span><span>Play Video</span>';
+                }
+              });
+            }
+          });
+        }
         return;
       }
 
@@ -3156,76 +3647,165 @@
       const ch2 = document.getElementById('storyChapter2');
       const ch3 = document.getElementById('storyChapter3');
 
-      // Coordinated Seek Controller for All-Intra interactive scrub (24fps frame-aligned)
-      const STORY_VIDEO_FPS = 24;
-      const FRAME_DURATION = 1 / 24;
+      // Desktop & Tablet Story Video Controller: Autoplay-Once with Stable Final-Frame Fallback
+      const desktopStoryVideos = [
+        {
+          video: img1,
+          slide: slide1,
+          endFrame: document.getElementById('storyDesktopEndFrame1'),
+          initialPoster: img1 ? img1.getAttribute('poster') : '',
+          initialBg: slide1 ? slide1.style.backgroundImage : '',
+          lastFrameSrc: 'assets/images/story-bride-frame-last.webp',
+          hasPlayed: false,
+          isCompleted: false
+        },
+        {
+          video: img2,
+          slide: slide2,
+          endFrame: document.getElementById('storyDesktopEndFrame2'),
+          initialPoster: img2 ? img2.getAttribute('poster') : '',
+          initialBg: slide2 ? slide2.style.backgroundImage : '',
+          lastFrameSrc: 'assets/images/story-groom-frame-last.webp',
+          hasPlayed: false,
+          isCompleted: false
+        },
+        {
+          video: img3,
+          slide: slide3,
+          endFrame: document.getElementById('storyDesktopEndFrame3'),
+          initialPoster: img3 ? img3.getAttribute('poster') : '',
+          initialBg: slide3 ? slide3.style.backgroundImage : '',
+          lastFrameSrc: 'assets/images/story-couple-frame-last.webp',
+          hasPlayed: false,
+          isCompleted: false
+        }
+      ];
 
-      function createVideoScrubber(video) {
-        if (!video) return { setProgress: () => {} };
-
-        let lastRequestedFrame = -1;
-        let pendingFrame = null;
-        let pendingTime = null;
-        let isSeeking = false;
-
-        video.addEventListener('seeked', () => {
-          isSeeking = false;
-          if (pendingFrame !== null && pendingTime !== null) {
-            const nextFrame = pendingFrame;
-            const nextTime = pendingTime;
-            pendingFrame = null;
-            pendingTime = null;
-            if (nextFrame !== lastRequestedFrame) {
-              isSeeking = true;
-              lastRequestedFrame = nextFrame;
-              video.currentTime = nextTime;
-            }
-          }
-        });
-
-        function setProgress(progress) {
-          if (!video.duration || isNaN(video.duration) || video.readyState < 2) return;
-          const p = Math.max(0, Math.min(1, progress));
-          const continuousTarget = p * video.duration;
-
-          // Frame-index based target model
-          const totalFrames = Math.max(1, Math.round(video.duration * STORY_VIDEO_FPS));
-          const maxFrameIndex = totalFrames - 1;
-          const rawFrameIndex = Math.round(continuousTarget * STORY_VIDEO_FPS);
-          const frameIndex = Math.max(0, Math.min(maxFrameIndex, rawFrameIndex));
-
-          let snappedTime = frameIndex / STORY_VIDEO_FPS;
-          const maxTime = Math.max(0, video.duration - 0.001);
-          snappedTime = Math.max(0, Math.min(maxTime, snappedTime));
-
-          // Seek only when frame index changes
-          if (frameIndex === lastRequestedFrame) return;
-
-          if (isSeeking) {
-            // Newest target wins
-            pendingFrame = frameIndex;
-            pendingTime = snappedTime;
-          } else {
-            isSeeking = true;
-            lastRequestedFrame = frameIndex;
-            video.currentTime = snappedTime;
+      function setDesktopVideoCompleted(index) {
+        const item = desktopStoryVideos[index];
+        if (!item || !item.video) return;
+        item.isCompleted = true;
+        item.video.dataset.completed = 'true';
+        if (item.endFrame) {
+          item.endFrame.style.opacity = '1';
+        }
+        if (item.lastFrameSrc) {
+          item.video.setAttribute('poster', item.lastFrameSrc);
+          if (item.slide) {
+            item.slide.style.backgroundImage = `url("${item.lastFrameSrc}")`;
           }
         }
-
-        return { setProgress };
+        item.video.style.opacity = '0';
+        if (window.__videoTelemetryLog) {
+          window.__videoTelemetryLog(item.video.id, 'completed_fallback_active', {
+            chapter: index + 1,
+            lastFrameSrc: item.lastFrameSrc
+          });
+        }
       }
 
-      const scrubber1 = createVideoScrubber(img1);
-      const scrubber2 = createVideoScrubber(img2);
-      const scrubber3 = createVideoScrubber(img3);
+      function waitForDesktopPlaybackFrame(video, onReady) {
+        let settled = false;
+        const finish = (time) => {
+          if (settled) return;
+          settled = true;
+          onReady(time);
+        };
 
-      // Initialize desktop videos to paused and refresh ScrollTrigger on metadata
-      [img1, img2, img3].forEach(v => {
-        if (v && v.tagName === 'VIDEO') {
-          v.pause();
-          v.addEventListener('loadedmetadata', () => {
-            ScrollTrigger.refresh();
-          }, { once: true });
+        if (typeof video.requestVideoFrameCallback === 'function') {
+          video.requestVideoFrameCallback((now, metadata) => {
+            const mediaTime = (metadata && typeof metadata.mediaTime === 'number') ? metadata.mediaTime : video.currentTime;
+            finish(mediaTime);
+          });
+          setTimeout(() => finish(video.currentTime), 400);
+        } else {
+          const onTimeUpdate = () => {
+            if (video.currentTime > 0 && video.currentTime < 0.35) {
+              video.removeEventListener('timeupdate', onTimeUpdate);
+              finish(video.currentTime);
+            }
+          };
+          video.addEventListener('timeupdate', onTimeUpdate);
+          setTimeout(() => {
+            video.removeEventListener('timeupdate', onTimeUpdate);
+            finish(video.currentTime);
+          }, 400);
+        }
+      }
+
+      function restoreDesktopReplayState(index, time) {
+        const item = desktopStoryVideos[index];
+        if (!item || !item.video) return;
+        item.video.setAttribute('poster', item.initialPoster);
+        if (item.slide) {
+          item.slide.style.backgroundImage = item.initialBg;
+        }
+        item.video.style.opacity = '1';
+        if (item.endFrame) {
+          item.endFrame.style.opacity = '0';
+        }
+        if (window.__videoTelemetryLog) {
+          window.__videoTelemetryLog(item.video.id, 'replay_frame_confirmed', {
+            chapter: index + 1,
+            mediaTime: time
+          });
+        }
+      }
+
+      function playDesktopVideoOnce(index) {
+        const item = desktopStoryVideos[index];
+        if (!item || !item.video) return;
+        if (item.hasPlayed || item.isCompleted) return;
+
+        item.hasPlayed = true;
+        item.video.muted = true;
+        item.video.playsInline = true;
+        const playPromise = item.video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(err => {
+            console.log(`[StoryVideo] Desktop chapter ${index + 1} play error:`, err);
+          });
+        }
+      }
+
+      // Initialize desktop videos and attach ended / click handlers
+      desktopStoryVideos.forEach((item, index) => {
+        if (!item.video) return;
+        item.video.pause();
+
+        item.video.addEventListener('ended', () => {
+          setDesktopVideoCompleted(index);
+        });
+
+        // Click on slide toggles replay or pause
+        if (item.slide) {
+          item.slide.addEventListener('click', () => {
+            if (item.isCompleted || item.video.ended) {
+              item.isCompleted = false;
+              item.video.dataset.completed = 'false';
+              item.video.currentTime = 0;
+              item.video.muted = true;
+              item.video.playsInline = true;
+              const p = item.video.play();
+              if (p !== undefined) {
+                p.then(() => {
+                  waitForDesktopPlaybackFrame(item.video, (t) => {
+                    restoreDesktopReplayState(index, t);
+                  });
+                }).catch(err => {
+                  console.warn(`[StoryVideo] Desktop replay error:`, err);
+                  restoreDesktopReplayState(index, 0);
+                });
+              }
+            } else if (item.video.paused) {
+              item.hasPlayed = true;
+              item.video.muted = true;
+              item.video.playsInline = true;
+              item.video.play().catch(() => {});
+            } else {
+              item.video.pause();
+            }
+          });
         }
       });
 
@@ -3276,47 +3856,40 @@
         gsap.set(ch2, { autoAlpha: 0, y: 35 });
         gsap.set(ch3, { autoAlpha: 0, y: 35 });
 
-        const scrubProgress = { v1: 0, v2: 0, v3: 0 };
         let activePlate = 1;
 
         const storyTl = gsap.timeline({
           scrollTrigger: {
             trigger: storyPinSection,
             start: 'top top',
-            end: '+=2400',
+            end: '+=3000',
             pin: storyPinViewport,
             pinSpacing: true,
             scrub: 0.5,
             anticipatePin: 2,
-            pinType: 'fixed'
+            pinType: 'fixed',
+            onEnter: () => {
+              playDesktopVideoOnce(0);
+            }
           },
           onUpdate: () => {
             const t = storyTl.time();
             const newPlate = t >= 3.4 ? 3 : (t >= 1.4 ? 2 : 1);
             if (newPlate !== activePlate) {
               activePlate = newPlate;
+              if (activePlate === 2) {
+                playDesktopVideoOnce(1);
+              } else if (activePlate === 3) {
+                playDesktopVideoOnce(2);
+              }
             }
-            if (activePlate === 1) {
-              if (img1 && img1.preload !== 'auto') { img1.preload = 'auto'; img1.load(); }
-              if (img2 && img2.preload !== 'auto' && t >= 0.2) { img2.preload = 'auto'; img2.load(); }
-              scrubber1.setProgress(scrubProgress.v1);
-            } else if (activePlate === 2) {
-              if (img2 && img2.preload !== 'auto') { img2.preload = 'auto'; img2.load(); }
-              if (img3 && img3.preload !== 'auto' && t >= 1.8) { img3.preload = 'auto'; img3.load(); }
-              scrubber2.setProgress(scrubProgress.v2);
-            } else if (activePlate === 3) {
-              if (img3 && img3.preload !== 'auto') { img3.preload = 'auto'; img3.load(); }
-              scrubber3.setProgress(scrubProgress.v3);
-            }
+            if (t >= 0.2 && img2) warmVideo(img2);
+            if (t >= 1.8 && img3) warmVideo(img3);
           }
         });
 
-        // Chapter 1: Bride video scrubs from 0 to duration
-        storyTl.to(scrubProgress, {
-          v1: 1,
-          duration: 1.2,
-          ease: 'none'
-        }, 0);
+        // Autoplay Chapter 1 at start of timeline
+        storyTl.call(() => playDesktopVideoOnce(0), null, 0);
 
         // Phase A: Transition from Chapter 1 to Chapter 2 (around 33% progress)
         storyTl.to(ch1, {
@@ -3338,11 +3911,8 @@
           ease: 'power1.inOut'
         }, 1.4);
 
-        storyTl.to(scrubProgress, {
-          v2: 1,
-          duration: 1.6,
-          ease: 'none'
-        }, 1.4);
+        // Autoplay Chapter 2 once Slide 2 begins entering
+        storyTl.call(() => playDesktopVideoOnce(1), null, 1.4);
 
         storyTl.to(ch2, {
           autoAlpha: 1,
@@ -3371,11 +3941,8 @@
           ease: 'power1.inOut'
         }, 3.4);
 
-        storyTl.to(scrubProgress, {
-          v3: 1,
-          duration: 1.2,
-          ease: 'none'
-        }, 3.4);
+        // Autoplay Chapter 3 once Slide 3 begins entering
+        storyTl.call(() => playDesktopVideoOnce(2), null, 3.4);
 
         storyTl.to(ch3, {
           autoAlpha: 1,
@@ -3384,8 +3951,8 @@
           ease: 'power2.out'
         }, 3.9);
 
-        // Settle smoothly before releasing
-        storyTl.to({}, { duration: 0.2 }, 4.6);
+        // Settle smoothly before releasing — extended reading & viewing space matching Chapters 1 & 2
+        storyTl.to({}, { duration: 1.3 }, 4.5);
       });
 
       // TIER 2: TABLET / SMALL LAPTOP — 768px TO 1199px (Simplified Cinematic Pinning)
@@ -3399,48 +3966,40 @@
         gsap.set(ch2, { autoAlpha: 0, y: 25 });
         gsap.set(ch3, { autoAlpha: 0, y: 25 });
 
-        const scrubProgress = { v1: 0, v2: 0, v3: 0 };
         let activePlate = 1;
 
-        // Compact scroll range (+1600px) calibrated for tablet touch/trackpad
+        // Balanced scroll range (+2000px) calibrated for tablet touch/trackpad with full Chapter 3 reading space
         const storyTl = gsap.timeline({
           scrollTrigger: {
             trigger: storyPinSection,
             start: 'top top',
-            end: '+=1600',
+            end: '+=2000',
             pin: storyPinViewport,
             pinSpacing: true,
             scrub: 0.4,
             anticipatePin: 2,
-            pinType: 'fixed'
+            pinType: 'fixed',
+            onEnter: () => {
+              playDesktopVideoOnce(0);
+            }
           },
           onUpdate: () => {
             const t = storyTl.time();
             const newPlate = t >= 2.7 ? 3 : (t >= 1.1 ? 2 : 1);
             if (newPlate !== activePlate) {
               activePlate = newPlate;
+              if (activePlate === 2) {
+                playDesktopVideoOnce(1);
+              } else if (activePlate === 3) {
+                playDesktopVideoOnce(2);
+              }
             }
-            if (activePlate === 1) {
-              if (img1 && img1.preload !== 'auto') { img1.preload = 'auto'; img1.load(); }
-              if (img2 && img2.preload !== 'auto' && t >= 0.2) { img2.preload = 'auto'; img2.load(); }
-              scrubber1.setProgress(scrubProgress.v1);
-            } else if (activePlate === 2) {
-              if (img2 && img2.preload !== 'auto') { img2.preload = 'auto'; img2.load(); }
-              if (img3 && img3.preload !== 'auto' && t >= 1.4) { img3.preload = 'auto'; img3.load(); }
-              scrubber2.setProgress(scrubProgress.v2);
-            } else if (activePlate === 3) {
-              if (img3 && img3.preload !== 'auto') { img3.preload = 'auto'; img3.load(); }
-              scrubber3.setProgress(scrubProgress.v3);
-            }
+            if (t >= 0.2 && img2) warmVideo(img2);
+            if (t >= 1.4 && img3) warmVideo(img3);
           }
         });
 
-        // Chapter 1 settles & scrubs
-        storyTl.to(scrubProgress, {
-          v1: 1,
-          duration: 1.0,
-          ease: 'none'
-        }, 0);
+        storyTl.call(() => playDesktopVideoOnce(0), null, 0);
 
         // Phase A: Ch 1 -> Ch 2 (~33% progress)
         storyTl.to(ch1, {
@@ -3462,11 +4021,7 @@
           ease: 'power1.inOut'
         }, 1.1);
 
-        storyTl.to(scrubProgress, {
-          v2: 1,
-          duration: 1.3,
-          ease: 'none'
-        }, 1.1);
+        storyTl.call(() => playDesktopVideoOnce(1), null, 1.1);
 
         storyTl.to(ch2, {
           autoAlpha: 1,
@@ -3495,11 +4050,7 @@
           ease: 'power1.inOut'
         }, 2.7);
 
-        storyTl.to(scrubProgress, {
-          v3: 1,
-          duration: 1.0,
-          ease: 'none'
-        }, 2.7);
+        storyTl.call(() => playDesktopVideoOnce(2), null, 2.7);
 
         storyTl.to(ch3, {
           autoAlpha: 1,
@@ -3508,22 +4059,31 @@
           ease: 'power2.out'
         }, 3.1);
 
-        storyTl.to({}, { duration: 0.15 }, 3.7);
+        // Settle smoothly before releasing — extended reading & viewing space matching Chapters 1 & 2
+        storyTl.to({}, { duration: 1.0 }, 3.6);
       });
 
       // TIER 3: MOBILE — BELOW 768px (Vertical Narrative Layout with Autoplay-Once)
       storyMm.add("(max-width: 767px)", () => {
+        const m1 = document.getElementById('storyMobileVideo1');
+        const m2 = document.getElementById('storyMobileVideo2');
+        const m3 = document.getElementById('storyMobileVideo3');
+
+        // Prime Chapter 1 early
+        warmVideo(m1);
+
         const mobileItems = document.querySelectorAll('#storyMobileContainer > div');
-        mobileItems.forEach(item => {
+        mobileItems.forEach((item, index) => {
           const media = item.querySelector('img, video');
           const video = item.querySelector('video');
 
-          // Entrance animation
+          // Entrance animation (plays once to resting framing; no reverse on upward scroll)
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: item,
               start: 'top 85%',
-              toggleActions: 'play none none reverse'
+              once: true,
+              toggleActions: 'play none none none'
             }
           });
           tl.from(item, {
@@ -3540,21 +4100,98 @@
             }, 0);
           }
 
-          // Autoplay-once when entering viewport, with proximity priming ahead of scroll
           if (video) {
-            // Proximity priming: buffer video ahead of scroll as user scrolls down through the story
+            const cardDiv = video.parentElement;
+            const endFrameImg = cardDiv ? cardDiv.querySelector('.story-mobile-endframe') : null;
+            const initialPoster = video.getAttribute('poster') || '';
+            const initialBg = cardDiv ? cardDiv.style.backgroundImage : '';
+            const lastFrameSrc = endFrameImg ? (endFrameImg.getAttribute('src') || endFrameImg.src) : '';
+            let isCompleted = false;
+
+            const setCompletedState = () => {
+              isCompleted = true;
+              video.dataset.completed = 'true';
+              if (endFrameImg) {
+                endFrameImg.style.opacity = '1';
+              }
+              if (lastFrameSrc) {
+                video.setAttribute('poster', lastFrameSrc);
+                if (cardDiv) {
+                  cardDiv.style.backgroundImage = `url("${lastFrameSrc}")`;
+                }
+              }
+              video.style.opacity = '0';
+              if (window.__videoTelemetryLog) {
+                window.__videoTelemetryLog(video.id, 'completed_fallback_active', {
+                  chapter: index + 1,
+                  lastFrameSrc
+                });
+              }
+            };
+
+            video.addEventListener('ended', setCompletedState);
+
+            const waitForNewPlaybackFrame = (onReady) => {
+              let settled = false;
+              const finish = (time) => {
+                if (settled) return;
+                settled = true;
+                onReady(time);
+              };
+
+              if (typeof video.requestVideoFrameCallback === 'function') {
+                video.requestVideoFrameCallback((now, metadata) => {
+                  const mediaTime = (metadata && typeof metadata.mediaTime === 'number') ? metadata.mediaTime : video.currentTime;
+                  finish(mediaTime);
+                });
+                setTimeout(() => finish(video.currentTime), 400);
+              } else {
+                const onTimeUpdate = () => {
+                  if (video.currentTime > 0 && video.currentTime < 0.35) {
+                    video.removeEventListener('timeupdate', onTimeUpdate);
+                    finish(video.currentTime);
+                  }
+                };
+                video.addEventListener('timeupdate', onTimeUpdate);
+                setTimeout(() => {
+                  video.removeEventListener('timeupdate', onTimeUpdate);
+                  finish(video.currentTime);
+                }, 400);
+              }
+            };
+
+            const restoreReplayState = (time) => {
+              video.setAttribute('poster', initialPoster);
+              if (cardDiv) {
+                cardDiv.style.backgroundImage = initialBg;
+              }
+              video.style.opacity = '1';
+              if (endFrameImg) {
+                endFrameImg.style.opacity = '0';
+              }
+              if (window.__videoTelemetryLog) {
+                window.__videoTelemetryLog(video.id, 'replay_frame_confirmed', {
+                  chapter: index + 1,
+                  mediaTime: time
+                });
+              }
+            };
+
+            // Predictable pipeline: warm up the NEXT upcoming chapter video before it enters viewport
             ScrollTrigger.create({
               trigger: item,
-              start: 'top bottom',
+              start: 'top 95%',
               once: true,
               onEnter: () => {
-                prepareMobileVideo(video);
+                if (index === 0 && m2) warmVideo(m2);
+                else if (index === 1 && m3) warmVideo(m3);
               }
             });
 
+            // Autoplay-once when entering reading focal zone (75%)
             let isPlayingOrPlayed = false;
             const attemptPlay = () => {
-              if (isPlayingOrPlayed || !video.paused) return;
+              if (isPlayingOrPlayed || !video.paused || isCompleted || video.ended) return;
               video.muted = true;
               video.playsInline = true;
               const playPromise = video.play();
@@ -3573,9 +4210,32 @@
               onEnter: attemptPlay
             });
 
-            // User interaction tap/click fallback for low-power mode or strict policies
-            item.addEventListener('click', attemptPlay, { passive: true });
-            item.addEventListener('touchend', attemptPlay, { passive: true });
+            // User interaction tap/click toggle for low-power mode or intentional control
+            item.addEventListener('click', () => {
+              if (isCompleted || video.ended) {
+                isCompleted = false;
+                video.dataset.completed = 'false';
+                video.currentTime = 0;
+                video.muted = true;
+                video.playsInline = true;
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                  playPromise.then(() => {
+                    waitForNewPlaybackFrame(restoreReplayState);
+                  }).catch(e => {
+                    console.warn('[StoryVideo] Replay play error:', e);
+                    restoreReplayState(0);
+                  });
+                }
+              } else if (video.paused) {
+                isPlayingOrPlayed = true;
+                video.muted = true;
+                video.playsInline = true;
+                video.play().catch(() => {});
+              } else {
+                video.pause();
+              }
+            }, { passive: true });
           }
         });
       });
@@ -3584,7 +4244,22 @@
     // --- 3. EDITORIAL TYPOGRAPHY REVEALS (Section 13) ---
     function initTypographyReveals() {
       if (prefersReducedMotion) {
-        gsap.set('.reveal-inner', { y: '0%', opacity: 1 });
+        gsap.utils.toArray('.reveal-inner').forEach(inner => {
+          gsap.fromTo(inner,
+            { opacity: 0, y: 3 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: 'power1.out',
+              scrollTrigger: {
+                trigger: inner.parentElement,
+                start: 'top 92%',
+                toggleActions: 'play none none none'
+              }
+            }
+          );
+        });
         return;
       }
 
@@ -3605,7 +4280,24 @@
 
     // --- 4. IMAGE PARALLAX (Section 14) ---
     function initImageParallax() {
-      if (prefersReducedMotion) return;
+      if (prefersReducedMotion) {
+        gsap.utils.toArray('.parallax-img').forEach(img => {
+          gsap.fromTo(img,
+            { opacity: 0.88 },
+            {
+              opacity: 1,
+              duration: 0.8,
+              ease: 'power1.out',
+              scrollTrigger: {
+                trigger: img.parentElement,
+                start: 'top 90%',
+                toggleActions: 'play none none none'
+              }
+            }
+          );
+        });
+        return;
+      }
 
       gsap.utils.toArray('.parallax-img').forEach(img => {
         gsap.to(img, {
