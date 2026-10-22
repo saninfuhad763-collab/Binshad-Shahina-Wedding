@@ -863,6 +863,73 @@
       overflow: visible;
     }
 
+    /* Chronicle of The Day Background Maroon Floral Frames */
+    .itinerary-floral-frame {
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+      z-index: 0;
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      max-height: 1200px;
+      height: 100%;
+      width: auto;
+      object-fit: contain;
+      transition: opacity 0.5s ease;
+    }
+
+    .itinerary-floral-left {
+      left: 0;
+      top: 0;
+      object-position: left top;
+      max-width: 42vw;
+      opacity: 0.35;
+    }
+
+    .itinerary-floral-right {
+      right: 0;
+      bottom: 0;
+      object-position: right bottom;
+      max-width: 42vw;
+      opacity: 0.35;
+    }
+
+    @media (min-width: 768px) {
+      .itinerary-floral-left {
+        max-width: 360px;
+        opacity: 0.45;
+      }
+      .itinerary-floral-right {
+        max-width: 360px;
+        opacity: 0.45;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .itinerary-floral-left {
+        max-width: 460px;
+        opacity: 0.60;
+      }
+      .itinerary-floral-right {
+        max-width: 460px;
+        opacity: 0.60;
+      }
+    }
+
+    @media (min-width: 1440px) {
+      .itinerary-floral-left {
+        max-width: 520px;
+        opacity: 0.70;
+      }
+      .itinerary-floral-right {
+        max-width: 520px;
+        opacity: 0.70;
+      }
+    }
+
     #storyMobileContainer video,
     .story-mobile-endframe,
     #storyPinSection video,
@@ -2252,8 +2319,30 @@
     <!-- ======================================================== -->
     <!-- 4. CHRONOLOGICAL VERTICAL TIMELINE                      -->
     <!-- ======================================================== -->
-    <section class="w-full bg-surface-container-lowest py-28 lg:py-40 px-gutter-mobile lg:px-margin border-t border-secondary/15" id="itinerary">
-      <div class="max-w-[1100px] mx-auto">
+    <section class="w-full bg-surface-container-lowest py-28 lg:py-40 px-gutter-mobile lg:px-margin border-t border-secondary/15 relative overflow-hidden" id="itinerary">
+      <!-- Chronicle Background Luxury Maroon Floral Frames (Left & Right) -->
+      <div class="pointer-events-none select-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true" id="itineraryFloralContainer">
+        <!-- Left Maroon Rose Frame -->
+        <picture class="block">
+          <source srcset="assets/images/itinerary-floral-frame-left.webp" type="image/webp"/>
+          <img src="assets/images/itinerary-floral-frame-left.webp"
+               alt=""
+               fetchpriority="low"
+               decoding="async"
+               class="itinerary-floral-frame itinerary-floral-left will-change-transform" />
+        </picture>
+        <!-- Right Maroon Rose Frame -->
+        <picture class="block">
+          <source srcset="assets/images/itinerary-floral-frame-right.webp" type="image/webp"/>
+          <img src="assets/images/itinerary-floral-frame-right.webp"
+               alt=""
+               fetchpriority="low"
+               decoding="async"
+               class="itinerary-floral-frame itinerary-floral-right will-change-transform" />
+        </picture>
+      </div>
+
+      <div class="relative z-10 max-w-[1100px] mx-auto">
         <div class="text-center max-w-xl mx-auto mb-20 space-y-3">
           <span class="text-[11px] uppercase tracking-[0.35em] text-secondary block font-semibold">Chronicle of The Day</span>
           <div class="reveal-mask">
@@ -4363,6 +4452,29 @@
 
     // --- 5. TIMELINE PROGRESSION (Section 16) ---
     function initTimelineProgress() {
+      // Subtle organic parallax for Chronicle floral background frames
+      if (!prefersReducedMotion && typeof gsap !== 'undefined') {
+        gsap.to('.itinerary-floral-left', {
+          y: -40,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#itinerary',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1
+          }
+        });
+        gsap.to('.itinerary-floral-right', {
+          y: 40,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#itinerary',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1
+          }
+        });
+      }
       const container = document.getElementById('timelineContainer');
       const progressLine = document.getElementById('timelineProgressLine');
       const progressLineMobile = document.getElementById('timelineProgressLineMobile');
